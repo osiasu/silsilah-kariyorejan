@@ -1,0 +1,98 @@
+ID,Nama,Pasangan,Parent ID,Generasi
+1,KYAI KARIYO REJO (Alm),NYAI KARIYO REJO (Almh),,
+2,1. Rubiyem (Almh),Pawiro Sandimin (Alm),1,1
+3,2. Kasiyem (Almh),Pawirorejo (Alm),1,1
+4,2.1 Mudjono (Alm),Tumini (Almh),3,2
+5,2.1.1 Murjianto,Giyatmi,4,3
+6,2.1.1.1. Tito Herlambang Pratama,-,5,4
+7,2.1.2 Muryani,Supardiono,4,3
+8,2.1.2.1 Wahyu Adnan Nursyamsi,-,7,4
+9,2.1.2.2 Atika Nilam,-,7,4
+10,2.1.3 Sutriyono,Ika Yeniati,4,3
+11,2.1.3.1 Naysa Alula Fadilah,-,10,4
+12,2.1.4 Harumsih,Basir,4,3
+13,2.2 Mujilah,Muji Raharjo,3,2
+14,2.2.1 Semi Lestari,Suranto,13,3
+15,2.2.1.1 Rico Fitrianto,Farikhah,14,4
+16,2.2.1.1.1 Razeta Ezlin Zelmira,-,15,5
+17,2.2.1.2 Taufik Ferinanto,-,14,4
+18,2.2.1.3 Syifa Khoirunisa,-,14,4
+19,2.2.2 Heri Wahyono,-,13,3
+20,2.2.3 Sri Wahyuni,Buang Haryanto,13,3
+21,2.2.3.1 Arifin Setiawan,-,20,4
+22,2.2.3.2 Lutfiah Setyawati,-,20,4
+23,2.2.4 Sri Sugiyanti,Wasis Budiantoro,13,3
+24,2.2.4.1 Anggun Bunga,-,23,4
+25,2.2.4.2 Nirvan Bintang,-,23,4
+26,2.2.5 Dwi Wulan Saptari,Adi Riyanto,13,3
+27,2.2.5.1 Azzahra Nur Salma,-,26,4
+28,2.2.5.2 Salma Sholikhatunisa,-,26,4
+29,2.2.6 Heriyanto,Ika,13,3
+30,2.3 Mujinah,Ponijo (Noto Raharjo),3,2
+31,2.3.1 Partinah,Walijo Dwi Prasetyo,30,3
+32,2.3.1.1 Alfi Anandika,-,31,4
+33,2.3.1.2 Tiara Kurniawati,-,31,4
+34,2.3.2 Iman Santoso,Wajiyem,30,3
+35,2.3.2.1 Amelinda Furi Nuraini,-,34,4
+36,2.3.2.2 Nayla Jenita Azzahra,-,34,4
+37,2.3.2 Sunarti,Agus Prasetyo,30,3
+38,2.3.2.1 Serlina Agatha Naysa Prasetya,-,37,4
+39,2.4 Jumilah,Kuwat Triswanto Sudarmo,3,2
+40,2.4.1 Martini,Ircham Sudaryanta,39,3
+41,2.4.1.1 Afifah Najah Mei Maryan,-,40,4
+42,2.4.2 Marjilan,Sutihat,39,3
+43,2.4.2.1 Aditya Nugraha,-,42,4
+44,2.4.2.2 Muhammad Arham,-,42,4
+45,2.4.2.3 Aris,-,42,4
+46,2.4.2.4 Alifah Kalindah,-,42,4
+47,2.5 Juminah,Ngatijan (Purwo Utomo),3,2
+48,2.5.1 Wijianto,Alif Latifah Hani,47,3
+49,2.5.1.1 Aditya Latief Wijaya,-,48,4
+50,2.5.1.2 Alfino Latief Wijaya,-,48,4
+51,2.5.2 Wijayanti,Adam,47,3
+52,3. Daliyem (Almh),Suwahyo (Alm),1,1
+53,4. Mujiono (Alm),-,1,1
+54,5. Ratiyem,Nyonoharjo (Alm),1,1
+55,5.1 Murtiyem,Sariyo (Alm),54,2
+56,5.1.1 Jaka Suryanta,Dina Natasari,55,3
+57,5.1.1.1 Athallah Radhafi Suryanata,-,56,4
+58,5.1.1.2 Athallah Arshadaanish Suryanata,-,56,4
+59,5.1.1.3 Athallah Rasyadizaan Suryanata,-,56,4
+60,5.1.1.4 Athallah Abdillahdzikri Suryanata,-,56,4
+61,5.1.2 Dewi Rahmawati Wulandari,Akhmadi Anwar,55,3
+62,5.1.3 Retno Nugraheni Wulansari,Arman Prajanto,55,3
+63,5.2 Murjiyem (Almh),-,54,2
+64,5.3 Suharjo (Alm),Jumini,54,2
+65,5.3.1 Eko Didik Setyawan,Ester Fitriani Suseno,64,3
+66,5.3.1.1 Jevan Abizar Maleeqal Mousa,-,65,4
+67,5.3.2 Ongky Putera Wibawa,Lestiana Aninda Sari,64,3
+68,5.3.2.1 Saafia Puteri Janeeta,-,67,4
+69,6. Jangkep/Kisdiwiharjo (alm),Ny. Jangkep,1,1
+70,6.1 Sutiyem,Tukiman,69,2
+71,6.1.1 Sunardi,Ernawati,70,3
+72,6.1.1.1 Fenisya Arlina Pradani,-,71,4
+73,6.1.2 Ervana,-,70,3
+74,6.1.3 Heru Triyanto (alm),-,70,3
+75,6.2 Darsilah,Waljiman (Alm),69,2
+76,6.2.1 Rahmad Widodo,Reysa Dhaniasari,75,3
+77,6.2.1.1 Zaki Hafiz,-,76,4
+78,6.2.1.2 Najwa Arsyla,-,76,4
+79,6.2.2 Isti Dwi Astuti,Arif Ardi Nugroho,75,3
+80,6.2.2.1 Nurani Merah Merona,-,79,4
+81,6.3 Supriyanto,Aulia Febriyanti,69,2
+82,6.3.1 Lucky Eka Candra Supriyanto,-,81,3
+83,6.3.2 Calpin Dwi Lintang Supriyanto,-,81,3
+84,6.4 Pargiyati,Subadi,69,2
+85,6.4.1 Andhika Yusuf Priambada,-,84,3
+86,6.4.2 Alfian Rosyid Priambada,-,84,3
+87,6.5 Sudarmanto,Yuni Palupi,69,2
+88,6.5.1 Dzakia Ayunda Safitri,-,87,3
+89,7. Walji Hanafi (alm),Masiroh (almh)	,1,1
+90,7. Walji Hanafi (alm),Sulistriyani (almh),1,1
+91,7.1 Rahmat Nugroho,Muthia Ulfah Yarisma,89,2
+92,7.1.1 Rozin Abdul Fattah,-,91,3
+93,7.1.2 Rizan Zen Abdul Fattah,-,91,3
+94,7.2 Dewi Novitasari,Rinanto Suryadhimirtha,90,2
+95,7.2.1 Aisyah Aulia Larasati,-,94,3
+96,7.3 Noor Ihsanuddin,Lilia Amarwani,90,2
+97,7.3.1 Akhtar Farzan Sabily,-,96,3
