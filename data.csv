@@ -67,12 +67,12 @@ ID,Nama,Pasangan,Parent ID,Generasi
 66,5.3.1.1 Jevan Abizar Maleeqal Mousa,-,65,4
 67,5.3.2 Ongky Putera Wibawa,Lestiana Aninda Sari,64,3
 68,5.3.2.1 Saafia Puteri Janeeta,-,67,4
-69,6. Jangkep/Kisdiwiharjo (Alm),Ny. Jangkep,1,1
+69,6. Jangkep/Kisdiwiharjo (alm),Ny. Jangkep,1,1
 70,6.1 Sutiyem,Tukiman,69,2
 71,6.1.1 Sunardi,Ernawati,70,3
 72,6.1.1.1 Fenisya Arlina Pradani,-,71,4
 73,6.1.2 Ervana,-,70,3
-74,6.1.3 Heru Triyanto (Alm),-,70,3
+74,6.1.3 Heru Triyanto (alm),-,70,3
 75,6.2 Darsilah,Waljiman (Alm),69,2
 76,6.2.1 Rahmad Widodo,Reysa Dhaniasari,75,3
 77,6.2.1.1 Zaki Hafiz,-,76,4
@@ -87,12 +87,13 @@ ID,Nama,Pasangan,Parent ID,Generasi
 86,6.4.2 Alfian Rosyid Priambada,-,84,3
 87,6.5 Sudarmanto,Yuni Palupi,69,2
 88,6.5.1 Dzakia Ayunda Safitri,-,87,3
-89,7. Walji Hanafi (Alm),Masiroh (Almh)	,1,1
-90,7. Walji Hanafi (Alm),Sulistriyani (Almh),1,1
+89,7. Walji Hanafi (alm),Masiroh (almh)	,1,1
+90,7. Walji Hanafi (alm),Sulistriyani (almh),1,1
 91,7.1 Rahmat Nugroho,Muthia Ulfah Yarisma,89,2
 92,7.1.1 Rozin Abdul Fattah,-,91,3
 93,7.1.2 Rizan Zen Abdul Fattah,-,91,3
-94,7.2 Dewi Novitasari,Rinanto Suryadhimirtha,90,2
-95,7.2.1 Aisyah Aulia Larasati,-,94,3
-96,7.3 Noor Ihsanuddin,Lilia Amarwani,90,2
-97,7.3.1 Akhtar Farzan Sabily,-,96,3
+94,7.1.3 Alifah Hanun Nur Rahmah,-,91,3
+95,7.2 Dewi Novitasari,Rinanto Suryadhimirtha,90,2
+96,7.2.1 Aisyah Aulia Larasati,-,95,3
+97,7.3 Noor Ihsanuddin,Lilia Amarwani,90,2
+98,7.3.1 Akhtar Farzan Sabily,-,97,3
