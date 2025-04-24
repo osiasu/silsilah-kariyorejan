@@ -1,23 +1,22 @@
 <!DOCTYPE html>
 <html lang="id">
 
-  <head>
-    <meta charset="UTF-8" />
-    <title>SILSILAH TRAH KARIYOREJAN</title>
-    <style>
+<head>
+  <meta charset="UTF-8" />
+  <title>SILSILAH TRAH KARIYOREJAN</title>
+  <style>
     :root {
-      --primary-color: #2c3e50;
-      --accent-color: #3498db;
-      --bg-color: #f9f9f9;
-      --border-color: #dcdcdc;
-      --text-color: #333;
+      --primary-color: #ffcc00;
+      --accent-color: #e67e22;
+      --bg-color: #0f0f0f;
+      --border-color: #2c2c2c;
+      --text-color: #f5f5f5;
     }
 
     @media print {
       #pageTitle {
         opacity: 1 !important;
       }
-
       #controls,
       .toggle-btn,
       .clear-btn {
@@ -31,12 +30,19 @@
       color: var(--text-color);
       margin: 0;
       padding: 2rem;
+      background-image: url('https://plus.unsplash.com/premium_photo-1733306529857-34bd61ff63b7?q=80&w=3784&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
+      background-size: cover;
+      background-repeat: repeat;
+      background-attachment: fixed;
+      background-color: rgba(15, 15, 15, 0.85);
+      backdrop-filter: blur(1px);
     }
 
     h1 {
       text-align: center;
       color: var(--primary-color);
       margin-bottom: 2rem;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
     }
 
     #controls {
@@ -48,42 +54,42 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-      background-color: var(--bg-color);
+      background-color: rgba(15, 15, 15, 0.9);
       padding: 0.5rem;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
       border-bottom: 1px solid var(--border-color);
+      backdrop-filter: blur(1px);
     }
 
     input,
     select,
     button {
-      padding: 0.2rem;
-      font-size: 0.7rem;
+      padding: 0.5rem;
+      font-size: 0.8rem;
       border: 1px solid var(--border-color);
-      border-radius: 6px;
+      border-radius: 8px;
+      background-color: #1e1e1e;
+      color: var(--text-color);
     }
 
     button {
       background-color: var(--accent-color);
       color: white;
       border: none;
-      border-radius: 8px;
-      padding: 0.6rem 1.2rem;
-      font-size: 0.7rem;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-      transition: all 0.2s ease;
+      box-shadow: 0 4px 12px rgba(230, 126, 34, 0.4);
+      transition: all 0.3s ease;
     }
 
     button:hover {
-      background-color: #2980b9;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      transform: translateY(-1px);
+      background-color: #d35400;
+      box-shadow: 0 6px 18px rgba(230, 126, 34, 0.6);
+      transform: translateY(-2px);
     }
 
     mark {
-      background-color: mediumspringgreen;
-      padding: 0 2px;
+      background-color: #ffdd57;
+      padding: 0 3px;
       border-radius: 3px;
     }
 
@@ -93,6 +99,11 @@
 
     .node-label {
       font-size: 0.95rem;
+      transition: color 0.3s ease;
+    }
+
+    .node-label:hover {
+      color: var(--accent-color);
     }
 
     .hidden {
@@ -102,10 +113,10 @@
     #tree-container {
       max-width: 800px;
       margin: 0 auto;
-      background: white;
+      background: rgba(30, 30, 30, 0.95);
       padding: 1.5rem 2rem;
       border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       border: 1px solid var(--border-color);
     }
 
@@ -136,7 +147,7 @@
       cursor: pointer;
       margin-right: 6px;
       font-weight: bold;
-      color: var(--accent-color);
+      color: var(--primary-color);
       font-size: 0.9rem;
     }
 
@@ -149,30 +160,30 @@
       border: 1px solid var(--border-color);
       border-radius: 8px;
       font-size: 0.7rem;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       transition: box-shadow 0.2s ease;
     }
 
     .search-wrapper input:focus {
       outline: none;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-      border-color: #007bff;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+      border-color: var(--accent-color);
     }
 
     .clear-btn {
       position: absolute;
       top: 50%;
-      right: 2px;
+      right: 6px;
       transform: translateY(-50%);
-      background: white;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      background: #2c2c2c;
+      border: 1px solid #444;
+      border-radius: 50%;
       padding: 2px 8px;
       font-size: 1.2rem;
       font-weight: bold;
       cursor: pointer;
-      color: #555;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      color: #bbb;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
       display: none;
     }
 
@@ -199,7 +210,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.6);
       cursor: pointer;
       opacity: 0;
       pointer-events: none;
@@ -208,7 +219,7 @@
     }
 
     #goTopBtn:hover {
-      background-color: #2980b9;
+      background-color: #d35400;
       transform: scale(1.1);
     }
 
@@ -216,11 +227,11 @@
       opacity: 1;
       pointer-events: auto;
     }
-    </style>
-  </head>
+  </style>
+</head>
 
-  <body>
-    <h1 id="pageTitle">◆❖ SILSILAH TRAH KARIYOREJAN ❖◆</h1>
+<body>
+  <h1 id="pageTitle">◆❖ SILSILAH TRAH KARIYOREJAN ❖◆</h1>
     <div id="controls">
       <button id="toggleAllBtn" onclick="toggleAll()">📂 Expand All</button>
 
@@ -237,6 +248,11 @@
         <option value="4">Generasi 4: Canggah</option>
         <option value="5">Generasi 5: Wareng</option>
       </select>
+
+      <span id="counterPanel" style="align-self: center; font-size: 0.8rem; font-weight: bold;">
+        Menampilkan: Semua anggota
+      </span>
+      
 
       <button onclick="location.reload()">🔄 Refresh</button>
       <button onclick="window.print()">🖨️ Cetak / Export PDF</button>
@@ -403,6 +419,13 @@
       });
 
       matchedNodes.forEach(expandParents);
+      const counterPanel = document.getElementById("counterPanel");
+if (matchedNodes.length > 0) {
+  counterPanel.textContent = `Menampilkan: ${matchedNodes.length} hasil pencarian`;
+} else {
+  counterPanel.textContent = "Tidak ada hasil pencarian.";
+}
+
     }
 
     function expandParents(node) {
@@ -421,7 +444,11 @@
       document.getElementById("searchBox").value = "";
       document.getElementById("generationFilter").value = "";
       resetTreeView();
+      document.getElementById("counterPanel").textContent = "Menampilkan: Semua anggota";
+
     }
+
+    
 
     function resetTreeView() {
       const nodes = document.querySelectorAll(".tree-node");
@@ -451,6 +478,8 @@
 
       expanded = false;
       document.getElementById("toggleAllBtn").textContent = "📂 Expand All";
+      document.getElementById("counterPanel").textContent = "Menampilkan: Semua anggota";
+
     }
 
     function getDataById(id) {
@@ -471,9 +500,11 @@
       });
 
       if (!selectedGen) {
-        resetTreeView();
-        return;
-      }
+  document.getElementById("counterPanel").textContent = "Menampilkan: Semua anggota";
+  resetTreeView();
+  return;
+}
+
 
       const matchedNodes = [];
 
@@ -506,6 +537,14 @@
       });
 
       matchedNodes.forEach(expandParents);
+
+      const counterPanel = document.getElementById("counterPanel");
+if (matchedNodes.length > 0) {
+  counterPanel.textContent = `Menampilkan: ${matchedNodes.length} anggota Generasi ${selectedGen}`;
+} else {
+  counterPanel.textContent = "Tidak ada anggota yang cocok.";
+}
+
     }
 
     // fade in title
