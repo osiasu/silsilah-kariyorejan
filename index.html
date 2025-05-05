@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>SILSILAH TRAH KARIYOREJAN</title>
   <style>
     :root {
@@ -30,12 +31,14 @@
       color: var(--text-color);
       margin: 0;
       padding: 2rem;
+      font-size: 1.2rem;  
       background-image: url('https://plus.unsplash.com/premium_photo-1733306529857-34bd61ff63b7?q=80&w=3784&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D');
       background-size: cover;
       background-repeat: repeat;
       background-attachment: fixed;
       background-color: rgba(15, 15, 15, 0.85);
       backdrop-filter: blur(1px);
+      overflow-x: hidden;
     }
 
     h1 {
@@ -43,6 +46,7 @@
       color: var(--primary-color);
       margin-bottom: 2rem;
       text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+      font-size: 2rem;
     }
 
     #controls {
@@ -118,6 +122,8 @@
       border-radius: 12px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
       border: 1px solid var(--border-color);
+      overflow-x: auto;
+      font-size: 1.2rem;
     }
 
     ul {
@@ -130,6 +136,7 @@
       margin: 0.5rem 0;
       position: relative;
       padding-left: 1.2rem;
+      font-size: 1rem;
     }
 
     .tree-node::before {
@@ -156,10 +163,10 @@
     }
 
     .search-wrapper input {
-      padding: 0.6rem 1rem;
+      padding: 0.6rem 0.1rem;
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      font-size: 0.7rem;
+      font-size: 0.8rem;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
       transition: box-shadow 0.2s ease;
     }
@@ -173,11 +180,11 @@
     .clear-btn {
       position: absolute;
       top: 50%;
-      right: 6px;
+      right: 5px;
       transform: translateY(-50%);
       background: #2c2c2c;
       border: 1px solid #444;
-      border-radius: 50%;
+      border-radius: 25%;
       padding: 2px 8px;
       font-size: 1.2rem;
       font-weight: bold;
@@ -198,7 +205,7 @@
     #goTopBtn {
       position: fixed;
       bottom: 30px;
-      right: 30px;
+      right: 20px;
       z-index: 1001;
       background-color: var(--accent-color);
       color: white;
@@ -226,6 +233,35 @@
     #goTopBtn.show {
       opacity: 1;
       pointer-events: auto;
+    }
+
+    @media (max-width: 600px) {
+      #controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      input,
+      select,
+      button {
+        width: 100%;
+        font-size: 0.61rem;
+      }
+
+      .tree-node {
+        font-size: 0.51rem;
+        padding-left: 0.5rem;
+      }
+
+      h1 {
+        font-size: 1rem;
+      }
+
+      #goTopBtn {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
     }
   </style>
 </head>
