@@ -120,19 +120,11 @@
       padding: 0.5rem 1rem;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-    }
-
-    .filter-chips {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       gap: 0.5rem;
       overflow-x: auto;
       scrollbar-width: none;
     }
-    .filter-chips::-webkit-scrollbar { display: none; }
+    #filterBar::-webkit-scrollbar { display: none; }
 
     .filter-chip {
       flex-shrink: 0;
@@ -155,6 +147,7 @@
     }
 
     #counterText {
+      margin-left: auto;
       flex-shrink: 0;
       font-size: 0.72rem;
       color: var(--text-muted);
@@ -330,6 +323,13 @@
       transform: translateY(0);
     }
 
+    /* Filter-chip content swap: just a quick fade (no slide) */
+    #listView.filter-fade, #treeView.filter-fade {
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    }
+
     .hidden { display: none !important; }
 
     /* ── EMPTY STATE ── */
@@ -456,14 +456,12 @@
 
   <!-- FILTER CHIPS -->
   <div id="filterBar">
-    <div class="filter-chips">
-      <button class="filter-chip active" data-gen="" onclick="setGenFilter(this, '')">Semua</button>
-      <button class="filter-chip" data-gen="1" onclick="setGenFilter(this, '1')">Generasi 1</button>
-      <button class="filter-chip" data-gen="2" onclick="setGenFilter(this, '2')">Generasi 2</button>
-      <button class="filter-chip" data-gen="3" onclick="setGenFilter(this, '3')">Generasi 3</button>
-      <button class="filter-chip" data-gen="4" onclick="setGenFilter(this, '4')">Generasi 4</button>
-      <button class="filter-chip" data-gen="5" onclick="setGenFilter(this, '5')">Generasi 5</button>
-    </div>
+    <button class="filter-chip active" data-gen="" onclick="setGenFilter(this, '')">Semua</button>
+    <button class="filter-chip" data-gen="1" onclick="setGenFilter(this, '1')">Generasi 1</button>
+    <button class="filter-chip" data-gen="2" onclick="setGenFilter(this, '2')">Generasi 2</button>
+    <button class="filter-chip" data-gen="3" onclick="setGenFilter(this, '3')">Generasi 3</button>
+    <button class="filter-chip" data-gen="4" onclick="setGenFilter(this, '4')">Generasi 4</button>
+    <button class="filter-chip" data-gen="5" onclick="setGenFilter(this, '5')">Generasi 5</button>
     <span id="counterText">–</span>
   </div>
 
@@ -754,11 +752,21 @@
 
     // ── GENERATION FILTER ──
     function setGenFilter(btn, gen) {
+      if (gen === currentGen) return;
       currentGen = gen;
       document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
       btn.classList.add('active');
-      if (currentView === 'list') renderAll();
-      else filterTree();
+
+      // Fade out the active panel, re-render, fade back in
+      const panelId = currentView === 'list' ? 'listView' : 'treeView';
+      const panel = document.getElementById(panelId);
+
+      panel.classList.add('filter-fade');
+      setTimeout(() => {
+        if (currentView === 'list') renderAll();
+        else filterTree();
+        panel.classList.remove('filter-fade');
+      }, 150);
     }
 
     // ── VIEW SWITCH ──
