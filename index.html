@@ -120,11 +120,19 @@
       padding: 0.5rem 1rem;
       display: flex;
       align-items: center;
+      gap: 0.75rem;
+    }
+
+    .filter-chips {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       gap: 0.5rem;
       overflow-x: auto;
       scrollbar-width: none;
     }
-    #filterBar::-webkit-scrollbar { display: none; }
+    .filter-chips::-webkit-scrollbar { display: none; }
 
     .filter-chip {
       flex-shrink: 0;
@@ -147,7 +155,6 @@
     }
 
     #counterText {
-      margin-left: auto;
       flex-shrink: 0;
       font-size: 0.72rem;
       color: var(--text-muted);
@@ -305,6 +312,24 @@
     }
     .tree-spouse::before { content: "& "; }
 
+    /* ── VIEW TRANSITIONS ── */
+    #listView, #treeView {
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+    #listView.view-exit, #treeView.view-exit {
+      opacity: 0;
+      transform: translateY(6px);
+      pointer-events: none;
+    }
+    #listView.view-enter, #treeView.view-enter {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+    #listView.view-visible, #treeView.view-visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     .hidden { display: none !important; }
 
     /* ── EMPTY STATE ── */
@@ -431,12 +456,14 @@
 
   <!-- FILTER CHIPS -->
   <div id="filterBar">
-    <button class="filter-chip active" data-gen="" onclick="setGenFilter(this, '')">Semua</button>
-    <button class="filter-chip" data-gen="1" onclick="setGenFilter(this, '1')">Generasi 1</button>
-    <button class="filter-chip" data-gen="2" onclick="setGenFilter(this, '2')">Generasi 2</button>
-    <button class="filter-chip" data-gen="3" onclick="setGenFilter(this, '3')">Generasi 3</button>
-    <button class="filter-chip" data-gen="4" onclick="setGenFilter(this, '4')">Generasi 4</button>
-    <button class="filter-chip" data-gen="5" onclick="setGenFilter(this, '5')">Generasi 5</button>
+    <div class="filter-chips">
+      <button class="filter-chip active" data-gen="" onclick="setGenFilter(this, '')">Semua</button>
+      <button class="filter-chip" data-gen="1" onclick="setGenFilter(this, '1')">Generasi 1</button>
+      <button class="filter-chip" data-gen="2" onclick="setGenFilter(this, '2')">Generasi 2</button>
+      <button class="filter-chip" data-gen="3" onclick="setGenFilter(this, '3')">Generasi 3</button>
+      <button class="filter-chip" data-gen="4" onclick="setGenFilter(this, '4')">Generasi 4</button>
+      <button class="filter-chip" data-gen="5" onclick="setGenFilter(this, '5')">Generasi 5</button>
+    </div>
     <span id="counterText">–</span>
   </div>
 
@@ -481,6 +508,16 @@
   <script>
     const sheetURL = "data.csv";
     // const sheetURL = "https://docs.google.com/spreadsheets/d/e/...";
+
+    // Generation label map — shared across list rendering and badges
+    const genLabels = {
+      '':  'Akar',
+      '1': 'Anak',
+      '2': 'Cucu',
+      '3': 'Buyut',
+      '4': 'Canggah',
+      '5': 'Wareng'
+    };
 
     let allData = [];
     let currentView = 'list';
@@ -535,6 +572,9 @@
     function renderList(data) {
       const container = document.getElementById('listView');
       container.classList.remove('hidden');
+      if (!container.classList.contains('view-enter')) {
+        container.classList.add('view-visible');
+      }
       document.getElementById('treeView').classList.add('hidden');
       document.getElementById('emptyState').classList.add('hidden');
 
@@ -546,7 +586,6 @@
 
       // Group by generation
       const groups = {};
-      const genLabels = { '': 'Akar', '1': 'Anak', '2': 'Cucu', '3': 'Buyut', '4': 'Canggah', '5': 'Wareng' };
       data.forEach(d => {
         const g = d.Generasi || '';
         if (!groups[g]) groups[g] = [];
@@ -570,7 +609,9 @@
       const nameHtml = highlight(d.Nama || '');
       const spouseHtml = d.Pasangan && d.Pasangan !== '-'
         ? `<div class="card-spouse">${highlight(d.Pasangan)}</div>` : '';
-      const badge = d.Generasi ? `<span class="card-badge">Gen ${d.Generasi}</span>` : '';
+      const badge = d.Generasi
+        ? `<span class="card-badge">${genLabels[d.Generasi] || 'Gen ' + d.Generasi}</span>`
+        : '';
       return `
         <div class="member-card">
           <div class="avatar ${genderClass}">${initials}</div>
@@ -584,8 +625,12 @@
 
     // ── TREE VIEW ──
     function renderTree() {
+      const treeView = document.getElementById('treeView');
       document.getElementById('listView').classList.add('hidden');
-      document.getElementById('treeView').classList.remove('hidden');
+      treeView.classList.remove('hidden');
+      if (!treeView.classList.contains('view-enter')) {
+        treeView.classList.add('view-visible');
+      }
       document.getElementById('emptyState').classList.add('hidden');
 
       const root = document.getElementById('treeRoot');
@@ -718,10 +763,36 @@
 
     // ── VIEW SWITCH ──
     function switchView(view) {
+      if (view === currentView) return;
+      const fromId = currentView + 'View';
+      const toId   = view + 'View';
+      const fromEl = document.getElementById(fromId);
+      const toEl   = document.getElementById(toId);
+
       currentView = view;
       document.getElementById('tabList').classList.toggle('active', view === 'list');
       document.getElementById('tabTree').classList.toggle('active', view === 'tree');
-      renderAll();
+
+      // Prepare the incoming view (render while invisible)
+      toEl.classList.remove('hidden', 'view-visible', 'view-enter');
+      void toEl.offsetWidth; // force reflow
+      toEl.classList.add('view-enter');
+
+      if (view === 'list') renderList(filteredData());
+      else renderTree();
+
+      // Exit animation on current panel
+      fromEl.classList.add('view-exit');
+
+      setTimeout(() => {
+        fromEl.classList.add('hidden');
+        fromEl.classList.remove('view-exit');
+
+        // Enter animation on new panel
+        toEl.classList.remove('view-enter');
+        void toEl.offsetWidth;
+        toEl.classList.add('view-visible');
+      }, 200);
     }
 
     // ── HELPERS ──
@@ -732,9 +803,15 @@
     }
 
     function detectGender(d) {
+      // Prefer explicit Gender column in CSV: 'P' = Perempuan, 'L' = Laki-laki
+      if (d.Gender) {
+        const g = d.Gender.trim().toUpperCase();
+        if (g === 'P') return 'female';
+        if (g === 'L') return 'male';
+      }
+      // Fallback: Javanese name heuristics
       const name = (d.Nama || '').toLowerCase();
-      // Rough heuristic for Javanese names — adjust as needed
-      const femaleHints = ['ni', 'wati', 'sari', 'yati', 'ningsih', 'wahyu', 'sri', 'dewi', 'suci'];
+      const femaleHints = ['ni', 'wati', 'sari', 'yati', 'ningsih', 'wahyu', 'sri', 'dewi', 'suci', 'yem', 'rubiy'];
       return femaleHints.some(h => name.includes(h)) ? 'female' : 'male';
     }
 
