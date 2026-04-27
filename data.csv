@@ -46,7 +46,7 @@ ID,Nama,Pasangan,Parent ID,Generasi,Gender
 45,2.4.2.3 Aris,-,42,4,L
 46,2.4.2.4 Alifah Kalindah,-,42,4,P
 47,2.5 Juminah,Ngatijan (Purwo Utomo),3,2,P
-48,2.5.1 Wijianto,Alif Latifah Hani,47,3,L
+48,2.5.1 Wijianto (Alm),Alif Latifah Hani,47,3,L
 49,2.5.1.1 Aditya Latief Wijaya,-,48,4,L
 50,2.5.1.2 Alfino Latief Wijaya,-,48,4,L
 51,2.5.2 Wijayanti,Adam,47,3,P
@@ -92,7 +92,7 @@ ID,Nama,Pasangan,Parent ID,Generasi,Gender
 91,7.1 Rahmat Nugroho,Muthia Ulfah Yarisma,89,2,L
 92,7.1.1 Rozin Abdul Fattah,-,91,3,L
 93,7.1.2 Rizan Zen Abdul Fattah,-,91,3,L
-94,7.1.3 Alifah Hanun Nur Rahmah,-,91,3,L
+94,7.1.3 Alifah Hanun Nur Rahmah,-,91,3,P
 95,7.2 Dewi Novitasari,Rinanto Suryadhimirtha,90,2,P
 96,7.2.1 Aisyah Aulia Larasati,-,95,3,P
 97,7.3 Noor Ihsanuddin,Lilia Amarwani,90,2,L
