@@ -113,6 +113,276 @@
     }
     #searchBox:not(:placeholder-shown) ~ #clearBtn { display: flex; }
 
+
+    /* ── OVERLAY ── */
+    .overlay {
+      position: fixed; inset: 0; z-index: 400;
+      background: rgba(0,0,0,0.65);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      opacity: 0; transition: opacity 0.22s ease; pointer-events: none;
+    }
+    .overlay.open { opacity: 1; pointer-events: all; }
+
+    /* ── BOTTOM SHEET ── */
+    .sheet {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -48%) scale(0.97);
+      width: calc(100% - 2rem); max-width: 600px;
+      z-index: 600;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      max-height: 88dvh;
+      display: flex; flex-direction: column;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 0.25s cubic-bezier(0.32,0.72,0,1),
+                  opacity 0.25s ease;
+    }
+    .sheet.open {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .sheet-handle { display: none; } /* hide drag handle — not needed for modal */
+
+    .sheet-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1.25rem 0.5rem; flex-shrink: 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .sheet-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold-light); }
+    .sheet-close {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 50%;
+      width: 28px; height: 28px; color: var(--text-muted); font-size: 0.85rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
+    }
+    .sheet-close:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .sheet-body { overflow-y: auto; padding: 1rem 1.25rem 2rem; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+
+    /* ── DETAIL VIEW ── */
+    .detail-avatar {
+      width: 56px; height: 56px; border-radius: 50%;
+      font-size: 1.3rem; font-weight: 700;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Playfair Display', serif; flex-shrink: 0;
+    }
+    .detail-hero { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .detail-hero-info { flex: 1; min-width: 0; }
+    .detail-hero-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--text); line-height: 1.2; }
+    .detail-hero-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem 1rem; }
+    .detail-field { display: flex; flex-direction: column; gap: 0.15rem; }
+    .detail-field.full { grid-column: 1 / -1; }
+    .detail-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 600; }
+    .detail-value { font-size: 0.88rem; color: var(--text); }
+    .detail-value.empty { color: var(--text-muted); font-style: italic; }
+
+    .detail-section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin: 1.25rem 0 0.6rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
+
+    .detail-spouse-btn {
+      display: flex; align-items: center; gap: 0.6rem;
+      background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 0.65rem 0.85rem; cursor: pointer; transition: border-color 0.15s; width: 100%; text-align: left;
+    }
+    .detail-spouse-btn:hover { border-color: var(--gold); }
+    .detail-spouse-btn .ds-name { font-size: 0.88rem; color: var(--text); }
+    .detail-spouse-btn .ds-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    .admin-edit-btn {
+      margin-top: 1.25rem; width: 100%; padding: 0.65rem;
+      background: var(--gold-dim); border: 1px solid var(--gold); border-radius: var(--radius);
+      color: var(--gold-light); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+      cursor: pointer; transition: background 0.18s; display: none;
+    }
+    .admin-edit-btn:hover { background: rgba(201,150,42,0.25); }
+    .admin-edit-btn.visible { display: block; }
+
+    /* ── FORM ── */
+    .form-section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin: 1.1rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+    .form-section-title:first-child { margin-top: 0; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem 0.85rem; }
+    .form-field { display: flex; flex-direction: column; gap: 0.25rem; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
+    .form-label span { color: var(--red); margin-left: 2px; }
+    .form-input, .form-select, .form-textarea {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+      padding: 0.5rem 0.75rem; outline: none; transition: border-color 0.18s; width: 100%;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
+    .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
+    .form-select option { background: var(--surface2); }
+    .form-textarea { resize: vertical; min-height: 72px; }
+    .form-actions { display: flex; gap: 0.65rem; margin-top: 1.25rem; }
+    .btn-cancel { flex: 1; padding: 0.65rem; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.18s; }
+    .btn-cancel:hover { border-color: var(--text-muted); color: var(--text); }
+    .btn-save { flex: 2; padding: 0.65rem; background: var(--gold); border: none; border-radius: var(--radius); color: #1a1205; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.18s; }
+    .btn-save:hover { opacity: 0.88; }
+    .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── ADMIN BUTTON (header) ── */
+    #adminBtn {
+      flex-shrink: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      width: 34px; height: 34px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: border-color 0.18s, background 0.18s;
+    }
+    #adminBtn:hover { border-color: var(--gold); background: var(--gold-dim); }
+    #adminBtn.admin-active { border-color: var(--gold); background: var(--gold-dim); box-shadow: 0 0 8px rgba(201,150,42,0.35); }
+
+    /* Admin mode banner under header */
+    #adminBanner {
+      display: none;
+      background: var(--gold-dim);
+      border-bottom: 1px solid var(--gold);
+      padding: 0.3rem 1rem;
+      font-size: 0.72rem;
+      color: var(--gold-light);
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+    #adminBanner.visible { display: block; }
+
+    /* ── ADMIN FAB ── */
+    #adminFab {
+      position: fixed;
+      bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 1rem);
+      right: 1.25rem;
+      z-index: 350;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: var(--gold);
+      border: none;
+      color: #1a1205;
+      font-size: 1.5rem;
+      font-weight: 300;
+      cursor: pointer;
+      box-shadow: 0 4px 18px rgba(201,150,42,0.45);
+      display: none;
+      align-items: center; justify-content: center;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+    #adminFab.visible { display: flex; }
+    #adminFab:hover { opacity: 0.88; transform: scale(1.06); }
+
+
+    /* ── CLICKABLE NAMES ── */
+    .clickable-name {
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .clickable-name:hover { color: var(--gold-light); }
+    .card-name.clickable-name { display: inline; }
+
+    /* ── ADMIN EDIT BTN (inside detail sheet) ── */
+    .admin-edit-btn {
+      display: none;
+      width: calc(100% - 2rem);
+      margin: 1rem;
+      padding: 0.7rem;
+      border-radius: 10px;
+      border: 1px solid var(--gold);
+      background: var(--gold-dim);
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .admin-edit-btn.visible { display: block; }
+    .admin-edit-btn:hover { background: rgba(201,150,42,0.22); }
+
+    /* ── SHEET OVERLAY ── */
+    #sheetOverlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.65);
+      z-index: 590;
+      backdrop-filter: blur(3px);
+    }
+    #sheetOverlay.open { display: block; }
+
+    /* ── FORM SHEET BODY ── */
+    .form-section-title {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--gold); text-transform: uppercase;
+      padding: 0.75rem 1rem 0.25rem;
+    }
+    .form-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 0.5rem; padding: 0 1rem;
+    }
+    .form-field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .form-field.full { grid-column: 1 / -1; }
+    .form-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-label span { color: #e07070; }
+    .form-input, .form-select, .form-textarea {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem;
+      padding: 0.5rem 0.65rem;
+      outline: none;
+      transition: border-color 0.15s;
+      width: 100%; box-sizing: border-box;
+      color-scheme: dark;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--gold);
+    }
+    .form-textarea { resize: vertical; min-height: 68px; }
+    .form-actions {
+      display: flex; gap: 0.75rem;
+      padding: 1rem;
+      padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+      border-top: 1px solid var(--border);
+      margin-top: 0.75rem;
+    }
+    .btn-cancel {
+      flex: 1; padding: 0.65rem;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--text-muted);
+      font-size: 0.85rem; cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .btn-cancel:hover { border-color: var(--gold); color: var(--text); }
+    .btn-save {
+      flex: 2; padding: 0.65rem;
+      border-radius: 10px; border: none;
+      background: var(--gold); color: #1a1205;
+      font-size: 0.85rem; font-weight: 700;
+      cursor: pointer; transition: opacity 0.15s;
+    }
+    .btn-save:hover { opacity: 0.88; }
+    .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ── PIN OVERLAY ── */
+    #pinOverlay { position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; }
+    #pinOverlay.open { display: flex; }
+    #pinBox { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.75rem 1.5rem; width: min(340px,90vw); text-align: center; }
+    #pinBox h3 { font-family: 'Playfair Display', serif; color: var(--gold-light); margin-bottom: 0.4rem; }
+    #pinBox p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.1rem; }
+    #pinInput { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1.1rem; letter-spacing: 0.25em; text-align: center; padding: 0.6rem; outline: none; margin-bottom: 0.75rem; transition: border-color 0.18s; }
+    #pinInput:focus { border-color: var(--gold); }
+    #pinError { font-size: 0.78rem; color: var(--red); margin-bottom: 0.65rem; min-height: 1.2em; }
+    .pin-actions { display: flex; gap: 0.5rem; }
+
+    .clickable-name { cursor: pointer; transition: color 0.15s; }
+    .clickable-name:hover { color: var(--gold-light); }
+
     /* ── FILTER BAR ── */
     #filterBar {
       background: var(--surface);
@@ -452,7 +722,11 @@
       <input type="search" id="searchBox" placeholder="Cari nama anggota..." autocomplete="off" oninput="handleSearch()" />
       <button id="clearBtn" onclick="clearSearch()" aria-label="Hapus pencarian">×</button>
     </div>
+    <button id="adminBtn" onclick="toggleAdminPrompt()" title="Super Admin">🔐</button>
   </div>
+
+  <!-- ADMIN BANNER -->
+  <div id="adminBanner">🔐 Mode Super Admin Aktif — <span style="cursor:pointer;text-decoration:underline" onclick="logoutAdmin()">Keluar</span></div>
 
   <!-- FILTER CHIPS -->
   <div id="filterBar">
@@ -487,6 +761,46 @@
     </div>
   </div>
 
+  <!-- PIN OVERLAY -->
+  <div id="pinOverlay">
+    <div id="pinBox">
+      <h3>🔐 Super Admin</h3>
+      <p>Masukkan PIN untuk mengakses mode admin</p>
+      <input type="password" id="pinInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmPin()" />
+      <div id="pinError"></div>
+      <div class="pin-actions">
+        <button class="btn-cancel" onclick="closePin()">Batal</button>
+        <button class="btn-save" onclick="confirmPin()">Masuk</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SHARED OVERLAY -->
+  <div class="overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
+
+  <!-- ADMIN FAB -->
+  <button id="adminFab" onclick="openMemberForm(null)" title="Tambah Anggota">＋</button>
+
+  <!-- DETAIL SHEET -->
+  <div class="sheet" id="detailSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title" id="detailSheetTitle">Detail Anggota</span>
+      <button class="sheet-close" onclick="closeSheet('detailSheet')">✕</button>
+    </div>
+    <div class="sheet-body" id="detailBody"></div>
+  </div>
+
+  <!-- FORM SHEET -->
+  <div class="sheet" id="formSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title" id="formSheetTitle">Tambah Anggota</span>
+      <button class="sheet-close" onclick="closeSheet('formSheet')">✕</button>
+    </div>
+    <div class="sheet-body" id="formBody"></div>
+  </div>
+
   <!-- BOTTOM TAB BAR -->
   <nav id="tabBar">
     <button class="tab-btn active" id="tabList" onclick="switchView('list')">
@@ -503,9 +817,23 @@
     </button>
   </nav>
 
+  <!-- Local CSV data (used when opening via file://, prevents CORS error) -->
+  <!-- Remove or comment this line once you've deployed to a web server -->
+  <script src="data.js"></script>
+
   <script>
+    // ── SUPABASE CONFIG ── (replace with your project values)
+    const SUPABASE_URL  = 'https://lckowkndmwiadwifilsv.supabase.co';
+    const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxja293a25kbXdpYWR3aWZpbHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA0MTgsImV4cCI6MjA5MjkwNjQxOH0.VrnY0DfgP_AW1UUJAI2sgNhZ8i8ok22nyWHpj4iQ-YQ';
+    const TABLE_MEMBERS = 'members';   // resident rows
+    const TABLE_SPOUSES = 'spouses';   // spouse rows
+
+    // Fallback CSV while Supabase is not yet wired
     const sheetURL = "data.csv";
-    // const sheetURL = "https://docs.google.com/spreadsheets/d/e/...";
+
+    // ── ADMIN STATE ──
+    const ADMIN_PIN = '123455';   // ← change this
+    let isAdmin = false;
 
     // Generation label map — shared across list rendering and badges
     const genLabels = {
@@ -531,21 +859,89 @@
         document.getElementById('loading').style.display = 'none';
         renderAll();
       } catch (err) {
-        document.getElementById('loading').innerHTML = '<p style="color:var(--text-muted)">Gagal memuat data.</p>';
+        document.getElementById('loading').innerHTML = `
+          <div style="padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.85rem;line-height:1.7">
+            <div style="font-size:1.5rem;margin-bottom:0.5rem">⚠️</div>
+            <strong style="color:var(--text)">Gagal memuat data.csv</strong><br>
+            Browser memblokir akses file lokal (<code>file://</code>).<br><br>
+            <strong style="color:var(--gold-light)">Solusi:</strong> Buat file <code>data.js</code> di folder yang sama berisi:<br>
+            <code style="display:block;text-align:left;background:var(--surface2);border-radius:8px;padding:0.6rem 0.8rem;margin-top:0.5rem;white-space:pre;overflow-x:auto">window.CSV_DATA = \`(paste isi data.csv di sini)\`;</code>
+            Lalu tambahkan di <code>index.html</code> sebelum tag <code>&lt;script&gt;</code>:<br>
+            <code>&lt;script src="data.js"&gt;&lt;/script&gt;</code>
+          </div>`;
         console.error(err);
       }
     }
 
     async function loadCSV(url) {
-      const res = await fetch(url);
-      const text = await res.text();
-      const rows = text.trim().split('\n').map(r => r.split(','));
-      const headers = rows[0].map(h => h.trim());
-      return rows.slice(1).map(row => {
-        const obj = {};
-        headers.forEach((h, i) => obj[h] = (row[i] || '').trim());
-        return obj;
-      });
+      // Strategy 1: data was inlined via data.js (works under file://)
+      if (window.CSV_DATA) {
+        window._csvRaw = window.CSV_DATA;
+        return parseCSVText(window.CSV_DATA);
+      }
+      // Strategy 2: fetch (works when served over http/https)
+      try {
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const text = await res.text();
+        window._csvRaw = text;
+        return parseCSVText(text);
+      } catch (e) {
+        throw new Error(
+          'Gagal memuat data.csv. Jika membuka via file://, gunakan data.js. ' + e.message
+        );
+      }
+    }
+
+    // Handles quoted fields (e.g. "Jl. Mawar, No. 5")
+    function parseCSVText(text) {
+      const lines = text.trim().split(/\r?\n/);
+      const headers = splitCSVRow(lines[0]);
+      return lines.slice(1)
+        .filter(l => l.trim())
+        .map(line => {
+          const values = splitCSVRow(line);
+          const obj = {};
+          headers.forEach((h, i) => obj[h.trim()] = (values[i] || '').trim());
+          return obj;
+        });
+    }
+
+    function splitCSVRow(row) {
+      const result = [];
+      let cur = '', inQ = false;
+      for (let i = 0; i < row.length; i++) {
+        const c = row[i];
+        if (c === '"') { inQ = !inQ; continue; }
+        if (c === ',' && !inQ) { result.push(cur); cur = ''; continue; }
+        cur += c;
+      }
+      result.push(cur);
+      return result;
+    }
+
+    // Map Supabase snake_case columns → app PascalCase keys
+    function normaliseRow(r) {
+      return {
+        ID:                       String(r.id || ''),
+        'No Induk':               r.no_induk || '',
+        Nama:                     r.nama || '',
+        Gender:                   r.gender || '',
+        'Tempat Lahir':           r.tempat_lahir || '',
+        'Tanggal Lahir':          r.tanggal_lahir || '',
+        Status:                   r.status || '',
+        Alamat:                   r.alamat || '',
+        Kontak:                   r.kontak || '',
+        Pasangan:                 r.pasangan || '',
+        'Pasangan Gender':        r.pasangan_gender || '',
+        'Pasangan Tempat Lahir':  r.pasangan_tempat_lahir || '',
+        'Pasangan Tanggal Lahir': r.pasangan_tanggal_lahir || '',
+        'Pasangan Status':        r.pasangan_status || '',
+        'Pasangan Alamat':        r.pasangan_alamat || '',
+        'Pasangan Kontak':        r.pasangan_kontak || '',
+        'Parent ID':              r.parent_id ? String(r.parent_id) : '',
+        Generasi:                 r.generasi ? String(r.generasi) : '',
+      };
     }
 
     // ── FILTER ──
@@ -606,7 +1002,7 @@
       const genderClass = detectGender(d);
       const nameHtml = highlight(d.Nama || '');
       const spouseHtml = d.Pasangan && d.Pasangan !== '-'
-        ? `<div class="card-spouse">${highlight(d.Pasangan)}</div>` : '';
+        ? `<div class="card-spouse clickable-name" onclick="openDetail('${d.ID}','spouse')">${highlight(d.Pasangan)}</div>` : '';
       const badge = d.Generasi
         ? `<span class="card-badge">${genLabels[d.Generasi] || 'Gen ' + d.Generasi}</span>`
         : '';
@@ -614,7 +1010,7 @@
         <div class="member-card">
           <div class="avatar ${genderClass}">${initials}</div>
           <div class="card-info">
-            <div class="card-name">${nameHtml}</div>
+            <div class="card-name clickable-name" onclick="openDetail('${d.ID}','member')">${nameHtml}</div>
             ${spouseHtml}
           </div>
           ${badge}
@@ -681,10 +1077,10 @@
         // Label
         const label = document.createElement('span');
         label.className = `tree-label${isRoot ? ' root-label' : ''}`;
-        const nameHtml = highlight(child.Nama || '');
+        const nameSpan = `<span class="clickable-name" onclick="openDetail('${child.ID}','member')">${highlight(child.Nama || '')}</span>`;
         const spouseHtml = child.Pasangan && child.Pasangan !== '-'
-          ? `<span class="tree-spouse">${highlight(child.Pasangan)}</span>` : '';
-        label.innerHTML = nameHtml + spouseHtml;
+          ? `<span class="tree-spouse clickable-name" onclick="openDetail('${child.ID}','spouse')">${highlight(child.Pasangan)}</span>` : '';
+        label.innerHTML = nameSpan + spouseHtml;
         row.appendChild(label);
 
         li.appendChild(row);
@@ -821,6 +1217,483 @@
       const name = (d.Nama || '').toLowerCase();
       const femaleHints = ['ni', 'wati', 'sari', 'yati', 'ningsih', 'wahyu', 'sri', 'dewi', 'suci', 'yem', 'rubiy'];
       return femaleHints.some(h => name.includes(h)) ? 'female' : 'male';
+    }
+
+    // ── FORM ──
+    // refId: member ID (edit) or null (add). type: 'member'|'spouse'
+    function openMemberForm(refId, type = 'member') {
+      const isEdit = !!refId;
+      let member = isEdit ? allData.find(d => d.ID === refId) : null;
+      const isSpouse = type === 'spouse';
+
+      document.getElementById('formSheetTitle').textContent =
+        isSpouse ? (isEdit ? 'Edit Pasangan' : 'Tambah Pasangan')
+                 : (isEdit ? 'Edit Anggota'  : 'Tambah Anggota');
+
+      document.getElementById('formBody').innerHTML = isSpouse
+        ? renderSpouseForm(member)
+        : renderMemberForm(member);
+
+      openSheet('formSheet');
+    }
+
+    function fval(d, ...keys) {
+      if (!d) return '';
+      for (const k of keys) if (d[k]) return d[k];
+      return '';
+    }
+
+    function selectOpt(name, options, current) {
+      return `<select class="form-select" name="${name}" id="f_${name}">
+        <option value="">— Pilih —</option>
+        ${options.map(o => `<option value="${o}"${current===o?' selected':''}>${o}</option>`).join('')}
+      </select>`;
+    }
+
+    function renderMemberForm(d) {
+      const parentOpts = allData.map(m =>
+        `<option value="${m.ID}"${fval(d,'Parent ID')===m.ID?' selected':''}>${m.ID} – ${m.Nama}</option>`
+      ).join('');
+
+      return `
+      <div class="form-section-title">Data Anggota</div>
+      <div class="form-grid">
+        <div class="form-field">
+          <label class="form-label">No. Induk</label>
+          <input class="form-input" id="f_no_induk" placeholder="cth. 1.2.3" value="${fval(d,'No Induk','No_Induk')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Generasi</label>
+          ${selectOpt('generasi',['1','2','3','4','5'], fval(d,'Generasi'))}
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Nama <span>*</span></label>
+          <input class="form-input" id="f_nama" placeholder="Nama lengkap" value="${fval(d,'Nama')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Jenis Kelamin <span>*</span></label>
+          ${selectOpt('gender',['L','P'], fval(d,'Gender'))}
+        </div>
+        <div class="form-field">
+          <label class="form-label">Status</label>
+          ${selectOpt('status',['Hidup','Almarhum/ah'], fval(d,'Status'))}
+        </div>
+        <div class="form-field">
+          <label class="form-label">Tempat Lahir</label>
+          <input class="form-input" id="f_tempat_lahir" placeholder="Kota" value="${fval(d,'Tempat Lahir','Tempat_Lahir')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Tanggal Lahir</label>
+          <input class="form-input" id="f_tanggal_lahir" type="date" value="${fval(d,'Tanggal Lahir','Tanggal_Lahir')}">
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Alamat</label>
+          <textarea class="form-textarea" id="f_alamat" placeholder="Alamat lengkap">${fval(d,'Alamat')}</textarea>
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Kontak</label>
+          <input class="form-input" id="f_kontak" placeholder="No. HP / WhatsApp" value="${fval(d,'Kontak')}">
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Parent ID (Orang Tua)</label>
+          <select class="form-select" id="f_parent_id">
+            <option value="">— Tidak ada (akar) —</option>
+            ${parentOpts}
+          </select>
+        </div>
+      </div>
+
+      <div class="form-section-title">Data Pasangan</div>
+      <div class="form-grid">
+        <div class="form-field full">
+          <label class="form-label">Nama Pasangan</label>
+          <input class="form-input" id="f_pasangan" placeholder="Nama pasangan" value="${fval(d,'Pasangan')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Jenis Kelamin Pasangan</label>
+          ${selectOpt('pasangan_gender',['L','P'], fval(d,'Pasangan Gender'))}
+        </div>
+        <div class="form-field">
+          <label class="form-label">Status Pasangan</label>
+          ${selectOpt('pasangan_status',['Hidup','Almarhum/ah'], fval(d,'Pasangan Status'))}
+        </div>
+        <div class="form-field">
+          <label class="form-label">Tempat Lahir Pasangan</label>
+          <input class="form-input" id="f_pasangan_tempat" placeholder="Kota" value="${fval(d,'Pasangan Tempat Lahir')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Tanggal Lahir Pasangan</label>
+          <input class="form-input" id="f_pasangan_tanggal" type="date" value="${fval(d,'Pasangan Tanggal Lahir')}">
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Alamat Pasangan</label>
+          <textarea class="form-textarea" id="f_pasangan_alamat" placeholder="Alamat lengkap">${fval(d,'Pasangan Alamat')}</textarea>
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Kontak Pasangan</label>
+          <input class="form-input" id="f_pasangan_kontak" placeholder="No. HP / WhatsApp" value="${fval(d,'Pasangan Kontak')}">
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeSheet('formSheet')">Batal</button>
+        <button class="btn-save" id="btnSave" onclick="submitForm('${d?.ID||''}')">
+          ${d ? 'Simpan Perubahan' : 'Tambah Anggota'}
+        </button>
+      </div>`;
+    }
+
+    function renderSpouseForm(member) {
+      const d = member || {};
+      return `
+      <div class="form-section-title">Data Pasangan dari ${d.Nama || '—'}</div>
+      <div class="form-grid">
+        <div class="form-field full">
+          <label class="form-label">Nama Pasangan <span>*</span></label>
+          <input class="form-input" id="f_pasangan" placeholder="Nama pasangan" value="${fval(d,'Pasangan')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Jenis Kelamin</label>
+          ${selectOpt('pasangan_gender',['L','P'], fval(d,'Pasangan Gender'))}
+        </div>
+        <div class="form-field">
+          <label class="form-label">Status</label>
+          ${selectOpt('pasangan_status',['Hidup','Almarhum/ah'], fval(d,'Pasangan Status'))}
+        </div>
+        <div class="form-field">
+          <label class="form-label">Tempat Lahir</label>
+          <input class="form-input" id="f_pasangan_tempat" placeholder="Kota" value="${fval(d,'Pasangan Tempat Lahir')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Tanggal Lahir</label>
+          <input class="form-input" id="f_pasangan_tanggal" type="date" value="${fval(d,'Pasangan Tanggal Lahir')}">
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Alamat</label>
+          <textarea class="form-textarea" id="f_pasangan_alamat" placeholder="Alamat lengkap">${fval(d,'Pasangan Alamat')}</textarea>
+        </div>
+        <div class="form-field full">
+          <label class="form-label">Kontak</label>
+          <input class="form-input" id="f_pasangan_kontak" placeholder="No. HP / WhatsApp" value="${fval(d,'Pasangan Kontak')}">
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-cancel" onclick="closeSheet('formSheet')">Batal</button>
+        <button class="btn-save" id="btnSave" onclick="submitSpouseForm('${d.ID||''}')">Simpan Pasangan</button>
+      </div>`;
+    }
+
+
+    async function submitForm(memberId) {
+      const btn = document.getElementById('btnSave');
+      btn.disabled = true; btn.textContent = 'Menyimpan…';
+
+      const g = (document.getElementById('f_generasi')?.value || '').trim();
+      const payload = {
+        no_induk:               (document.getElementById('f_no_induk')?.value || '').trim() || null,
+        nama:                   (document.getElementById('f_nama')?.value || '').trim(),
+        gender:                 (document.getElementById('f_gender')?.value || '').trim() || null,
+        tempat_lahir:           (document.getElementById('f_tempat_lahir')?.value || '').trim() || null,
+        tanggal_lahir:          (document.getElementById('f_tanggal_lahir')?.value || '').trim() || null,
+        status:                 (document.getElementById('f_status')?.value || '').trim() || null,
+        alamat:                 (document.getElementById('f_alamat')?.value || '').trim() || null,
+        kontak:                 (document.getElementById('f_kontak')?.value || '').trim() || null,
+        parent_id:              (document.getElementById('f_parent_id')?.value || '').trim() || null,
+        generasi:               g ? parseInt(g) : null,
+        pasangan:               (document.getElementById('f_pasangan')?.value || '').trim() || null,
+        pasangan_gender:        (document.getElementById('f_pasangan_gender')?.value || '').trim() || null,
+        pasangan_status:        (document.getElementById('f_pasangan_status')?.value || '').trim() || null,
+        pasangan_tempat_lahir:  (document.getElementById('f_pasangan_tempat')?.value || '').trim() || null,
+        pasangan_tanggal_lahir: (document.getElementById('f_pasangan_tanggal')?.value || '').trim() || null,
+        pasangan_alamat:        (document.getElementById('f_pasangan_alamat')?.value || '').trim() || null,
+        pasangan_kontak:        (document.getElementById('f_pasangan_kontak')?.value || '').trim() || null,
+      };
+
+      if (!payload.nama) {
+        showFormError('Nama anggota wajib diisi.');
+        btn.disabled = false; btn.textContent = memberId ? 'Simpan Perubahan' : 'Tambah Anggota';
+        return;
+      }
+
+      try {
+        let res;
+        if (memberId) {
+          res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${memberId}`, {
+            method: 'PATCH',
+            headers: supaHeaders(),
+            body: JSON.stringify(payload),
+          });
+        } else {
+          res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}`, {
+            method: 'POST',
+            headers: { ...supaHeaders(), 'Prefer': 'return=representation' },
+            body: JSON.stringify(payload),
+          });
+        }
+        if (!res.ok) throw new Error(await res.text());
+        closeSheet('formSheet');
+        await reloadData();
+        showToast(memberId ? 'Data berhasil diperbarui.' : 'Anggota baru berhasil ditambahkan.');
+      } catch (e) {
+        showFormError('Gagal menyimpan: ' + e.message);
+        btn.disabled = false; btn.textContent = memberId ? 'Simpan Perubahan' : 'Tambah Anggota';
+      }
+    }
+
+    async function submitSpouseForm(memberId) {
+      const btn = document.getElementById('btnSave');
+      btn.disabled = true; btn.textContent = 'Menyimpan…';
+
+      const patch = {
+        pasangan:               (document.getElementById('f_pasangan')?.value || '').trim() || null,
+        pasangan_gender:        (document.getElementById('f_pasangan_gender')?.value || '').trim() || null,
+        pasangan_status:        (document.getElementById('f_pasangan_status')?.value || '').trim() || null,
+        pasangan_tempat_lahir:  (document.getElementById('f_pasangan_tempat')?.value || '').trim() || null,
+        pasangan_tanggal_lahir: (document.getElementById('f_pasangan_tanggal')?.value || '').trim() || null,
+        pasangan_alamat:        (document.getElementById('f_pasangan_alamat')?.value || '').trim() || null,
+        pasangan_kontak:        (document.getElementById('f_pasangan_kontak')?.value || '').trim() || null,
+      };
+
+      if (!patch.pasangan) {
+        showFormError('Nama pasangan wajib diisi.');
+        btn.disabled = false; btn.textContent = 'Simpan Pasangan';
+        return;
+      }
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${memberId}`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify(patch),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        closeSheet('formSheet');
+        await reloadData();
+        showToast('Data pasangan berhasil diperbarui.');
+      } catch (e) {
+        showFormError('Gagal menyimpan: ' + e.message);
+        btn.disabled = false; btn.textContent = 'Simpan Pasangan';
+      }
+    }
+
+    // ── SUPABASE HELPERS ──
+    function supaHeaders() {
+      return {
+        'Content-Type': 'application/json',
+        'apikey': SUPABASE_KEY,
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+      };
+    }
+
+    async function reloadData() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&order=generasi.asc`, {
+          headers: supaHeaders(),
+        });
+        if (!res.ok) throw new Error('supabase fetch failed');
+        const rows = await res.json();
+        allData = rows.map(normaliseRow);
+      } catch {
+        // Still on CSV — re-parse cached raw text
+        if (window._csvRaw) allData = parseCSVText(window._csvRaw);
+      }
+      renderAll();
+    }
+
+    function showFormError(msg) {
+      let el = document.getElementById('formError');
+      if (!el) {
+        el = document.createElement('p');
+        el.id = 'formError';
+        el.style.cssText = 'color:#e07070;font-size:0.8rem;margin:0.5rem 1rem 0;';
+        document.getElementById('formBody').prepend(el);
+      }
+      el.textContent = msg;
+    }
+
+    function showToast(msg) {
+      let toast = document.getElementById('toast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.style.cssText = `position:fixed;bottom:calc(var(--tab-h) + 1.5rem);left:50%;
+          transform:translateX(-50%);background:var(--gold);color:#1a1205;
+          padding:0.5rem 1.2rem;border-radius:999px;font-size:0.8rem;font-weight:600;
+          z-index:9999;transition:opacity 0.3s;white-space:nowrap;`;
+        document.body.appendChild(toast);
+      }
+      toast.textContent = msg;
+      toast.style.opacity = '1';
+      clearTimeout(toast._t);
+      toast._t = setTimeout(() => toast.style.opacity = '0', 2800);
+    }
+
+    // ── OPEN DETAIL ──
+    function openDetail(id, type) {
+      // type: 'member' | 'spouse'
+      let subject, title;
+
+      if (type === 'member') {
+        subject = allData.find(d => d.ID === id);
+        if (!subject) return;
+        title = subject.Nama || 'Detail Anggota';
+      } else {
+        // spouse: id is the member's ID whose spouse we want
+        const member = allData.find(d => d.ID === id);
+        if (!member) return;
+        subject = buildSpouseObj(member);
+        title = subject.Nama || 'Detail Pasangan';
+      }
+
+      document.getElementById('detailSheetTitle').textContent = title;
+      document.getElementById('detailBody').innerHTML = renderDetailBody(subject, type, id);
+      openSheet('detailSheet');
+    }
+
+    function buildSpouseObj(member) {
+      // Merge spouse sub-fields if stored separately, fallback to Pasangan string
+      return {
+        Nama:           member['Pasangan']          || '',
+        Gender:         member['Pasangan Gender']   || '',
+        'Tempat Lahir': member['Pasangan Tempat Lahir'] || '',
+        'Tanggal Lahir':member['Pasangan Tanggal Lahir'] || '',
+        Status:         member['Pasangan Status']   || '',
+        Alamat:         member['Pasangan Alamat']   || '',
+        Kontak:         member['Pasangan Kontak']   || '',
+        _memberId:      member.ID,
+      };
+    }
+
+    function renderDetailBody(d, type, refId) {
+      const isMember = type === 'member';
+      const genderClass = isMember ? detectGender(d) : (
+        d.Gender ? (d.Gender.trim().toUpperCase() === 'P' ? 'female' : 'male') : 'male'
+      );
+      const initials = (d.Nama || '?').charAt(0).toUpperCase();
+      const genLabel = isMember && d.Generasi ? genLabels[d.Generasi] || `Gen ${d.Generasi}` : '';
+      const statusBadge = d.Status
+        ? `<span style="font-size:0.72rem;padding:0.1rem 0.5rem;border-radius:999px;background:${d.Status==='Almarhum/ah'||d.Status==='Almh'||d.Status==='Alm'?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${d.Status==='Almarhum/ah'||d.Status==='Almh'||d.Status==='Alm'?'#e07070':'#70c070'}">${d.Status}</span>`
+        : '';
+
+      const field = (label, value) => `
+        <div class="detail-field">
+          <span class="detail-label">${label}</span>
+          <span class="detail-value${!value ? ' empty' : ''}">${value || '—'}</span>
+        </div>`;
+
+      const fieldFull = (label, value) => `
+        <div class="detail-field full">
+          <span class="detail-label">${label}</span>
+          <span class="detail-value${!value ? ' empty' : ''}">${value || '—'}</span>
+        </div>`;
+
+      let spouseSection = '';
+      if (isMember && d.Pasangan && d.Pasangan !== '-') {
+        spouseSection = `
+          <div class="detail-section-title">Pasangan</div>
+          <button class="detail-spouse-btn" onclick="openDetail('${d.ID}','spouse')">
+            <div class="avatar ${detectSpouseGender(d)} " style="width:36px;height:36px;font-size:0.85rem">
+              ${(d.Pasangan||'?').charAt(0).toUpperCase()}
+            </div>
+            <div>
+              <div class="ds-name">${d.Pasangan}</div>
+              <div class="ds-sub">Ketuk untuk detail pasangan</div>
+            </div>
+          </button>`;
+      }
+
+      const editBtn = `<button class="admin-edit-btn${isAdmin ? ' visible' : ''}"
+        onclick="openMemberForm('${refId}','${type}')">✏️ Edit Data Ini</button>`;
+
+      return `
+        <div class="detail-hero">
+          <div class="detail-avatar avatar ${genderClass}">${initials}</div>
+          <div class="detail-hero-info">
+            <div class="detail-hero-name">${d.Nama || '—'}</div>
+            <div class="detail-hero-sub">${[genLabel, statusBadge].filter(Boolean).join(' · ')}</div>
+          </div>
+        </div>
+        <div class="detail-section-title">${isMember ? 'Data Anggota' : 'Data Pasangan'}</div>
+        <div class="detail-grid">
+          ${isMember ? field('No. Induk', d['No Induk'] || d['No_Induk'] || d.ID) : ''}
+          ${field('Jenis Kelamin', d.Gender === 'P' ? 'Perempuan' : d.Gender === 'L' ? 'Laki-laki' : d.Gender || '')}
+          ${field('Tempat Lahir', d['Tempat Lahir'] || d['Tempat_Lahir'])}
+          ${field('Tanggal Lahir', d['Tanggal Lahir'] || d['Tanggal_Lahir'])}
+          ${field('Status', d.Status)}
+          ${isMember ? field('Generasi', genLabel) : ''}
+          ${fieldFull('Alamat', d.Alamat)}
+          ${fieldFull('Kontak', d.Kontak)}
+        </div>
+        ${spouseSection}
+        ${editBtn}`;
+    }
+
+    function detectSpouseGender(member) {
+      const g = (member['Pasangan Gender'] || '').trim().toUpperCase();
+      if (g === 'P') return 'female';
+      if (g === 'L') return 'male';
+      // heuristic fallback on spouse name
+      const name = (member.Pasangan || '').toLowerCase();
+      const femaleHints = ['ni','wati','sari','yati','ningsih','sri','dewi','suci','yem'];
+      return femaleHints.some(h => name.includes(h)) ? 'female' : 'male';
+    }
+
+
+    // ── ADMIN AUTH ──
+    function toggleAdminPrompt() {
+      if (isAdmin) { logoutAdmin(); return; }
+      const overlay = document.getElementById('pinOverlay');
+      overlay.classList.add('open');
+      document.getElementById('pinInput').value = '';
+      document.getElementById('pinError').textContent = '';
+      setTimeout(() => document.getElementById('pinInput').focus(), 100);
+    }
+
+    function confirmPin() {
+      const val = document.getElementById('pinInput').value;
+      if (val === ADMIN_PIN) {
+        isAdmin = true;
+        document.getElementById('pinOverlay').classList.remove('open');
+        document.getElementById('adminBtn').classList.add('admin-active');
+        document.getElementById('adminBanner').classList.add('visible');
+        document.getElementById('adminFab').classList.add('visible');
+        // Re-render to show edit buttons inside any open detail sheet
+        renderAll();
+      } else {
+        document.getElementById('pinError').textContent = 'PIN salah. Coba lagi.';
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinInput').focus();
+      }
+    }
+
+    function closePin() {
+      document.getElementById('pinOverlay').classList.remove('open');
+    }
+
+    function logoutAdmin() {
+      isAdmin = false;
+      document.getElementById('adminBtn').classList.remove('admin-active');
+      document.getElementById('adminBanner').classList.remove('visible');
+      document.getElementById('adminFab').classList.remove('visible');
+      closeAllSheets();
+    }
+
+    // ── SHEET HELPERS ──
+    function openSheet(id) {
+      document.getElementById('sheetOverlay').classList.add('open');
+      document.getElementById(id).classList.add('open');
+    }
+
+    function closeSheet(id) {
+      document.getElementById(id).classList.remove('open');
+      // Only remove overlay if no other sheet is open
+      const anyOpen = document.querySelectorAll('.sheet.open').length > 0;
+      if (!anyOpen) document.getElementById('sheetOverlay').classList.remove('open');
+    }
+
+    function closeAllSheets() {
+      document.querySelectorAll('.sheet.open').forEach(s => s.classList.remove('open'));
+      document.getElementById('sheetOverlay').classList.remove('open');
     }
 
     init();
