@@ -832,7 +832,7 @@
     const sheetURL = "data.csv";
 
     // ── ADMIN STATE ──
-    const ADMIN_PIN = '123455';   // ← change this
+    const ADMIN_PIN = '7215';   // ← change this
     let isAdmin = false;
 
     // Generation label map — shared across list rendering and badges
@@ -853,21 +853,38 @@
 
     // ── INIT ──
     async function init() {
+      const loadingEl = document.getElementById('loading');
       try {
+        // ── Priority 1: Supabase (if configured) ──
+        if (SUPABASE_URL && !SUPABASE_URL.includes('your-project')) {
+          try {
+            const res = await fetch(
+              `${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&order=generasi.asc,no_induk.asc`,
+              { headers: supaHeaders() }
+            );
+            if (!res.ok) throw new Error(await res.text());
+            const rows = await res.json();
+            allData = rows.map(normaliseRow);
+            loadingEl.style.display = 'none';
+            renderAll();
+            return;
+          } catch (e) {
+            console.warn('Supabase load failed, falling back to CSV:', e.message);
+          }
+        }
+        // ── Priority 2: data.js inline or fetch data.csv ──
         const data = await loadCSV(sheetURL);
         allData = data;
-        document.getElementById('loading').style.display = 'none';
+        loadingEl.style.display = 'none';
         renderAll();
       } catch (err) {
-        document.getElementById('loading').innerHTML = `
+        loadingEl.innerHTML = `
           <div style="padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.85rem;line-height:1.7">
             <div style="font-size:1.5rem;margin-bottom:0.5rem">⚠️</div>
-            <strong style="color:var(--text)">Gagal memuat data.csv</strong><br>
-            Browser memblokir akses file lokal (<code>file://</code>).<br><br>
-            <strong style="color:var(--gold-light)">Solusi:</strong> Buat file <code>data.js</code> di folder yang sama berisi:<br>
-            <code style="display:block;text-align:left;background:var(--surface2);border-radius:8px;padding:0.6rem 0.8rem;margin-top:0.5rem;white-space:pre;overflow-x:auto">window.CSV_DATA = \`(paste isi data.csv di sini)\`;</code>
-            Lalu tambahkan di <code>index.html</code> sebelum tag <code>&lt;script&gt;</code>:<br>
-            <code>&lt;script src="data.js"&gt;&lt;/script&gt;</code>
+            <strong style="color:var(--text)">Gagal memuat data</strong><br>
+            ${err.message}<br><br>
+            <strong style="color:var(--gold-light)">Opsi lokal:</strong> Buat <code>data.js</code> berisi:<br>
+            <code style="display:block;text-align:left;background:var(--surface2);border-radius:8px;padding:0.6rem 0.8rem;margin-top:0.5rem;white-space:pre;overflow-x:auto">window.CSV_DATA = \`(isi data.csv)\`;</code>
           </div>`;
         console.error(err);
       }
@@ -1239,7 +1256,7 @@
 
     function fval(d, ...keys) {
       if (!d) return '';
-      for (const k of keys) if (d[k]) return d[k];
+      for (const k of keys) if (d[k] != null && d[k] !== '') return d[k];
       return '';
     }
 
@@ -1276,7 +1293,7 @@
         </div>
         <div class="form-field">
           <label class="form-label">Status</label>
-          ${selectOpt('status',['Hidup','Almarhum','Almarhumah'], fval(d,'Status'))}
+      ${selectOpt('status',['Hidup','Wafat'], fval(d,'Status','status'))}
         </div>
         <div class="form-field">
           <label class="form-label">Tempat Lahir</label>
@@ -1315,7 +1332,7 @@
         </div>
         <div class="form-field">
           <label class="form-label">Status Pasangan</label>
-          ${selectOpt('pasangan_status',['Hidup','Almarhum','Almarhumah'], fval(d,'Pasangan Status'))}
+          ${selectOpt('pasangan_status',['Hidup','Wafat'], fval(d,'Pasangan Status','pasangan_status'))}
         </div>
         <div class="form-field">
           <label class="form-label">Tempat Lahir Pasangan</label>
@@ -1358,7 +1375,7 @@
         </div>
         <div class="form-field">
           <label class="form-label">Status</label>
-          ${selectOpt('pasangan_status',['Hidup','Almarhum','Almarhumah'], fval(d,'Pasangan Status'))}
+          ${selectOpt('pasangan_status',['Hidup','Wafat'], fval(d,'Pasangan Status','pasangan_status'))}
         </div>
         <div class="form-field">
           <label class="form-label">Tempat Lahir</label>
@@ -1487,15 +1504,19 @@
 
     async function reloadData() {
       try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&order=generasi.asc`, {
-          headers: supaHeaders(),
-        });
-        if (!res.ok) throw new Error('supabase fetch failed');
-        const rows = await res.json();
-        allData = rows.map(normaliseRow);
-      } catch {
-        // Still on CSV — re-parse cached raw text
-        if (window._csvRaw) allData = parseCSVText(window._csvRaw);
+        if (SUPABASE_URL && !SUPABASE_URL.includes('your-project')) {
+          const res = await fetch(
+            `${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&order=generasi.asc,no_induk.asc`,
+            { headers: supaHeaders() }
+          );
+          if (!res.ok) throw new Error(await res.text());
+          const rows = await res.json();
+          allData = rows.map(normaliseRow);
+        } else if (window._csvRaw) {
+          allData = parseCSVText(window._csvRaw);
+        }
+      } catch (e) {
+        console.error('reloadData failed:', e);
       }
       renderAll();
     }
@@ -1571,9 +1592,25 @@
       );
       const initials = (d.Nama || '?').charAt(0).toUpperCase();
       const genLabel = isMember && d.Generasi ? genLabels[d.Generasi] || `Gen ${d.Generasi}` : '';
-      const statusBadge = d.Status
-        ? `<span style="font-size:0.72rem;padding:0.1rem 0.5rem;border-radius:999px;background:${d.Status==='Almarhum/ah'||d.Status==='Almh'||d.Status==='Alm'?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${d.Status==='Almarhum/ah'||d.Status==='Almh'||d.Status==='Alm'?'#e07070':'#70c070'}">${d.Status}</span>`
+
+      // Normalise all Almarhum/* variants to "Wafat"
+      const normaliseStatus = s => (s && /alm|wafat/i.test(s)) ? 'Wafat' : s;
+      const spouseStatus = normaliseStatus(d.Status || '');
+      const isWafat = s => s === 'Wafat';
+      const statusBadge = spouseStatus
+        ? `<span style="font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;background:${isWafat(spouseStatus)?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${isWafat(spouseStatus)?'#e07070':'#70c070'}">${spouseStatus}</span>`
         : '';
+
+      // Support multiple CSV column spellings + extract from name suffix e.g. "Rubiyem (Almh)"
+      let memberStatus = d.Status || d.status || d['Status Anggota'] || '';
+      if (!memberStatus) {
+        const nameSuffix = (d.Nama || d.nama || '').match(/\((Alm[^)]*|Wafat)\)/i);
+        if (nameSuffix) memberStatus = 'Wafat';
+      }
+      memberStatus = normaliseStatus(memberStatus);
+      const memberGenerasi = d.Generasi || d.generasi || d['Generasi'] || '';
+      const resolvedGenLabel = isMember && memberGenerasi
+        ? genLabels[memberGenerasi] || `Gen ${memberGenerasi}` : genLabel;
 
       const field = (label, value) => `
         <div class="detail-field">
@@ -1592,7 +1629,7 @@
         spouseSection = `
           <div class="detail-section-title">Pasangan</div>
           <button class="detail-spouse-btn" onclick="openDetail('${d.ID}','spouse')">
-            <div class="avatar ${detectSpouseGender(d)} " style="width:36px;height:36px;font-size:0.85rem">
+            <div class="avatar ${detectSpouseGender(d)}" style="width:36px;height:36px;font-size:0.85rem">
               ${(d.Pasangan||'?').charAt(0).toUpperCase()}
             </div>
             <div>
@@ -1610,19 +1647,19 @@
           <div class="detail-avatar avatar ${genderClass}">${initials}</div>
           <div class="detail-hero-info">
             <div class="detail-hero-name">${d.Nama || '—'}</div>
-            <div class="detail-hero-sub">${[genLabel, statusBadge].filter(Boolean).join(' · ')}</div>
+            <div class="detail-hero-sub">${[resolvedGenLabel, memberStatus ? `<span style="font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;background:${isWafat(memberStatus)?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${isWafat(memberStatus)?'#e07070':'#70c070'}">${memberStatus}</span>` : ''].filter(Boolean).join(' · ')}</div>
           </div>
         </div>
         <div class="detail-section-title">${isMember ? 'Data Anggota' : 'Data Pasangan'}</div>
         <div class="detail-grid">
-          ${isMember ? field('No. Induk', d['No Induk'] || d['No_Induk'] || d.ID) : ''}
-          ${field('Jenis Kelamin', d.Gender === 'P' ? 'Perempuan' : d.Gender === 'L' ? 'Laki-laki' : d.Gender || '')}
-          ${field('Tempat Lahir', d['Tempat Lahir'] || d['Tempat_Lahir'])}
-          ${field('Tanggal Lahir', d['Tanggal Lahir'] || d['Tanggal_Lahir'])}
-          ${field('Status', d.Status)}
-          ${isMember ? field('Generasi', genLabel) : ''}
-          ${fieldFull('Alamat', d.Alamat)}
-          ${fieldFull('Kontak', d.Kontak)}
+          ${isMember ? field('No. Induk', d['No Induk'] || d['No_Induk'] || d.no_induk || d.ID) : ''}
+          ${field('Jenis Kelamin', d.Gender === 'P' || d.gender === 'P' ? 'Perempuan' : d.Gender === 'L' || d.gender === 'L' ? 'Laki-laki' : '')}
+          ${field('Tempat Lahir', d['Tempat Lahir'] || d['Tempat_Lahir'] || d.tempat_lahir)}
+          ${field('Tanggal Lahir', d['Tanggal Lahir'] || d['Tanggal_Lahir'] || d.tanggal_lahir)}
+          ${field('Status', memberStatus)}
+          ${isMember ? field('Generasi', resolvedGenLabel) : ''}
+          ${fieldFull('Alamat', d.Alamat || d.alamat)}
+          ${fieldFull('Kontak', d.Kontak || d.kontak)}
         </div>
         ${spouseSection}
         ${editBtn}`;
