@@ -277,6 +277,16 @@
     #adminFab:hover { opacity: 0.88; transform: scale(1.06); }
 
 
+    .detail-back-btn {
+      display: flex; align-items: center; gap: 0.35rem;
+      background: none; border: none;
+      color: var(--text-muted); font-size: 0.8rem;
+      cursor: pointer; padding: 0.5rem 1rem 0;
+      transition: color 0.15s;
+    }
+    .detail-back-btn:hover { color: var(--gold-light); }
+    .detail-back-btn svg { flex-shrink: 0; }
+
     /* ── CLICKABLE NAMES ── */
     .clickable-name {
       cursor: pointer;
@@ -289,7 +299,7 @@
     .admin-edit-btn {
       display: none;
       width: calc(100% - 2rem);
-      margin: 1rem;
+      margin: 0.5rem 1rem 0;
       padding: 0.7rem;
       border-radius: 10px;
       border: 1px solid var(--gold);
@@ -302,6 +312,23 @@
     }
     .admin-edit-btn.visible { display: block; }
     .admin-edit-btn:hover { background: rgba(201,150,42,0.22); }
+
+    .admin-delete-btn {
+      display: none;
+      width: calc(100% - 2rem);
+      margin: 0.4rem 1rem 1rem;
+      padding: 0.6rem;
+      border-radius: 10px;
+      border: 1px solid rgba(217,64,64,0.4);
+      background: rgba(217,64,64,0.08);
+      color: #e07070;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+    .admin-delete-btn.visible { display: block; }
+    .admin-delete-btn:hover { background: rgba(217,64,64,0.16); }
 
     /* ── SHEET OVERLAY ── */
     #sheetOverlay {
@@ -372,6 +399,38 @@
     /* ── PIN OVERLAY ── */
     #pinOverlay { position: fixed; inset: 0; z-index: 600; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; }
     #pinOverlay.open { display: flex; }
+
+    /* ── LOGIN OVERLAY (dashboard access) ── */
+    #loginOverlay {
+      position: fixed; inset: 0; z-index: 900;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      flex-direction: column; gap: 0;
+    }
+    #loginOverlay.hidden { display: none; }
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem 1.75rem 1.75rem;
+      width: calc(100% - 2rem); max-width: 340px;
+      display: flex; flex-direction: column; gap: 1rem;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+    }
+    .login-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1rem; font-weight: 700;
+      color: var(--gold-light); letter-spacing: 0.05em;
+      text-align: center; margin-bottom: 0.25rem;
+    }
+    .login-title {
+      font-size: 0.78rem; color: var(--text-muted);
+      text-align: center; margin-bottom: 0.5rem;
+    }
+    #loginError {
+      font-size: 0.75rem; color: #e07070;
+      text-align: center; min-height: 1rem;
+    }
     #pinBox { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.75rem 1.5rem; width: min(340px,90vw); text-align: center; }
     #pinBox h3 { font-family: 'Playfair Display', serif; color: var(--gold-light); margin-bottom: 0.4rem; }
     #pinBox p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.1rem; }
@@ -832,7 +891,7 @@
     const sheetURL = "data.csv";
 
     // ── ADMIN STATE ──
-    const ADMIN_PIN = '7215';   // ← change this
+    const ADMIN_PIN = '7215';
     let isAdmin = false;
 
     // Generation label map — shared across list rendering and badges
@@ -845,7 +904,8 @@
       '5': 'Wareng'
     };
 
-    let allData = [];
+    let allData     = [];
+    let spousesData = [];  // rows from the separate spouses table
     let currentView = 'list';
     let currentGen = '';
     let currentKeyword = '';
@@ -858,13 +918,14 @@
         // ── Priority 1: Supabase (if configured) ──
         if (SUPABASE_URL && !SUPABASE_URL.includes('your-project')) {
           try {
-            const res = await fetch(
-              `${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&order=generasi.asc,no_induk.asc`,
-              { headers: supaHeaders() }
-            );
-            if (!res.ok) throw new Error(await res.text());
-            const rows = await res.json();
-            allData = rows.map(normaliseRow);
+            const [mRes, sRes] = await Promise.all([
+              fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&deleted_at=is.null&order=generasi.asc,no_induk.asc`, { headers: supaHeaders() }),
+              fetch(`${SUPABASE_URL}/rest/v1/spouses?select=*&deleted_at=is.null&order=member_id.asc`,                       { headers: supaHeaders() }),
+            ]);
+            if (!mRes.ok) throw new Error(await mRes.text());
+            const mRows = await mRes.json();
+            allData = mRows.map(normaliseRow);
+            if (sRes.ok) spousesData = (await sRes.json()).map(normaliseSpouseRow);
             loadingEl.style.display = 'none';
             renderAll();
             return;
@@ -940,15 +1001,19 @@
     // Map Supabase snake_case columns → app PascalCase keys
     function normaliseRow(r) {
       return {
-        ID:                       String(r.id || ''),
-        'No Induk':               r.no_induk || '',
-        Nama:                     r.nama || '',
-        Gender:                   r.gender || '',
-        'Tempat Lahir':           r.tempat_lahir || '',
-        'Tanggal Lahir':          r.tanggal_lahir || '',
-        Status:                   r.status || '',
-        Alamat:                   r.alamat || '',
-        Kontak:                   r.kontak || '',
+        ID:              String(r.id || ''),
+        'No Induk':      r.no_induk || '',
+        Nama:            r.nama || '',
+        Gender:          r.gender || '',
+        'Tempat Lahir':  r.tempat_lahir || '',
+        'Tanggal Lahir': r.tanggal_lahir || '',
+        Status:          r.status || '',
+        Alamat:          r.alamat || '',
+        Kontak:          r.kontak || '',
+        'Gol Darah':     r.gol_darah || '',
+        'Parent ID':     r.parent_id ? String(r.parent_id) : '',
+        Generasi:        r.generasi ? (['','1 - Anak','2 - Cucu','3 - Buyut','4 - Canggah','5 - Wareng'][r.generasi] || String(r.generasi)) : '',
+        // Keep inline pasangan for CSV backward-compat (migrated to spouses table in Supabase)
         Pasangan:                 r.pasangan || '',
         'Pasangan Gender':        r.pasangan_gender || '',
         'Pasangan Tempat Lahir':  r.pasangan_tempat_lahir || '',
@@ -956,15 +1021,33 @@
         'Pasangan Status':        r.pasangan_status || '',
         'Pasangan Alamat':        r.pasangan_alamat || '',
         'Pasangan Kontak':        r.pasangan_kontak || '',
-        'Parent ID':              r.parent_id ? String(r.parent_id) : '',
-        Generasi:                 r.generasi ? String(r.generasi) : '',
+      };
+    }
+
+    function normaliseSpouseRow(r) {
+      const spouseGenMap = {
+        '1p':'1p - Anak Menantu','2p':'2p - Cucu Menantu',
+        '3p':'3p - Buyut Menantu','4p':'4p - Canggah Menantu','5p':'5p - Wareng Menantu'
+      };
+      return {
+        ID:             String(r.id || ''),
+        'Member ID':    String(r.member_id || ''),
+        Nama:           r.nama || '',
+        Gender:         r.gender || '',
+        'Tempat Lahir': r.tempat_lahir || '',
+        'Tanggal Lahir':r.tanggal_lahir || '',
+        Status:         r.status || '',
+        Alamat:         r.alamat || '',
+        Kontak:         r.kontak || '',
+        'Gol Darah':    r.gol_darah || '',
+        Generasi:       spouseGenMap[r.generasi] || r.generasi || '',
       };
     }
 
     // ── FILTER ──
     function filteredData() {
       return allData.filter(d => {
-        const matchGen = !currentGen || d.Generasi === currentGen;
+        const matchGen = !currentGen || (d.Generasi || '').split(' - ')[0] === currentGen;
         const text = ((d.Nama || '') + ' ' + (d.Pasangan || '')).toLowerCase();
         const matchKw = !currentKeyword || text.includes(currentKeyword);
         return matchGen && matchKw;
@@ -1004,24 +1087,37 @@
       });
 
       const html = Object.entries(groups).map(([gen, members]) => {
-        const label = genLabels[gen] || `Generasi ${gen}`;
+        // gen may be "1 - Anak" (Supabase) or "1" (CSV) — extract the number for lookup
+        const genNum = gen.split(' - ')[0];
+        const label = genLabels[genNum] || gen;
         const cards = members.map(m => memberCard(m)).join('');
-        // Only show gen header when showing all or multiple groups
-        const header = !currentGen ? `<div class="gen-header">Generasi ${gen} · ${label}</div>` : '';
+        const header = !currentGen ? `<div class="gen-header">Generasi ${genNum} · ${label}</div>` : '';
         return `<div class="gen-group">${header}${cards}</div>`;
       }).join('');
 
       container.innerHTML = html;
     }
 
+    function getMemberSpouses(memberId) {
+      const rows = spousesData.filter(s => s['Member ID'] === String(memberId));
+      if (rows.length) return rows;
+      // CSV fallback
+      const m = allData.find(d => d.ID === String(memberId));
+      if (m?.Pasangan && m.Pasangan !== '-') return [{ ID: 'inline_' + memberId, Nama: m.Pasangan, Gender: m['Pasangan Gender'] || '', Status: m['Pasangan Status'] || '', Generasi: '' }];
+      return [];
+    }
+
     function memberCard(d) {
       const initials = (d.Nama || '?').charAt(0).toUpperCase();
       const genderClass = detectGender(d);
       const nameHtml = highlight(d.Nama || '');
-      const spouseHtml = d.Pasangan && d.Pasangan !== '-'
-        ? `<div class="card-spouse clickable-name" onclick="openDetail('${d.ID}','spouse')">${highlight(d.Pasangan)}</div>` : '';
-      const badge = d.Generasi
-        ? `<span class="card-badge">${genLabels[d.Generasi] || 'Gen ' + d.Generasi}</span>`
+      const spouses = getMemberSpouses(d.ID);
+      const spouseHtml = spouses.map(sp =>
+        `<div class="card-spouse clickable-name" onclick="openDetail('${sp.ID}','spouse_row')">${highlight(sp.Nama)}</div>`
+      ).join('');
+      const genNum = (d.Generasi || '').split(' - ')[0];
+      const badge = genNum
+        ? `<span class="card-badge">${genLabels[genNum] || d.Generasi}</span>`
         : '';
       return `
         <div class="member-card">
@@ -1048,6 +1144,13 @@
       root.innerHTML = '';
       const tree = buildTreeNode(allData, '');
       if (tree) root.appendChild(tree);
+
+      // Update counter after building tree
+      if (currentGen || currentKeyword) {
+        filterTree();
+      } else {
+        document.getElementById('counterText').textContent = `${allData.length} anggota`;
+      }
     }
 
     function buildTreeNode(data, parentId) {
@@ -1060,7 +1163,7 @@
         const li = document.createElement('li');
         li.className = 'tree-node';
         li.dataset.id = child.ID;
-        li.dataset.gen = child.Generasi || '';
+        li.dataset.gen = (child.Generasi || '').split(' - ')[0];
         li.dataset.name = ((child.Nama || '') + ' ' + (child.Pasangan || '')).toLowerCase();
 
         const row = document.createElement('div');
@@ -1095,9 +1198,11 @@
         const label = document.createElement('span');
         label.className = `tree-label${isRoot ? ' root-label' : ''}`;
         const nameSpan = `<span class="clickable-name" onclick="openDetail('${child.ID}','member')">${highlight(child.Nama || '')}</span>`;
-        const spouseHtml = child.Pasangan && child.Pasangan !== '-'
-          ? `<span class="tree-spouse clickable-name" onclick="openDetail('${child.ID}','spouse')">${highlight(child.Pasangan)}</span>` : '';
-        label.innerHTML = nameSpan + spouseHtml;
+        const spouses = getMemberSpouses(child.ID);
+        const spouseSpans = spouses.map(sp =>
+          `<span class="tree-spouse clickable-name" onclick="openDetail('${sp.ID}','spouse_row')">${highlight(sp.Nama)}</span>`
+        ).join('');
+        label.innerHTML = nameSpan + spouseSpans;
         row.appendChild(label);
 
         li.appendChild(row);
@@ -1133,16 +1238,22 @@
       const nodes = document.querySelectorAll('#treeRoot .tree-node');
       if (!currentKeyword && !currentGen) {
         nodes.forEach(n => n.style.display = '');
+        document.getElementById('counterText').textContent = `${allData.length} anggota`;
         return;
       }
+      let matchCount = 0;
       nodes.forEach(n => {
         const nameMatch = !currentKeyword || n.dataset.name.includes(currentKeyword);
-        const genMatch = !currentGen || n.dataset.gen === currentGen;
-        n.style.display = (nameMatch && genMatch) ? '' : 'none';
-        if (nameMatch && genMatch) expandParents(n);
+        const genMatch  = !currentGen  || (n.dataset.gen || '') === currentGen;
+        if (nameMatch && genMatch) {
+          n.style.display = '';
+          matchCount++;
+          expandParents(n);
+        } else {
+          n.style.display = 'none';
+        }
       });
-      const visible = [...nodes].filter(n => n.style.display !== 'none').length;
-      document.getElementById('counterText').textContent = `${visible} anggota`;
+      document.getElementById('counterText').textContent = `${matchCount} anggota`;
     }
 
     function expandParents(node) {
@@ -1238,7 +1349,28 @@
 
     // ── FORM ──
     // refId: member ID (edit) or null (add). type: 'member'|'spouse'
-    function openMemberForm(refId, type = 'member') {
+    function openAddChildForm(parentId) {
+      if (!parentId) { showToast('Simpan anggota ini dulu sebelum menambah anak.'); return; }
+      // Pre-build a fake member stub so parent_id is pre-selected in the form
+      const parentMember = allData.find(d => d.ID === String(parentId));
+      const parentGenNum = parentMember ? parseInt((parentMember.Generasi || '').split(' - ')[0]) : 0;
+      const childGenLabels = ['','1 - Anak','2 - Cucu','3 - Buyut','4 - Canggah','5 - Wareng'];
+      const childGenDefault = childGenLabels[parentGenNum + 1] || '';
+
+      // Open with a blank member but inject parent_id after render
+      document.getElementById('formSheetTitle').textContent = 'Tambah Anak';
+      document.getElementById('formBody').innerHTML = renderMemberForm(null);
+
+      // Pre-select parent and generasi
+      const parentSel = document.getElementById('f_parent_id');
+      if (parentSel) parentSel.value = parentId;
+      const genSel = document.getElementById('f_generasi');
+      if (genSel && childGenDefault) genSel.value = childGenDefault;
+
+      openSheet('formSheet');
+    }
+
+    function openMemberForm(refId, type = 'member', spouseId = '') {
       const isEdit = !!refId;
       let member = isEdit ? allData.find(d => d.ID === refId) : null;
       const isSpouse = type === 'spouse';
@@ -1248,7 +1380,7 @@
                  : (isEdit ? 'Edit Anggota'  : 'Tambah Anggota');
 
       document.getElementById('formBody').innerHTML = isSpouse
-        ? renderSpouseForm(member)
+        ? renderSpouseForm(member, spouseId)
         : renderMemberForm(member);
 
       openSheet('formSheet');
@@ -1267,10 +1399,118 @@
       </select>`;
     }
 
+    let _spouseBlockCount = 0;
+
+    function spouseBlockHtml(idx, sp) {
+      _spouseBlockCount = Math.max(_spouseBlockCount, idx + 1);
+      const id = sp.ID || '';
+      const v = k => (sp[k] || '').replace(/"/g,'&quot;');
+      const sel = (name, opts, cur) => `<select class="form-select" data-sp="${idx}" data-key="${name}">
+        <option value="">— Pilih —</option>
+        ${opts.map(o=>`<option value="${o}"${cur===o?' selected':''}>${o}</option>`).join('')}
+      </select>`;
+      return `
+      <div class="spouse-block" data-idx="${idx}" data-sp-id="${id}" style="border:1px solid var(--border);border-radius:10px;padding:0.75rem 0.75rem 0.5rem;margin:0 1rem 0.75rem;position:relative">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
+          <span style="font-size:0.7rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em">Pasangan ${idx + 1}</span>
+          ${idx > 0 ? `<button onclick="removeSpouseBlock(${idx})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:0">✕</button>` : ''}
+        </div>
+        <div class="form-grid">
+          <div class="form-field full">
+            <label class="form-label">Nama <span>*</span></label>
+            <input class="form-input" data-sp="${idx}" data-key="nama" placeholder="Nama pasangan" value="${v('Nama')}">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Generasi</label>
+            ${sel('generasi',['1p - Anak Menantu','2p - Cucu Menantu','3p - Buyut Menantu','4p - Canggah Menantu','5p - Wareng Menantu'], v('Generasi'))}
+          </div>
+          <div class="form-field">
+            <label class="form-label">Jenis Kelamin</label>
+            ${sel('gender',['L','P'], v('Gender'))}
+          </div>
+          <div class="form-field">
+            <label class="form-label">Status</label>
+            ${sel('status',['Hidup','Wafat'], v('Status'))}
+          </div>
+          <div class="form-field">
+            <label class="form-label">Gol. Darah</label>
+            ${sel('gol_darah',['A','B','AB','O'], v('Gol Darah'))}
+          </div>
+          <div class="form-field">
+            <label class="form-label">Tempat Lahir</label>
+            <input class="form-input" data-sp="${idx}" data-key="tempat_lahir" placeholder="Kota" value="${v('Tempat Lahir')}">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Tanggal Lahir</label>
+            <input class="form-input" type="date" data-sp="${idx}" data-key="tanggal_lahir" value="${v('Tanggal Lahir')}">
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Alamat</label>
+            <textarea class="form-textarea" data-sp="${idx}" data-key="alamat" placeholder="Alamat lengkap">${v('Alamat')}</textarea>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Kontak</label>
+            <input class="form-input" data-sp="${idx}" data-key="kontak" placeholder="No. HP / WhatsApp" value="${v('Kontak')}">
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function addSpouseBlock() {
+      const container = document.getElementById('spouseBlocksContainer');
+      const idx = container.querySelectorAll('.spouse-block').length;
+      const div = document.createElement('div');
+      div.innerHTML = spouseBlockHtml(idx, {});
+      container.appendChild(div.firstElementChild);
+    }
+
+    function removeSpouseBlock(idx) {
+      const block = document.querySelector(`.spouse-block[data-idx="${idx}"]`);
+      if (block) block.remove();
+    }
+
+    function collectSpouseBlocks() {
+      // Normalise legacy values from old CSV data
+      const normGender = v => ({ F:'P', M:'L', f:'P', m:'L' }[v] || v || null);
+      const normStatus = v => v && /alm|deceased/i.test(v) ? 'Wafat' : (v || null);
+      const nullify   = v => v && v.trim() ? v.trim() : null;
+
+      const blocks = document.querySelectorAll('.spouse-block');
+      return Array.from(blocks).map(block => {
+        const idx = block.dataset.idx;
+        const spId = block.dataset.spId || '';
+        const get = key => {
+          const el = block.querySelector(`[data-sp="${idx}"][data-key="${key}"]`);
+          return el ? el.value.trim() : '';
+        };
+        return {
+          id:           spId,
+          nama:         nullify(get('nama')),
+          generasi:     nullify(get('generasi').split(' - ')[0]),
+          gender:       normGender(get('gender')),
+          status:       normStatus(get('status')),
+          gol_darah:    nullify(get('gol_darah')),
+          tempat_lahir: nullify(get('tempat_lahir')),
+          tanggal_lahir:nullify(get('tanggal_lahir')),
+          alamat:       nullify(get('alamat')),
+          kontak:       nullify(get('kontak')),
+        };
+      }).filter(sp => sp.nama);
+    }
+
     function renderMemberForm(d) {
-      const parentOpts = allData.map(m =>
-        `<option value="${m.ID}"${fval(d,'Parent ID')===m.ID?' selected':''}>${m.ID} – ${m.Nama}</option>`
-      ).join('');
+      const parentOpts = allData
+        .filter(m => !d || m.ID !== d.ID)   // exclude self
+        .sort((a, b) => {
+          // sort by no_induk numerically where possible
+          const an = a['No Induk'] || '', bn = b['No Induk'] || '';
+          return an.localeCompare(bn, undefined, { numeric: true });
+        })
+        .map(m => {
+          const label = m['No Induk'] ? `${m['No Induk']} – ${m.Nama}` : `${m.Nama}`;
+          return `<option value="${m.ID}"${fval(d,'Parent ID')===m.ID?' selected':''}>${label}</option>`;
+        })
+        .join('');
 
       return `
       <div class="form-section-title">Data Anggota</div>
@@ -1281,7 +1521,7 @@
         </div>
         <div class="form-field">
           <label class="form-label">Generasi</label>
-          ${selectOpt('generasi',['1','2','3','4','5'], fval(d,'Generasi'))}
+          ${selectOpt('generasi',['1 - Anak','2 - Cucu','3 - Buyut','4 - Canggah','5 - Wareng'], fval(d,'Generasi','generasi') || '')}
         </div>
         <div class="form-field full">
           <label class="form-label">Nama <span>*</span></label>
@@ -1309,7 +1549,11 @@
         </div>
         <div class="form-field full">
           <label class="form-label">Kontak</label>
-          <input class="form-input" id="f_kontak" placeholder="No. HP / WhatsApp" value="${fval(d,'Kontak')}">
+          <input class="form-input" id="f_kontak" placeholder="No. HP / WhatsApp" value="${fval(d,'Kontak','kontak')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Gol. Darah</label>
+          ${selectOpt('gol_darah',['A','B','AB','O'], fval(d,'Gol Darah','gol_darah'))}
         </div>
         <div class="form-field full">
           <label class="form-label">Parent ID (Orang Tua)</label>
@@ -1320,37 +1564,50 @@
         </div>
       </div>
 
-      <div class="form-section-title">Data Pasangan</div>
-      <div class="form-grid">
-        <div class="form-field full">
-          <label class="form-label">Nama Pasangan</label>
-          <input class="form-input" id="f_pasangan" placeholder="Nama pasangan" value="${fval(d,'Pasangan')}">
-        </div>
-        <div class="form-field">
-          <label class="form-label">Jenis Kelamin Pasangan</label>
-          ${selectOpt('pasangan_gender',['L','P'], fval(d,'Pasangan Gender'))}
-        </div>
-        <div class="form-field">
-          <label class="form-label">Status Pasangan</label>
-          ${selectOpt('pasangan_status',['Hidup','Wafat'], fval(d,'Pasangan Status','pasangan_status'))}
-        </div>
-        <div class="form-field">
-          <label class="form-label">Tempat Lahir Pasangan</label>
-          <input class="form-input" id="f_pasangan_tempat" placeholder="Kota" value="${fval(d,'Pasangan Tempat Lahir')}">
-        </div>
-        <div class="form-field">
-          <label class="form-label">Tanggal Lahir Pasangan</label>
-          <input class="form-input" id="f_pasangan_tanggal" type="date" value="${fval(d,'Pasangan Tanggal Lahir')}">
-        </div>
-        <div class="form-field full">
-          <label class="form-label">Alamat Pasangan</label>
-          <textarea class="form-textarea" id="f_pasangan_alamat" placeholder="Alamat lengkap">${fval(d,'Pasangan Alamat')}</textarea>
-        </div>
-        <div class="form-field full">
-          <label class="form-label">Kontak Pasangan</label>
-          <input class="form-input" id="f_pasangan_kontak" placeholder="No. HP / WhatsApp" value="${fval(d,'Pasangan Kontak')}">
-        </div>
+      <div class="form-section-title" style="display:flex;align-items:center;justify-content:space-between">
+        <span>Data Pasangan</span>
+        <button onclick="addSpouseBlock()" style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:6px;color:var(--gold-light);font-size:0.72rem;padding:0.2rem 0.65rem;cursor:pointer">+ Tambah Pasangan</button>
       </div>
+      <div id="spouseBlocksContainer">
+        ${(() => {
+          const memberId = d?.ID || '';
+          const existing = memberId
+            ? spousesData.filter(s => s['Member ID'] === memberId)
+            : [];
+          // CSV fallback
+          if (existing.length === 0 && d?.Pasangan && d.Pasangan !== '-') {
+            existing.push({
+              ID: '', Nama: d.Pasangan,
+              Gender: d['Pasangan Gender'] || '',
+              Generasi: d['Pasangan Generasi'] || d.pasangan_generasi || '',
+              Status: d['Pasangan Status'] || '',
+              'Tempat Lahir': d['Pasangan Tempat Lahir'] || '',
+              'Tanggal Lahir': d['Pasangan Tanggal Lahir'] || '',
+              Alamat: d['Pasangan Alamat'] || '',
+              Kontak: d['Pasangan Kontak'] || '',
+              'Gol Darah': d['Pasangan Gol Darah'] || '',
+            });
+          }
+          // Only render existing spouses — don't auto-show empty block
+          return existing.map((sp, i) => spouseBlockHtml(i, sp)).join('');
+        })()}
+      </div>
+
+      <div class="form-section-title" style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem">
+        <span>Data Anak</span>
+        <button onclick="openAddChildForm('${d?.ID||''}')" style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:6px;color:var(--gold-light);font-size:0.72rem;padding:0.2rem 0.65rem;cursor:pointer">+ Tambah Anak</button>
+      </div>
+      ${(() => {
+        if (!d?.ID) return `<p style="font-size:0.75rem;color:var(--text-muted);padding:0 1rem 0.5rem">Simpan anggota terlebih dahulu sebelum menambah anak.</p>`;
+        const children = allData.filter(c => c['Parent ID'] === d.ID);
+        if (!children.length) return `<p style="font-size:0.75rem;color:var(--text-muted);padding:0 1rem 0.5rem">Belum ada data anak.</p>`;
+        return `<div style="padding:0 1rem 0.5rem;display:flex;flex-direction:column;gap:0.4rem">` +
+          children.map(c => `
+            <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.75rem">
+              <span style="font-size:0.85rem;color:var(--text)">${c.Nama}</span>
+              <button onclick="openMemberForm('${c.ID}','member')" style="background:none;border:none;color:var(--gold-light);font-size:0.72rem;cursor:pointer">Edit</button>
+            </div>`).join('') + `</div>`;
+      })()}
 
       <div class="form-actions">
         <button class="btn-cancel" onclick="closeSheet('formSheet')">Batal</button>
@@ -1360,43 +1617,68 @@
       </div>`;
     }
 
-    function renderSpouseForm(member) {
-      const d = member || {};
+    function renderSpouseForm(member, spouseId) {
+      // If spouseId is provided, load from spousesData; otherwise editing inline CSV spouse
+      let sp = {};
+      let memberName = member?.Nama || '—';
+      if (spouseId && !String(spouseId).startsWith('inline_')) {
+        sp = spousesData.find(s => s.ID === String(spouseId)) || {};
+      } else if (member?.Pasangan) {
+        sp = {
+          Nama: member.Pasangan,
+          Gender: member['Pasangan Gender'] || '',
+          Generasi: member['Pasangan Generasi'] || '',
+          Status: member['Pasangan Status'] || '',
+          'Tempat Lahir': member['Pasangan Tempat Lahir'] || '',
+          'Tanggal Lahir': member['Pasangan Tanggal Lahir'] || '',
+          Alamat: member['Pasangan Alamat'] || '',
+          Kontak: member['Pasangan Kontak'] || '',
+          'Gol Darah': member['Pasangan Gol Darah'] || '',
+        };
+      }
       return `
-      <div class="form-section-title">Data Pasangan dari ${d.Nama || '—'}</div>
+      <div class="form-section-title">Data Pasangan dari ${memberName}</div>
       <div class="form-grid">
         <div class="form-field full">
           <label class="form-label">Nama Pasangan <span>*</span></label>
-          <input class="form-input" id="f_pasangan" placeholder="Nama pasangan" value="${fval(d,'Pasangan')}">
+          <input class="form-input" id="f_pasangan" placeholder="Nama pasangan" value="${fval(sp,'Nama','nama')}">
+        </div>
+        <div class="form-field">
+          <label class="form-label">Generasi</label>
+          ${selectOpt('pasangan_generasi',['1p - Anak Menantu','2p - Cucu Menantu','3p - Buyut Menantu','4p - Canggah Menantu','5p - Wareng Menantu'], fval(sp,'Generasi','generasi'))}
         </div>
         <div class="form-field">
           <label class="form-label">Jenis Kelamin</label>
-          ${selectOpt('pasangan_gender',['L','P'], fval(d,'Pasangan Gender'))}
+          ${selectOpt('pasangan_gender',['L','P'], fval(sp,'Gender','gender'))}
         </div>
         <div class="form-field">
           <label class="form-label">Status</label>
-          ${selectOpt('pasangan_status',['Hidup','Wafat'], fval(d,'Pasangan Status','pasangan_status'))}
+          ${selectOpt('pasangan_status',['Hidup','Wafat'], fval(sp,'Status','status'))}
+        </div>
+        <div class="form-field">
+          <label class="form-label">Gol. Darah</label>
+          ${selectOpt('pasangan_gol_darah',['A','B','AB','O'], fval(sp,'Gol Darah','gol_darah'))}
         </div>
         <div class="form-field">
           <label class="form-label">Tempat Lahir</label>
-          <input class="form-input" id="f_pasangan_tempat" placeholder="Kota" value="${fval(d,'Pasangan Tempat Lahir')}">
+          <input class="form-input" id="f_pasangan_tempat" placeholder="Kota" value="${fval(sp,'Tempat Lahir','tempat_lahir')}">
         </div>
         <div class="form-field">
           <label class="form-label">Tanggal Lahir</label>
-          <input class="form-input" id="f_pasangan_tanggal" type="date" value="${fval(d,'Pasangan Tanggal Lahir')}">
+          <input class="form-input" id="f_pasangan_tanggal" type="date" value="${fval(sp,'Tanggal Lahir','tanggal_lahir')}">
         </div>
         <div class="form-field full">
           <label class="form-label">Alamat</label>
-          <textarea class="form-textarea" id="f_pasangan_alamat" placeholder="Alamat lengkap">${fval(d,'Pasangan Alamat')}</textarea>
+          <textarea class="form-textarea" id="f_pasangan_alamat" placeholder="Alamat lengkap">${fval(sp,'Alamat','alamat')}</textarea>
         </div>
         <div class="form-field full">
           <label class="form-label">Kontak</label>
-          <input class="form-input" id="f_pasangan_kontak" placeholder="No. HP / WhatsApp" value="${fval(d,'Pasangan Kontak')}">
+          <input class="form-input" id="f_pasangan_kontak" placeholder="No. HP / WhatsApp" value="${fval(sp,'Kontak','kontak')}">
         </div>
       </div>
       <div class="form-actions">
         <button class="btn-cancel" onclick="closeSheet('formSheet')">Batal</button>
-        <button class="btn-save" id="btnSave" onclick="submitSpouseForm('${d.ID||''}')">Simpan Pasangan</button>
+        <button class="btn-save" id="btnSave" onclick="submitSpouseForm('${member?.ID||''}','${spouseId||''}')">Simpan Pasangan</button>
       </div>`;
     }
 
@@ -1416,7 +1698,7 @@
         alamat:                 (document.getElementById('f_alamat')?.value || '').trim() || null,
         kontak:                 (document.getElementById('f_kontak')?.value || '').trim() || null,
         parent_id:              (document.getElementById('f_parent_id')?.value || '').trim() || null,
-        generasi:               g ? parseInt(g) : null,
+        generasi:               g ? (parseInt(g.split(' - ')[0]) || null) : null,
         pasangan:               (document.getElementById('f_pasangan')?.value || '').trim() || null,
         pasangan_gender:        (document.getElementById('f_pasangan_gender')?.value || '').trim() || null,
         pasangan_status:        (document.getElementById('f_pasangan_status')?.value || '').trim() || null,
@@ -1433,21 +1715,49 @@
       }
 
       try {
+        let savedMemberId = memberId;
         let res;
         if (memberId) {
           res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${memberId}`, {
-            method: 'PATCH',
-            headers: supaHeaders(),
-            body: JSON.stringify(payload),
+            method: 'PATCH', headers: supaHeaders(), body: JSON.stringify(payload),
           });
         } else {
           res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}`, {
-            method: 'POST',
-            headers: { ...supaHeaders(), 'Prefer': 'return=representation' },
+            method: 'POST', headers: { ...supaHeaders(), 'Prefer': 'return=representation' },
             body: JSON.stringify(payload),
           });
+          if (res.ok) {
+            const created = await res.json();
+            savedMemberId = created[0]?.id;
+          }
         }
         if (!res.ok) throw new Error(await res.text());
+
+        // ── Save spouses ──
+        if (savedMemberId) {
+          const spouseBlocks = collectSpouseBlocks();
+          // Fetch existing spouse IDs for this member to know which to delete
+          const existingRes = await fetch(`${SUPABASE_URL}/rest/v1/spouses?member_id=eq.${savedMemberId}&select=id`, { headers: supaHeaders() });
+          const existingSpouses = existingRes.ok ? await existingRes.json() : [];
+          const submittedIds = spouseBlocks.map(s => s.id).filter(Boolean);
+          // Delete removed spouses
+          for (const ex of existingSpouses) {
+            if (!submittedIds.includes(String(ex.id))) {
+              await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${ex.id}`, { method: 'DELETE', headers: supaHeaders() });
+            }
+          }
+          // Upsert each spouse block
+          for (const sp of spouseBlocks) {
+            const spPayload = { ...sp, member_id: savedMemberId };
+            delete spPayload.id;
+            if (sp.id) {
+              await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${sp.id}`, { method: 'PATCH', headers: supaHeaders(), body: JSON.stringify(spPayload) });
+            } else {
+              await fetch(`${SUPABASE_URL}/rest/v1/spouses`, { method: 'POST', headers: supaHeaders(), body: JSON.stringify(spPayload) });
+            }
+          }
+        }
+
         closeSheet('formSheet');
         await reloadData();
         showToast(memberId ? 'Data berhasil diperbarui.' : 'Anggota baru berhasil ditambahkan.');
@@ -1457,32 +1767,44 @@
       }
     }
 
-    async function submitSpouseForm(memberId) {
+    async function submitSpouseForm(memberId, spouseId) {
       const btn = document.getElementById('btnSave');
       btn.disabled = true; btn.textContent = 'Menyimpan…';
 
+      const normGender = v => ({ F:'P', M:'L', f:'P', m:'L' }[v] || v || null);
+      const normStatus = v => v && /alm|deceased/i.test(v) ? 'Wafat' : (v || null);
+      const nullify   = v => v && v.trim() ? v.trim() : null;
+
       const patch = {
-        pasangan:               (document.getElementById('f_pasangan')?.value || '').trim() || null,
-        pasangan_gender:        (document.getElementById('f_pasangan_gender')?.value || '').trim() || null,
-        pasangan_status:        (document.getElementById('f_pasangan_status')?.value || '').trim() || null,
-        pasangan_tempat_lahir:  (document.getElementById('f_pasangan_tempat')?.value || '').trim() || null,
-        pasangan_tanggal_lahir: (document.getElementById('f_pasangan_tanggal')?.value || '').trim() || null,
-        pasangan_alamat:        (document.getElementById('f_pasangan_alamat')?.value || '').trim() || null,
-        pasangan_kontak:        (document.getElementById('f_pasangan_kontak')?.value || '').trim() || null,
+        member_id:    memberId || null,
+        nama:         nullify(document.getElementById('f_pasangan')?.value),
+        gender:       normGender(document.getElementById('f_pasangan_gender')?.value || ''),
+        generasi:     nullify((document.getElementById('f_pasangan_generasi')?.value || '').split(' - ')[0]),
+        status:       normStatus(document.getElementById('f_pasangan_status')?.value || ''),
+        gol_darah:    nullify(document.getElementById('f_pasangan_gol_darah')?.value),
+        tempat_lahir: nullify(document.getElementById('f_pasangan_tempat')?.value),
+        tanggal_lahir:nullify(document.getElementById('f_pasangan_tanggal')?.value),
+        alamat:       nullify(document.getElementById('f_pasangan_alamat')?.value),
+        kontak:       nullify(document.getElementById('f_pasangan_kontak')?.value),
       };
 
-      if (!patch.pasangan) {
+      if (!patch.nama) {
         showFormError('Nama pasangan wajib diisi.');
         btn.disabled = false; btn.textContent = 'Simpan Pasangan';
         return;
       }
 
       try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${memberId}`, {
-          method: 'PATCH',
-          headers: supaHeaders(),
-          body: JSON.stringify(patch),
-        });
+        let res;
+        if (spouseId && !String(spouseId).startsWith('inline_')) {
+          res = await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${spouseId}`, {
+            method: 'PATCH', headers: supaHeaders(), body: JSON.stringify(patch),
+          });
+        } else {
+          res = await fetch(`${SUPABASE_URL}/rest/v1/spouses`, {
+            method: 'POST', headers: supaHeaders(), body: JSON.stringify(patch),
+          });
+        }
         if (!res.ok) throw new Error(await res.text());
         closeSheet('formSheet');
         await reloadData();
@@ -1505,13 +1827,13 @@
     async function reloadData() {
       try {
         if (SUPABASE_URL && !SUPABASE_URL.includes('your-project')) {
-          const res = await fetch(
-            `${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&order=generasi.asc,no_induk.asc`,
-            { headers: supaHeaders() }
-          );
-          if (!res.ok) throw new Error(await res.text());
-          const rows = await res.json();
-          allData = rows.map(normaliseRow);
+          const [mRes, sRes] = await Promise.all([
+            fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?select=*&deleted_at=is.null&order=generasi.asc,no_induk.asc`, { headers: supaHeaders() }),
+            fetch(`${SUPABASE_URL}/rest/v1/spouses?select=*&deleted_at=is.null&order=member_id.asc`,                       { headers: supaHeaders() }),
+          ]);
+          if (!mRes.ok) throw new Error(await mRes.text());
+          allData = (await mRes.json()).map(normaliseRow);
+          if (sRes.ok) spousesData = (await sRes.json()).map(normaliseSpouseRow);
         } else if (window._csvRaw) {
           allData = parseCSVText(window._csvRaw);
         }
@@ -1550,25 +1872,66 @@
     }
 
     // ── OPEN DETAIL ──
-    function openDetail(id, type) {
-      // type: 'member' | 'spouse'
-      let subject, title;
+    // Navigation stack: stores PREVIOUS views so back button can return to them
+    let _detailStack   = [];
+    let _currentDetail = null; // {id, type} currently shown
+
+    function openDetail(id, type, fromNav = false) {
+      let subject, title, renderType;
 
       if (type === 'member') {
-        subject = allData.find(d => d.ID === id);
+        subject = allData.find(d => d.ID === String(id));
         if (!subject) return;
         title = subject.Nama || 'Detail Anggota';
+        renderType = 'member';
+      } else if (type === 'spouse_row') {
+        if (String(id).startsWith('inline_')) {
+          const memberId = String(id).replace('inline_', '');
+          const member = allData.find(d => d.ID === memberId);
+          subject = member ? buildSpouseObj(member) : null;
+        } else {
+          subject = spousesData.find(s => s.ID === String(id));
+        }
+        if (!subject) return;
+        title = subject.Nama || 'Detail Pasangan';
+        renderType = 'spouse';
       } else {
-        // spouse: id is the member's ID whose spouse we want
-        const member = allData.find(d => d.ID === id);
+        const member = allData.find(d => d.ID === String(id));
         if (!member) return;
         subject = buildSpouseObj(member);
         title = subject.Nama || 'Detail Pasangan';
+        renderType = 'spouse';
       }
 
+      const isOpen = document.getElementById('detailSheet').classList.contains('open');
+
+      if (!fromNav) {
+        if (isOpen && _currentDetail) {
+          // Save CURRENT view before navigating to new one
+          _detailStack.push(_currentDetail);
+        } else {
+          // Fresh open from list — reset stack
+          _detailStack = [];
+        }
+      }
+      // Track what we're now showing
+      _currentDetail = { id, type };
+
       document.getElementById('detailSheetTitle').textContent = title;
-      document.getElementById('detailBody').innerHTML = renderDetailBody(subject, type, id);
-      openSheet('detailSheet');
+      const backBtn = _detailStack.length > 0
+        ? `<button class="detail-back-btn" onclick="detailGoBack()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+            Kembali
+          </button>`
+        : '';
+      document.getElementById('detailBody').innerHTML = backBtn + renderDetailBody(subject, renderType, id);
+      if (!isOpen) openSheet('detailSheet');
+    }
+
+    function detailGoBack() {
+      const prev = _detailStack.pop();
+      if (!prev) { closeSheet('detailSheet'); return; }
+      openDetail(prev.id, prev.type, true);
     }
 
     function buildSpouseObj(member) {
@@ -1587,82 +1950,173 @@
 
     function renderDetailBody(d, type, refId) {
       const isMember = type === 'member';
-      const genderClass = isMember ? detectGender(d) : (
-        d.Gender ? (d.Gender.trim().toUpperCase() === 'P' ? 'female' : 'male') : 'male'
-      );
-      const initials = (d.Nama || '?').charAt(0).toUpperCase();
-      const genLabel = isMember && d.Generasi ? genLabels[d.Generasi] || `Gen ${d.Generasi}` : '';
+      const isSpouseType = type === 'spouse';
 
-      // Normalise all Almarhum/* variants to "Wafat"
-      const normaliseStatus = s => (s && /alm|wafat/i.test(s)) ? 'Wafat' : s;
-      const spouseStatus = normaliseStatus(d.Status || '');
+      // ── Helpers ──
+      const normaliseStatus = s => (s && /alm|wafat/i.test(s)) ? 'Wafat' : (s || '');
       const isWafat = s => s === 'Wafat';
-      const statusBadge = spouseStatus
-        ? `<span style="font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;background:${isWafat(spouseStatus)?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${isWafat(spouseStatus)?'#e07070':'#70c070'}">${spouseStatus}</span>`
-        : '';
-
-      // Support multiple CSV column spellings + extract from name suffix e.g. "Rubiyem (Almh)"
-      let memberStatus = d.Status || d.status || d['Status Anggota'] || '';
-      if (!memberStatus) {
-        const nameSuffix = (d.Nama || d.nama || '').match(/\((Alm[^)]*|Wafat)\)/i);
-        if (nameSuffix) memberStatus = 'Wafat';
-      }
-      memberStatus = normaliseStatus(memberStatus);
-      const memberGenerasi = d.Generasi || d.generasi || d['Generasi'] || '';
-      const resolvedGenLabel = isMember && memberGenerasi
-        ? genLabels[memberGenerasi] || `Gen ${memberGenerasi}` : genLabel;
-
+      const statusSpan = s => {
+        const ns = normaliseStatus(s);
+        if (!ns) return '';
+        return `<span style="font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;background:${isWafat(ns)?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${isWafat(ns)?'#e07070':'#70c070'}">${ns}</span>`;
+      };
       const field = (label, value) => `
         <div class="detail-field">
           <span class="detail-label">${label}</span>
           <span class="detail-value${!value ? ' empty' : ''}">${value || '—'}</span>
         </div>`;
-
       const fieldFull = (label, value) => `
         <div class="detail-field full">
           <span class="detail-label">${label}</span>
           <span class="detail-value${!value ? ' empty' : ''}">${value || '—'}</span>
         </div>`;
+      const genderLabel = g => g === 'P' ? 'Perempuan' : g === 'L' ? 'Laki-laki' : '—';
 
-      let spouseSection = '';
-      if (isMember && d.Pasangan && d.Pasangan !== '-') {
-        spouseSection = `
+      // ── Spouse generation labels (menantu) ──
+      const spouseGenLabels = {
+        '1p': 'Anak Menantu', '2p': 'Cucu Menantu',
+        '3p': 'Buyut Menantu', '4p': 'Canggah Menantu', '5p': 'Wareng Menantu'
+      };
+
+      if (isMember) {
+        // ── MEMBER DETAIL ──
+        const genderClass = detectGender(d);
+        const initials = (d.Nama || '?').charAt(0).toUpperCase();
+        const memberGenerasi = d.Generasi || d.generasi || '';
+        const genNum = memberGenerasi.split(' - ')[0];
+        const resolvedGenLabel = memberGenerasi
+          ? (genLabels[genNum] || memberGenerasi) : '';
+
+        let memberStatus = normaliseStatus(d.Status || d.status || d['Status Anggota'] || '');
+        if (!memberStatus) {
+          const m = (d.Nama || d.nama || '').match(/\((Alm[^)]*|Wafat)\)/i);
+          if (m) memberStatus = 'Wafat';
+        }
+
+        // ── Spouses (from spousesData or CSV inline fallback) ──
+        const spousesForMember = spousesData.filter(s => s['Member ID'] === d.ID);
+        // CSV fallback: build inline spouse as first entry if no spousesData
+        if (spousesForMember.length === 0 && d.Pasangan && d.Pasangan !== '-') {
+          spousesForMember.push({
+            ID: 'inline_' + d.ID,
+            'Member ID': d.ID,
+            Nama: d.Pasangan,
+            Gender: d['Pasangan Gender'] || '',
+            'Tempat Lahir': d['Pasangan Tempat Lahir'] || '',
+            'Tanggal Lahir': d['Pasangan Tanggal Lahir'] || '',
+            Status: d['Pasangan Status'] || '',
+            Alamat: d['Pasangan Alamat'] || '',
+            Kontak: d['Pasangan Kontak'] || '',
+            'Gol Darah': '',
+            Generasi: '',
+          });
+        }
+
+        const spouseSection = spousesForMember.length ? `
           <div class="detail-section-title">Pasangan</div>
-          <button class="detail-spouse-btn" onclick="openDetail('${d.ID}','spouse')">
-            <div class="avatar ${detectSpouseGender(d)}" style="width:36px;height:36px;font-size:0.85rem">
-              ${(d.Pasangan||'?').charAt(0).toUpperCase()}
-            </div>
-            <div>
-              <div class="ds-name">${d.Pasangan}</div>
-              <div class="ds-sub">Ketuk untuk detail pasangan</div>
-            </div>
-          </button>`;
-      }
+          ${spousesForMember.map(sp => {
+            const spG = sp.Gender === 'P' ? 'female' : 'male';
+            const spStatus = normaliseStatus(sp.Status);
+            return `<button class="detail-spouse-btn" onclick="openDetail('${sp.ID}','spouse_row')">
+              <div class="avatar ${spG}" style="width:36px;height:36px;font-size:0.85rem">${(sp.Nama||'?').charAt(0).toUpperCase()}</div>
+              <div style="flex:1">
+                <div class="ds-name">${sp.Nama}</div>
+                <div class="ds-sub">${spouseGenLabels[(sp.Generasi||'').split(' - ')[0]] || sp.Generasi || 'Pasangan'}${spStatus ? ' · ' + statusSpan(spStatus) : ''}</div>
+              </div>
+            </button>`;
+          }).join('')}` : '';
 
-      const editBtn = `<button class="admin-edit-btn${isAdmin ? ' visible' : ''}"
-        onclick="openMemberForm('${refId}','${type}')">✏️ Edit Data Ini</button>`;
+        // ── Children (members whose Parent ID = this member's ID) ──
+        const children = allData.filter(c => c['Parent ID'] === d.ID);
+        const childSection = children.length ? `
+          <div class="detail-section-title">Anak</div>
+          ${children.map(c => {
+            const cG = detectGender(c);
+            const cStatus = normaliseStatus(c.Status || '');
+            return `<button class="detail-spouse-btn" onclick="openDetail('${c.ID}','member')">
+              <div class="avatar ${cG}" style="width:36px;height:36px;font-size:0.85rem">${(c.Nama||'?').charAt(0).toUpperCase()}</div>
+              <div style="flex:1">
+                <div class="ds-name">${c.Nama}</div>
+                <div class="ds-sub">${genLabels[(c.Generasi||'').split(' - ')[0]] || c.Generasi || ''}${cStatus ? ' · ' + statusSpan(cStatus) : ''}</div>
+              </div>
+            </button>`;
+          }).join('')}` : '';
 
-      return `
-        <div class="detail-hero">
-          <div class="detail-avatar avatar ${genderClass}">${initials}</div>
-          <div class="detail-hero-info">
-            <div class="detail-hero-name">${d.Nama || '—'}</div>
-            <div class="detail-hero-sub">${[resolvedGenLabel, memberStatus ? `<span style="font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;background:${isWafat(memberStatus)?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${isWafat(memberStatus)?'#e07070':'#70c070'}">${memberStatus}</span>` : ''].filter(Boolean).join(' · ')}</div>
+        const editBtn = `
+          <button class="admin-edit-btn${isAdmin ? ' visible' : ''}"
+            onclick="openMemberForm('${refId}','member')">✏️ Edit Data Ini</button>
+          <button class="admin-delete-btn${isAdmin ? ' visible' : ''}"
+            onclick="softDelete('${d.ID}','${TABLE_MEMBERS}')">🗑 Hapus Anggota Ini</button>`;
+
+        return `
+          <div class="detail-hero">
+            <div class="detail-avatar avatar ${genderClass}">${initials}</div>
+            <div class="detail-hero-info">
+              <div class="detail-hero-name">${d.Nama || '—'}</div>
+              <div class="detail-hero-sub">${[resolvedGenLabel, statusSpan(memberStatus)].filter(Boolean).join(' · ')}</div>
+            </div>
           </div>
-        </div>
-        <div class="detail-section-title">${isMember ? 'Data Anggota' : 'Data Pasangan'}</div>
-        <div class="detail-grid">
-          ${isMember ? field('No. Induk', d['No Induk'] || d['No_Induk'] || d.no_induk || d.ID) : ''}
-          ${field('Jenis Kelamin', d.Gender === 'P' || d.gender === 'P' ? 'Perempuan' : d.Gender === 'L' || d.gender === 'L' ? 'Laki-laki' : '')}
-          ${field('Tempat Lahir', d['Tempat Lahir'] || d['Tempat_Lahir'] || d.tempat_lahir)}
-          ${field('Tanggal Lahir', d['Tanggal Lahir'] || d['Tanggal_Lahir'] || d.tanggal_lahir)}
-          ${field('Status', memberStatus)}
-          ${isMember ? field('Generasi', resolvedGenLabel) : ''}
-          ${fieldFull('Alamat', d.Alamat || d.alamat)}
-          ${fieldFull('Kontak', d.Kontak || d.kontak)}
-        </div>
-        ${spouseSection}
-        ${editBtn}`;
+          <div class="detail-section-title">Data Anggota</div>
+          <div class="detail-grid">
+            ${field('No. Induk', d['No Induk'] || d['No_Induk'] || d.no_induk || '')}
+            ${field('Jenis Kelamin', genderLabel(d.Gender || d.gender))}
+            ${field('Tempat Lahir', d['Tempat Lahir'] || d.tempat_lahir)}
+            ${field('Tanggal Lahir', d['Tanggal Lahir'] || d.tanggal_lahir)}
+            ${field('Status', memberStatus || '—')}
+            ${field('Generasi', resolvedGenLabel)}
+            ${field('Gol. Darah', d['Gol Darah'] || d.gol_darah)}
+            ${fieldFull('Alamat', d.Alamat || d.alamat)}
+            ${fieldFull('Kontak', d.Kontak || d.kontak)}
+          </div>
+          ${spouseSection}
+          ${childSection}
+          ${editBtn}`;
+
+      } else {
+        // ── SPOUSE DETAIL (from spousesData or inline CSV) ──
+        // refId is the spouse's own ID (or 'inline_MEMBERID')
+        let sp;
+        if (String(refId).startsWith('inline_')) {
+          // built from CSV inline fields
+          sp = d;
+        } else {
+          sp = spousesData.find(s => s.ID === String(refId)) || d;
+        }
+
+        const spG = sp.Gender === 'P' ? 'female' : 'male';
+        const initials = (sp.Nama || '?').charAt(0).toUpperCase();
+        const spStatus = normaliseStatus(sp.Status || '');
+        // sp.Generasi may be "1p - Anak Menantu" (full) or "1p" (raw) — handle both
+        const spGenCode = (sp.Generasi || '').split(' - ')[0];
+        const spGenLabel = spouseGenLabels[spGenCode] || sp.Generasi || '';
+
+        const editBtn = `
+          <button class="admin-edit-btn${isAdmin ? ' visible' : ''}"
+            onclick="openMemberForm('${sp['Member ID'] || ''}','spouse','${sp.ID || ''}')">✏️ Edit Data Ini</button>
+          <button class="admin-delete-btn${isAdmin ? ' visible' : ''}"
+            onclick="softDelete('${sp.ID}','spouses')">🗑 Hapus Pasangan Ini</button>`;
+
+        return `
+          <div class="detail-hero">
+            <div class="detail-avatar avatar ${spG}">${initials}</div>
+            <div class="detail-hero-info">
+              <div class="detail-hero-name">${sp.Nama || '—'}</div>
+              <div class="detail-hero-sub">${[spGenLabel, statusSpan(spStatus)].filter(Boolean).join(' · ')}</div>
+            </div>
+          </div>
+          <div class="detail-section-title">Data Pasangan</div>
+          <div class="detail-grid">
+            ${field('Jenis Kelamin', genderLabel(sp.Gender))}
+            ${field('Tempat Lahir', sp['Tempat Lahir'])}
+            ${field('Tanggal Lahir', sp['Tanggal Lahir'])}
+            ${field('Status', spStatus || '—')}
+            ${field('Generasi', spGenLabel)}
+            ${field('Gol. Darah', sp['Gol Darah'] || '')}
+            ${fieldFull('Alamat', sp.Alamat)}
+            ${fieldFull('Kontak', sp.Kontak)}
+          </div>
+          ${editBtn}`;
+      }
     }
 
     function detectSpouseGender(member) {
@@ -1675,6 +2129,25 @@
       return femaleHints.some(h => name.includes(h)) ? 'female' : 'male';
     }
 
+
+    // ── SOFT DELETE ──
+    async function softDelete(id, table) {
+      const label = table === 'spouses' ? 'data pasangan' : 'data anggota';
+      if (!confirm(`Hapus ${label} ini? Data akan disembunyikan (soft delete) dan bisa dipulihkan dari database.`)) return;
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${table}?id=eq.${id}`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify({ deleted_at: new Date().toISOString() }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        closeAllSheets();
+        await reloadData();
+        showToast('Data berhasil dihapus.');
+      } catch (e) {
+        alert('Gagal menghapus: ' + e.message);
+      }
+    }
 
     // ── ADMIN AUTH ──
     function toggleAdminPrompt() {
@@ -1733,7 +2206,41 @@
       document.getElementById('sheetOverlay').classList.remove('open');
     }
 
+    // ── LOGIN (dashboard access) ──
+    const LOGIN_PIN = '8138';
+
+    function confirmLogin() {
+      const val = document.getElementById('loginInput').value;
+      if (val === LOGIN_PIN) {
+        document.getElementById('loginOverlay').classList.add('hidden');
+        document.getElementById('loginInput').value = '';
+      } else {
+        document.getElementById('loginError').textContent = 'PIN salah. Coba lagi.';
+        document.getElementById('loginInput').value = '';
+        document.getElementById('loginInput').focus();
+      }
+    }
+
+    // Show login on first load
+    window.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('loginOverlay').classList.remove('hidden');
+      setTimeout(() => document.getElementById('loginInput').focus(), 100);
+    });
+
     init();
   </script>
+  <!-- LOGIN OVERLAY -->
+  <div id="loginOverlay">
+    <div class="login-box">
+      <div class="login-logo">⟡ Silsilah Trah Kariyorejan ⟡</div>
+      <div class="login-title">Masukkan PIN untuk melanjutkan</div>
+      <input type="password" id="loginInput" placeholder="••••" maxlength="8"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1.2rem;letter-spacing:0.3em;text-align:center;padding:0.65rem;outline:none;transition:border-color 0.18s;box-sizing:border-box;color-scheme:dark"
+        onkeydown="if(event.key==='Enter')confirmLogin()" />
+      <div id="loginError"></div>
+      <button class="btn-save" onclick="confirmLogin()">Masuk</button>
+    </div>
+  </div>
+
 </body>
 </html>
