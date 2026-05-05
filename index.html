@@ -772,12 +772,262 @@
         border-radius: 16px 16px 0 0;
       }
     }
+
+    /* ── BURGER / SIDEBAR ── */
+    #burgerBtn {
+      flex-shrink: 0;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 0.25rem;
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s;
+      line-height: 1;
+    }
+    #burgerBtn:hover { color: var(--gold-light); }
+
+    #sidebarOverlay {
+      position: fixed; inset: 0; z-index: 700;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s ease;
+    }
+    #sidebarOverlay.open { opacity: 1; pointer-events: all; }
+
+    #sidebar {
+      position: fixed;
+      top: 0; left: 0; bottom: 0;
+      width: 270px;
+      z-index: 800;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      transform: translateX(-100%);
+      transition: transform 0.28s cubic-bezier(0.32,0.72,0,1);
+    }
+    #sidebar.open { transform: translateX(0); }
+
+    .sidebar-head {
+      padding: 1.1rem 1.1rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .sidebar-logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 0.88rem;
+      color: var(--gold-light);
+      line-height: 1.35;
+      flex: 1;
+    }
+    .sidebar-close {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 50%; width: 28px; height: 28px;
+      color: var(--text-muted); font-size: 0.85rem;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s; flex-shrink: 0;
+    }
+    .sidebar-close:hover { border-color: var(--gold); color: var(--gold-light); }
+
+    .sidebar-nav { list-style: none; padding: 0.6rem 0; flex: 1; overflow-y: auto; }
+    .sidebar-nav li a, .sidebar-nav li button {
+      display: flex; align-items: center; gap: 0.75rem;
+      padding: 0.7rem 1.1rem;
+      color: var(--text-muted);
+      font-size: 0.88rem; font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s, background 0.15s;
+      border-radius: 0; border: none; background: none;
+      width: 100%; text-align: left;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .sidebar-nav li a:hover, .sidebar-nav li button:hover {
+      color: var(--text); background: var(--surface2);
+    }
+    .sidebar-nav li.active a, .sidebar-nav li.active button {
+      color: var(--gold-light); background: var(--gold-dim);
+    }
+    .sidebar-nav .nav-icon { font-size: 1.05rem; width: 22px; text-align: center; flex-shrink: 0; }
+    .sidebar-nav .nav-sep {
+      height: 1px; background: var(--border); margin: 0.4rem 1rem;
+      pointer-events: none;
+    }
+    .sidebar-nav .nav-badge {
+      margin-left: auto;
+      font-size: 0.6rem; font-weight: 700;
+      background: var(--gold-dim); color: var(--gold);
+      border: 1px solid rgba(201,150,42,0.3);
+      border-radius: 999px; padding: 0.1rem 0.45rem;
+      letter-spacing: 0.04em;
+    }
+    .sidebar-footer {
+      padding: 0.75rem 1.1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem; color: var(--text-muted);
+      text-align: center;
+    }
+
+    /* Admin-only nav items */
+    .nav-admin-only { display: none; }
+    .nav-admin-only.visible { display: block; }
+
+    /* ── REQUEST TYPE MODAL ── */
+    #requestTypeSheet { max-width: 420px; }
+    .request-type-btn {
+      display: flex; align-items: flex-start; gap: 0.9rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 1rem 1.1rem;
+      cursor: pointer; transition: border-color 0.15s, background 0.15s;
+      width: 100%; text-align: left;
+    }
+    .request-type-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
+    .rtb-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .rtb-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
+    .rtb-sub { font-size: 0.75rem; color: var(--text-muted); line-height: 1.45; }
+
+    /* ── REQUEST FORM SHEET ── */
+    #requestSheet { max-width: 640px; }
+
+    .req-section-title {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+      color: var(--gold); text-transform: uppercase;
+      padding: 0.75rem 1rem 0.25rem;
+    }
+    .requestor-badge {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      background: rgba(74,127,203,0.12); border: 1px solid rgba(74,127,203,0.25);
+      border-radius: 999px; padding: 0.25rem 0.75rem;
+      font-size: 0.72rem; color: #7aaae0; font-weight: 500;
+      margin: 0 1rem 0.5rem;
+    }
+
+    /* Search-to-update member picker */
+    .member-search-wrap {
+      position: relative; padding: 0 1rem; margin-bottom: 0.5rem;
+    }
+    .member-search-input {
+      width: 100%; background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif;
+      font-size: 0.85rem; padding: 0.5rem 0.65rem 0.5rem 2.2rem;
+      outline: none; transition: border-color 0.15s; box-sizing: border-box;
+    }
+    .member-search-input:focus { border-color: var(--gold); }
+    .member-search-icon {
+      position: absolute; left: 1.65rem; top: 50%;
+      transform: translateY(-50%); font-size: 0.85rem; color: var(--text-muted);
+      pointer-events: none;
+    }
+    .member-pick-list {
+      max-height: 180px; overflow-y: auto;
+      border: 1px solid var(--border); border-radius: 10px;
+      margin: 0.5rem 1rem; background: var(--surface);
+    }
+    .member-pick-item {
+      display: flex; align-items: center; gap: 0.65rem;
+      padding: 0.55rem 0.85rem; cursor: pointer;
+      transition: background 0.12s; border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .member-pick-item:last-child { border-bottom: none; }
+    .member-pick-item:hover { background: var(--surface2); }
+    .member-pick-item .mpi-name { color: var(--text); }
+    .member-pick-item .mpi-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .selected-member-card {
+      display: flex; align-items: center; gap: 0.75rem;
+      background: var(--gold-dim); border: 1px solid var(--gold);
+      border-radius: var(--radius); padding: 0.7rem 0.85rem;
+      margin: 0 1rem 0.75rem;
+    }
+    .selected-member-card .smc-name { font-size: 0.88rem; color: var(--text); }
+    .selected-member-card .smc-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+
+    /* ── PREVIEW MODAL ── */
+    #previewOverlay {
+      position: fixed; inset: 0; z-index: 900;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+    }
+    #previewOverlay.open { display: flex; }
+    #previewModal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; width: calc(100% - 2rem); max-width: 560px;
+      max-height: 88dvh; display: flex; flex-direction: column;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+    }
+    .preview-header {
+      padding: 0.85rem 1.25rem 0.65rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .preview-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold-light); }
+    .preview-body { overflow-y: auto; padding: 1rem 1.25rem; flex: 1; }
+    .preview-section { margin-bottom: 1rem; }
+    .preview-section-title {
+      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--gold); font-weight: 600; margin-bottom: 0.6rem;
+      padding-bottom: 0.3rem; border-bottom: 1px solid var(--border);
+    }
+    .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; }
+    .preview-field { display: flex; flex-direction: column; gap: 0.1rem; }
+    .preview-field.full { grid-column: 1 / -1; }
+    .preview-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
+    .preview-value { font-size: 0.85rem; color: var(--text); }
+    .preview-value.empty { color: var(--text-muted); font-style: italic; }
+    .preview-footer {
+      padding: 0.85rem 1.25rem; border-top: 1px solid var(--border);
+      display: flex; gap: 0.65rem; flex-shrink: 0;
+    }
+
+    /* ── REQUEST QUEUE (admin view inline) ── */
+    .req-queue-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .req-queue-table th {
+      text-align: left; font-size: 0.65rem; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text-muted); font-weight: 600;
+      padding: 0.5rem 0.65rem; border-bottom: 1px solid var(--border);
+    }
+    .req-queue-table td { padding: 0.65rem 0.65rem; border-bottom: 1px solid rgba(201,150,42,0.08); }
+    .req-queue-table tr:hover td { background: var(--surface2); }
+    .req-id-link { color: var(--gold-light); cursor: pointer; font-weight: 600; text-decoration: underline dotted; font-size: 0.78rem; }
+    .req-status-badge {
+      display: inline-block; border-radius: 999px;
+      padding: 0.18rem 0.6rem; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .req-status-badge.pending { background: rgba(201,150,42,0.15); color: var(--gold); border: 1px solid rgba(201,150,42,0.3); }
+    .req-status-badge.in_progress { background: rgba(74,127,203,0.15); color: #7aaae0; border: 1px solid rgba(74,127,203,0.3); }
+    .req-status-badge.completed { background: rgba(74,203,74,0.1); color: #70c070; border: 1px solid rgba(74,203,74,0.25); }
+
+    /* Request detail overlay */
+    #reqDetailOverlay {
+      position: fixed; inset: 0; z-index: 920;
+      background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
+      display: none; align-items: center; justify-content: center;
+    }
+    #reqDetailOverlay.open { display: flex; }
+    #reqDetailModal {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; width: calc(100% - 2rem); max-width: 580px;
+      max-height: 90dvh; display: flex; flex-direction: column;
+    }
+
+    /* ── SUCCESS ANIMATION ── */
+    .success-check {
+      width: 56px; height: 56px; border-radius: 50%;
+      background: rgba(74,203,74,0.12); border: 2px solid rgba(74,203,74,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.5rem; margin: 0 auto 0.85rem;
+    }
   </style>
 </head>
 <body>
 
   <!-- HEADER -->
   <div id="header">
+    <button id="burgerBtn" onclick="openSidebar()" title="Menu">☰</button>
     <div class="logo">⟡ Silsilah Trah Kariyorejan ⟡</div>
     <div id="searchWrap">
       <span class="search-icon">🔍</span>
@@ -789,6 +1039,60 @@
 
   <!-- ADMIN BANNER -->
   <div id="adminBanner">🔐 Mode Super Admin Aktif — <span style="cursor:pointer;text-decoration:underline" onclick="logoutAdmin()">Keluar</span></div>
+
+  <!-- SIDEBAR OVERLAY -->
+  <div id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+  <!-- SIDEBAR -->
+  <nav id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo" style="text-align: center;">
+      <span style="font-size: 1.3em; font-weight: bold; display: block; margin-bottom: 5px;">❖ SILSILAH ❖</span>
+      ⟡ Trah Kariyorejan ⟡</div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <ul class="sidebar-nav">
+      <li>
+        <a href="dashboard.html">
+          <span class="nav-icon">🏠</span> Beranda
+        </a>
+      </li>
+      <li>
+        <a href="introduction.html">
+          <span class="nav-icon">📖</span> Pengenalan
+        </a>
+      </li>
+      <li>
+        <a href="biography.html">
+          <span class="nav-icon">📜</span> Biografi
+        </a>
+      </li>
+      <li class="active">
+        <a href="index.html">
+          <span class="nav-icon">🌿</span> Pohon Silsilah
+        </a>
+      </li>
+      <div class="nav-sep"></div>
+      <li class="nav-admin-only" id="navRequestList">
+        <a href="request-list.html">
+          <span class="nav-icon">📋</span> Antrian Permintaan
+          <span class="nav-badge" id="navPendingCount" style="display:none">0</span>
+        </a>
+      </li>
+      <div class="nav-sep nav-admin-only" id="navSep2"></div>
+      <li>
+        <a href="attendance.html">
+          <span class="nav-icon">📅</span> Kehadiran Keluarga
+        </a>
+      </li>
+      <li>
+        <a href="misc.html">
+          <span class="nav-icon">⚙️</span> Lainnya
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">Trah Kariyorejan © 2025</div>
+  </nav>
 
   <!-- FILTER CHIPS -->
   <div id="filterBar">
@@ -863,6 +1167,87 @@
     <div class="sheet-body" id="formBody"></div>
   </div>
 
+  <!-- REQUEST TYPE SHEET -->
+  <div class="sheet" id="requestTypeSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title">Ajukan Permintaan Data</span>
+      <button class="sheet-close" onclick="closeSheet('requestTypeSheet')">✕</button>
+    </div>
+    <div class="sheet-body" style="padding:1.25rem">
+      <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:1.1rem;line-height:1.55">
+        Pilih jenis permintaan yang ingin Anda ajukan. Data akan direview oleh admin sebelum disimpan ke silsilah.
+      </p>
+      <div style="display:flex;flex-direction:column;gap:0.85rem">
+        <button class="request-type-btn" onclick="startRequestForm('add_member')">
+          <span class="rtb-icon">👤</span>
+          <div>
+            <div class="rtb-title">Tambah Anggota Baru</div>
+            <div class="rtb-sub">Daftarkan anggota trah yang belum ada di silsilah</div>
+          </div>
+        </button>
+        <button class="request-type-btn" onclick="startRequestForm('add_spouse')">
+          <span class="rtb-icon">💑</span>
+          <div>
+            <div class="rtb-title">Tambah Pasangan Baru</div>
+            <div class="rtb-sub">Daftarkan pasangan dari anggota yang sudah terdaftar</div>
+          </div>
+        </button>
+        <button class="request-type-btn" onclick="startRequestForm('update_member')">
+          <span class="rtb-icon">✏️</span>
+          <div>
+            <div class="rtb-title">Perbarui Data Anggota</div>
+            <div class="rtb-sub">Koreksi atau lengkapi data anggota yang sudah terdaftar</div>
+          </div>
+        </button>
+        <button class="request-type-btn" onclick="startRequestForm('update_spouse')">
+          <span class="rtb-icon">📝</span>
+          <div>
+            <div class="rtb-title">Perbarui Data Pasangan</div>
+            <div class="rtb-sub">Koreksi atau lengkapi data pasangan yang sudah terdaftar</div>
+          </div>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUEST FORM SHEET -->
+  <div class="sheet" id="requestSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-header">
+      <span class="sheet-title" id="requestSheetTitle">Ajukan Data</span>
+      <button class="sheet-close" onclick="closeSheet('requestSheet')">✕</button>
+    </div>
+    <div class="sheet-body" id="requestBody"></div>
+  </div>
+
+  <!-- PREVIEW MODAL -->
+  <div id="previewOverlay">
+    <div id="previewModal">
+      <div class="preview-header">
+        <span class="preview-title">👁 Preview Permintaan</span>
+        <button class="sheet-close" onclick="closePreview()">✕</button>
+      </div>
+      <div class="preview-body" id="previewBody"></div>
+      <div class="preview-footer">
+        <button class="btn-cancel" style="flex:1" onclick="closePreview()">← Kembali Edit</button>
+        <button class="btn-save" style="flex:2" id="previewSubmitBtn" onclick="submitRequest()">✓ Kirim Permintaan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REQUEST DETAIL OVERLAY -->
+  <div id="reqDetailOverlay">
+    <div id="reqDetailModal">
+      <div class="preview-header">
+        <span class="preview-title" id="reqDetailTitle">Detail Permintaan</span>
+        <button class="sheet-close" onclick="closeReqDetail()">✕</button>
+      </div>
+      <div class="preview-body" id="reqDetailBody"></div>
+      <div class="preview-footer" id="reqDetailFooter"></div>
+    </div>
+  </div>
+
   <!-- BOTTOM TAB BAR -->
   <nav id="tabBar">
     <button class="tab-btn active" id="tabList" onclick="switchView('list')">
@@ -872,6 +1257,10 @@
     <button class="tab-btn" id="tabTree" onclick="switchView('tree')">
       <span class="tab-icon">🌿</span>
       Pohon
+    </button>
+    <button class="tab-btn" id="tabRequest" onclick="openRequestTypeSheet()">
+      <span class="tab-icon">📝</span>
+      Ajukan
     </button>
     <button class="tab-btn" onclick="window.print()">
       <span class="tab-icon">🖨️</span>
@@ -2170,6 +2559,9 @@
         document.getElementById('adminBtn').classList.add('admin-active');
         document.getElementById('adminBanner').classList.add('visible');
         document.getElementById('adminFab').classList.add('visible');
+        // Show admin-only sidebar items
+        document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.add('visible'));
+        loadPendingRequestCount();
         // Re-render to show edit buttons inside any open detail sheet
         renderAll();
       } else {
@@ -2188,7 +2580,656 @@
       document.getElementById('adminBtn').classList.remove('admin-active');
       document.getElementById('adminBanner').classList.remove('visible');
       document.getElementById('adminFab').classList.remove('visible');
+      // Hide admin sidebar items
+      document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.remove('visible'));
       closeAllSheets();
+    }
+
+    // ── SIDEBAR ──
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('sidebarOverlay').classList.add('open');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('sidebarOverlay').classList.remove('open');
+    }
+
+    // ── REQUEST DATA FEATURE ──
+    let _reqType = null;      // 'add_member' | 'add_spouse' | 'update_member' | 'update_spouse'
+    let _reqTarget = null;    // selected member/spouse object (for updates)
+    let _reqPayload = null;   // collected form data (for preview→submit)
+    const TABLE_REQUESTS = 'data_requests';
+
+    function openRequestTypeSheet() {
+      openSheet('requestTypeSheet');
+    }
+
+    function startRequestForm(type) {
+      _reqType = type;
+      _reqTarget = null;
+      closeSheet('requestTypeSheet');
+
+      const titles = {
+        add_member: 'Tambah Anggota Baru',
+        add_spouse: 'Tambah Pasangan Baru',
+        update_member: 'Perbarui Data Anggota',
+        update_spouse: 'Perbarui Data Pasangan',
+      };
+      document.getElementById('requestSheetTitle').textContent = titles[type] || 'Ajukan Data';
+      document.getElementById('requestBody').innerHTML = renderRequestFormBody(type);
+      openSheet('requestSheet');
+    }
+
+    function renderRequestFormBody(type) {
+      const isUpdate = type.startsWith('update_');
+      const isMember = type.endsWith('member');
+
+      // Member/spouse form fields template
+      const memberFields = () => `
+        <div class="form-section-title" style="padding:0.75rem 1rem 0.25rem">Data Anggota</div>
+        <div class="form-grid" style="padding:0 1rem">
+          <div class="form-field">
+            <label class="form-label">No. Induk</label>
+            <input class="form-input" id="rq_no_induk" placeholder="cth. 1.2.3">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Generasi</label>
+            <select class="form-select" id="rq_generasi">
+              <option value="">— Pilih —</option>
+              <option>1 - Anak</option><option>2 - Cucu</option>
+              <option>3 - Buyut</option><option>4 - Canggah</option><option>5 - Wareng</option>
+            </select>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Nama <span style="color:#e07070">*</span></label>
+            <input class="form-input" id="rq_nama" placeholder="Nama lengkap">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Jenis Kelamin</label>
+            <select class="form-select" id="rq_gender">
+              <option value="">— Pilih —</option>
+              <option value="L">L (Laki-laki)</option>
+              <option value="P">P (Perempuan)</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="rq_status">
+              <option value="">— Pilih —</option>
+              <option>Hidup</option><option>Wafat</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Tempat Lahir</label>
+            <input class="form-input" id="rq_tempat_lahir" placeholder="Kota">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Tanggal Lahir</label>
+            <input class="form-input" id="rq_tanggal_lahir" type="date" style="color-scheme:dark">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Gol. Darah</label>
+            <select class="form-select" id="rq_gol_darah">
+              <option value="">— Pilih —</option>
+              <option>A</option><option>B</option><option>AB</option><option>O</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Parent ID (Orang Tua)</label>
+            <select class="form-select" id="rq_parent_id">
+              <option value="">— Tidak ada (akar) —</option>
+              ${allData.map(m=>`<option value="${m.ID}">${m['No Induk']?m['No Induk']+' – ':''}${m.Nama}</option>`).join('')}
+            </select>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Alamat</label>
+            <textarea class="form-textarea" id="rq_alamat" placeholder="Alamat lengkap"></textarea>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Kontak</label>
+            <input class="form-input" id="rq_kontak" placeholder="No. HP / WhatsApp">
+          </div>
+        </div>`;
+
+      const spouseFields = (prefix='rq_sp_') => `
+        <div class="form-section-title" style="padding:0.75rem 1rem 0.25rem">Data Pasangan</div>
+        <div class="form-grid" style="padding:0 1rem">
+          <div class="form-field full">
+            <label class="form-label">Nama Pasangan <span style="color:#e07070">*</span></label>
+            <input class="form-input" id="${prefix}nama" placeholder="Nama pasangan">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Generasi Pasangan</label>
+            <select class="form-select" id="${prefix}generasi">
+              <option value="">— Pilih —</option>
+              <option>1p - Anak Menantu</option><option>2p - Cucu Menantu</option>
+              <option>3p - Buyut Menantu</option><option>4p - Canggah Menantu</option>
+              <option>5p - Wareng Menantu</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Jenis Kelamin</label>
+            <select class="form-select" id="${prefix}gender">
+              <option value="">— Pilih —</option>
+              <option value="L">L</option><option value="P">P</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Status</label>
+            <select class="form-select" id="${prefix}status">
+              <option value="">— Pilih —</option>
+              <option>Hidup</option><option>Wafat</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Gol. Darah</label>
+            <select class="form-select" id="${prefix}gol_darah">
+              <option value="">— Pilih —</option>
+              <option>A</option><option>B</option><option>AB</option><option>O</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label class="form-label">Tempat Lahir</label>
+            <input class="form-input" id="${prefix}tempat_lahir" placeholder="Kota">
+          </div>
+          <div class="form-field">
+            <label class="form-label">Tanggal Lahir</label>
+            <input class="form-input" id="${prefix}tanggal_lahir" type="date" style="color-scheme:dark">
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Alamat</label>
+            <textarea class="form-textarea" id="${prefix}alamat" placeholder="Alamat lengkap"></textarea>
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Kontak</label>
+            <input class="form-input" id="${prefix}kontak" placeholder="No. HP / WhatsApp">
+          </div>
+        </div>`;
+
+      const memberPicker = (label) => `
+        <div class="form-section-title" style="padding:0.75rem 1rem 0.25rem">${label}</div>
+        <div class="member-search-wrap">
+          <span class="member-search-icon">🔍</span>
+          <input class="member-search-input" id="rqTargetSearch" placeholder="Cari nama anggota…" oninput="filterMemberPicker()">
+        </div>
+        <div class="member-pick-list" id="memberPickList">
+          ${allData.map(m=>`
+            <div class="member-pick-item" onclick="selectRequestTarget('${m.ID}','member')" data-name="${(m.Nama||'').toLowerCase()}">
+              <div class="avatar ${detectGender(m)}" style="width:30px;height:30px;font-size:0.75rem">${(m.Nama||'?').charAt(0)}</div>
+              <div>
+                <div class="mpi-name">${m.Nama}</div>
+                <div class="mpi-sub">${m['No Induk']||''} · ${genLabels[(m.Generasi||'').split(' - ')[0]]||''}</div>
+              </div>
+            </div>`).join('')}
+        </div>
+        <div id="selectedTargetCard" style="display:none"></div>`;
+
+      const spousePicker = () => `
+        <div class="form-section-title" style="padding:0.75rem 1rem 0.25rem">Pilih Pasangan yang Diperbarui</div>
+        <div class="member-search-wrap">
+          <span class="member-search-icon">🔍</span>
+          <input class="member-search-input" id="rqTargetSearch" placeholder="Cari nama pasangan…" oninput="filterSpousePicker()">
+        </div>
+        <div class="member-pick-list" id="memberPickList">
+          ${spousesData.map(sp=>{
+            const m = allData.find(d=>d.ID===sp['Member ID']);
+            return `<div class="member-pick-item" onclick="selectRequestTarget('${sp.ID}','spouse')" data-name="${(sp.Nama||'').toLowerCase()}">
+              <div class="avatar ${sp.Gender==='P'?'female':'male'}" style="width:30px;height:30px;font-size:0.75rem">${(sp.Nama||'?').charAt(0)}</div>
+              <div>
+                <div class="mpi-name">${sp.Nama}</div>
+                <div class="mpi-sub">Pasangan dari: ${m?.Nama||'—'}</div>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+        <div id="selectedTargetCard" style="display:none"></div>`;
+
+      const requestorSection = `
+        <div class="req-section-title">Informasi Pemohon</div>
+        <div class="form-grid" style="padding:0 1rem">
+          <div class="form-field full">
+            <label class="form-label">Nama Pemohon <span style="color:#e07070">*</span></label>
+            <input class="form-input" id="rq_requestor_name" placeholder="Nama Anda">
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Kontak Pemohon</label>
+            <input class="form-input" id="rq_requestor_contact" placeholder="No. HP / WhatsApp (opsional)">
+          </div>
+          <div class="form-field full">
+            <label class="form-label">Catatan / Alasan</label>
+            <textarea class="form-textarea" id="rq_notes" placeholder="Informasi tambahan untuk admin (opsional)" style="min-height:56px"></textarea>
+          </div>
+        </div>`;
+
+      const formActions = `
+        <div class="form-actions" style="padding:1rem;border-top:1px solid var(--border);margin-top:0.75rem">
+          <button class="btn-cancel" onclick="closeSheet('requestSheet')">Batal</button>
+          <button class="btn-save" onclick="openPreviewRequest()" style="background:var(--surface2);border:1px solid var(--gold);color:var(--gold-light);flex:1.2">👁 Preview</button>
+          <button class="btn-save" onclick="quickSubmitRequest()" style="flex:2">✓ Kirim Permintaan</button>
+        </div>`;
+
+      let formContent = requestorSection;
+
+      if (type === 'add_member') {
+        formContent += memberFields();
+      } else if (type === 'add_spouse') {
+        formContent += memberPicker('Anggota yang Memiliki Pasangan Ini');
+        formContent += spouseFields();
+      } else if (type === 'update_member') {
+        formContent += memberPicker('Pilih Anggota yang Diperbarui');
+        formContent += `<div id="updateMemberFormArea" style="display:none">` + memberFields() + `</div>`;
+      } else if (type === 'update_spouse') {
+        formContent += spousePicker();
+        formContent += `<div id="updateSpouseFormArea" style="display:none">` + spouseFields() + `</div>`;
+      }
+
+      formContent += formActions;
+      return formContent;
+    }
+
+    function filterMemberPicker() {
+      const kw = (document.getElementById('rqTargetSearch')?.value || '').toLowerCase();
+      document.querySelectorAll('#memberPickList .member-pick-item').forEach(el => {
+        el.style.display = !kw || el.dataset.name.includes(kw) ? '' : 'none';
+      });
+    }
+    function filterSpousePicker() { filterMemberPicker(); }
+
+    function selectRequestTarget(id, kind) {
+      if (kind === 'member') {
+        _reqTarget = { id, kind, obj: allData.find(d => d.ID === id) };
+      } else {
+        _reqTarget = { id, kind, obj: spousesData.find(s => s.ID === id) };
+      }
+      if (!_reqTarget.obj) return;
+
+      // Hide picker, show selected card
+      document.getElementById('memberPickList').style.display = 'none';
+      const rqSearch = document.getElementById('rqTargetSearch');
+      if (rqSearch) rqSearch.closest('.member-search-wrap').style.display = 'none';
+
+      const o = _reqTarget.obj;
+      const cardHtml = `
+        <div class="selected-member-card">
+          <div class="avatar ${kind==='spouse'?(o.Gender==='P'?'female':'male'):detectGender(o)}" style="width:36px;height:36px;font-size:0.9rem">${(o.Nama||'?').charAt(0)}</div>
+          <div style="flex:1">
+            <div class="smc-name">${o.Nama}</div>
+            <div class="smc-sub">${kind==='member'?(o['No Induk']||''):'Pasangan dari: '+(allData.find(m=>m.ID===o['Member ID'])?.Nama||'—')}</div>
+          </div>
+          <button onclick="clearRequestTarget()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.8rem">Ubah</button>
+        </div>`;
+      const card = document.getElementById('selectedTargetCard');
+      card.innerHTML = cardHtml;
+      card.style.display = 'block';
+
+      // Pre-fill form fields for updates
+      if (_reqType === 'update_member' && kind === 'member') {
+        const area = document.getElementById('updateMemberFormArea');
+        if (area) {
+          area.style.display = 'block';
+          // Pre-fill
+          const d = o;
+          const setV = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+          setV('rq_no_induk', d['No Induk']);
+          setV('rq_nama', d.Nama);
+          setV('rq_gender', d.Gender);
+          setV('rq_status', d.Status);
+          setV('rq_tempat_lahir', d['Tempat Lahir']);
+          setV('rq_tanggal_lahir', d['Tanggal Lahir']);
+          setV('rq_gol_darah', d['Gol Darah']);
+          setV('rq_parent_id', d['Parent ID']);
+          setV('rq_alamat', d.Alamat);
+          setV('rq_kontak', d.Kontak);
+          setV('rq_generasi', d.Generasi);
+        }
+      } else if (_reqType === 'update_spouse' && kind === 'spouse') {
+        const area = document.getElementById('updateSpouseFormArea');
+        if (area) {
+          area.style.display = 'block';
+          const sp = o;
+          const setV = (id, val) => { const el = document.getElementById(id); if(el) el.value = val || ''; };
+          setV('rq_sp_nama', sp.Nama);
+          setV('rq_sp_gender', sp.Gender);
+          setV('rq_sp_status', sp.Status);
+          setV('rq_sp_generasi', sp.Generasi);
+          setV('rq_sp_gol_darah', sp['Gol Darah']);
+          setV('rq_sp_tempat_lahir', sp['Tempat Lahir']);
+          setV('rq_sp_tanggal_lahir', sp['Tanggal Lahir']);
+          setV('rq_sp_alamat', sp.Alamat);
+          setV('rq_sp_kontak', sp.Kontak);
+        }
+      }
+    }
+
+    function clearRequestTarget() {
+      _reqTarget = null;
+      document.getElementById('memberPickList').style.display = '';
+      const rqSearch = document.getElementById('rqTargetSearch');
+      if (rqSearch) rqSearch.closest('.member-search-wrap').style.display = '';
+      document.getElementById('selectedTargetCard').style.display = 'none';
+      const area = document.getElementById('updateMemberFormArea') || document.getElementById('updateSpouseFormArea');
+      if (area) area.style.display = 'none';
+    }
+
+    function collectRequestFormData() {
+      const g = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+      const requestor_name = g('rq_requestor_name');
+      const requestor_contact = g('rq_requestor_contact');
+      const notes = g('rq_notes');
+
+      let data = {};
+      const isMember = _reqType === 'add_member' || _reqType === 'update_member';
+
+      if (isMember) {
+        data = {
+          no_induk: g('rq_no_induk'),
+          nama: g('rq_nama'),
+          gender: g('rq_gender'),
+          status: g('rq_status'),
+          tempat_lahir: g('rq_tempat_lahir'),
+          tanggal_lahir: g('rq_tanggal_lahir'),
+          gol_darah: g('rq_gol_darah'),
+          parent_id: g('rq_parent_id'),
+          generasi: g('rq_generasi'),
+          alamat: g('rq_alamat'),
+          kontak: g('rq_kontak'),
+        };
+      } else {
+        // spouse
+        const p = 'rq_sp_';
+        data = {
+          nama: g(p+'nama'),
+          gender: g(p+'gender'),
+          status: g(p+'status'),
+          generasi: g(p+'generasi'),
+          gol_darah: g(p+'gol_darah'),
+          tempat_lahir: g(p+'tempat_lahir'),
+          tanggal_lahir: g(p+'tanggal_lahir'),
+          alamat: g(p+'alamat'),
+          kontak: g(p+'kontak'),
+          member_id: _reqTarget?.id || g('rq_parent_id'),
+        };
+      }
+      return { requestor_name, requestor_contact, notes, data };
+    }
+
+    function validateRequestForm() {
+      const { requestor_name, data } = collectRequestFormData();
+      if (!requestor_name) { showToast('⚠️ Nama pemohon wajib diisi!'); return false; }
+      if (!data.nama) { showToast('⚠️ Nama wajib diisi!'); return false; }
+      if ((_reqType === 'update_member' || _reqType === 'update_spouse') && !_reqTarget) {
+        showToast('⚠️ Pilih anggota/pasangan yang akan diperbarui!'); return false;
+      }
+      if (_reqType === 'add_spouse' && !_reqTarget && !data.member_id) {
+        showToast('⚠️ Pilih anggota yang memiliki pasangan ini!'); return false;
+      }
+      return true;
+    }
+
+    function openPreviewRequest() {
+      if (!validateRequestForm()) return;
+      const { requestor_name, requestor_contact, notes, data } = collectRequestFormData();
+      _reqPayload = { requestor_name, requestor_contact, notes, data };
+
+      const typeLabel = {
+        add_member: 'Tambah Anggota Baru',
+        add_spouse: 'Tambah Pasangan Baru',
+        update_member: 'Perbarui Data Anggota',
+        update_spouse: 'Perbarui Data Pasangan',
+      }[_reqType] || 'Permintaan';
+
+      const pf = (label, value) => `
+        <div class="preview-field${value?'':' empty'}">
+          <span class="preview-label">${label}</span>
+          <span class="preview-value${value?'':' empty'}">${value || '—'}</span>
+        </div>`;
+
+      const targetInfo = _reqTarget ? `
+        <div class="preview-section">
+          <div class="preview-section-title">Target Data</div>
+          <div class="preview-grid">
+            ${pf('Nama Target', _reqTarget.obj?.Nama)}
+          </div>
+        </div>` : '';
+
+      const dataFields = data;
+      const isMember = _reqType === 'add_member' || _reqType === 'update_member';
+
+      let dataHtml = `<div class="preview-grid">`;
+      if (isMember) {
+        dataHtml += pf('Nama', dataFields.nama) + pf('No. Induk', dataFields.no_induk) +
+          pf('Generasi', dataFields.generasi) + pf('Jenis Kelamin', dataFields.gender === 'L' ? 'Laki-laki' : dataFields.gender === 'P' ? 'Perempuan' : '') +
+          pf('Status', dataFields.status) + pf('Tempat Lahir', dataFields.tempat_lahir) +
+          pf('Tanggal Lahir', dataFields.tanggal_lahir) + pf('Gol. Darah', dataFields.gol_darah) +
+          `<div class="preview-field full"><span class="preview-label">Alamat</span><span class="preview-value">${dataFields.alamat||'—'}</span></div>` +
+          `<div class="preview-field full"><span class="preview-label">Kontak</span><span class="preview-value">${dataFields.kontak||'—'}</span></div>`;
+      } else {
+        const memberOf = allData.find(m => m.ID === dataFields.member_id);
+        dataHtml += pf('Nama Pasangan', dataFields.nama) + pf('Generasi', dataFields.generasi) +
+          pf('Jenis Kelamin', dataFields.gender === 'L' ? 'Laki-laki' : dataFields.gender === 'P' ? 'Perempuan' : '') +
+          pf('Status', dataFields.status) + pf('Tempat Lahir', dataFields.tempat_lahir) +
+          pf('Tanggal Lahir', dataFields.tanggal_lahir) + pf('Gol. Darah', dataFields.gol_darah) +
+          pf('Pasangan dari', memberOf?.Nama || '') +
+          `<div class="preview-field full"><span class="preview-label">Alamat</span><span class="preview-value">${dataFields.alamat||'—'}</span></div>` +
+          `<div class="preview-field full"><span class="preview-label">Kontak</span><span class="preview-value">${dataFields.kontak||'—'}</span></div>`;
+      }
+      dataHtml += '</div>';
+
+      document.getElementById('previewBody').innerHTML = `
+        <div style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:var(--radius);padding:0.7rem 1rem;margin-bottom:1rem;font-size:0.8rem;color:var(--gold-light)">
+          <strong>Jenis Permintaan:</strong> ${typeLabel}
+        </div>
+        ${targetInfo}
+        <div class="preview-section">
+          <div class="preview-section-title">Informasi Pemohon</div>
+          <div class="preview-grid">
+            ${pf('Nama', requestor_name)} ${pf('Kontak', requestor_contact)}
+            ${notes ? `<div class="preview-field full"><span class="preview-label">Catatan</span><span class="preview-value">${notes}</span></div>` : ''}
+          </div>
+        </div>
+        <div class="preview-section">
+          <div class="preview-section-title">Data yang Diajukan</div>
+          ${dataHtml}
+        </div>`;
+      document.getElementById('previewOverlay').classList.add('open');
+    }
+
+    function closePreview() {
+      document.getElementById('previewOverlay').classList.remove('open');
+    }
+
+    async function quickSubmitRequest() {
+      if (!validateRequestForm()) return;
+      const { requestor_name, requestor_contact, notes, data } = collectRequestFormData();
+      _reqPayload = { requestor_name, requestor_contact, notes, data };
+      await doSubmitRequest();
+    }
+
+    async function submitRequest() {
+      await doSubmitRequest();
+    }
+
+    async function doSubmitRequest() {
+      const submitBtn = document.getElementById('previewSubmitBtn');
+      if (submitBtn) { submitBtn.disabled = true; submitBtn.textContent = 'Mengirim…'; }
+
+      const payload = {
+        request_type: _reqType,
+        target_id: _reqTarget?.id || null,
+        target_name: _reqTarget?.obj?.Nama || _reqPayload?.data?.nama || null,
+        requestor_name: _reqPayload.requestor_name,
+        requestor_contact: _reqPayload.requestor_contact || null,
+        data: _reqPayload.data,
+        notes: _reqPayload.notes || null,
+        status: 'pending',
+      };
+
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}`, {
+          method: 'POST',
+          headers: { ...supaHeaders(), 'Prefer': 'return=representation' },
+          body: JSON.stringify(payload),
+        });
+        if (!res.ok) throw new Error(await res.text());
+
+        closePreview();
+        closeSheet('requestSheet');
+        // Show success message
+        document.getElementById('requestBody').innerHTML = `
+          <div style="text-align:center;padding:2.5rem 1rem">
+            <div class="success-check">✓</div>
+            <div style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--text);margin-bottom:0.5rem">Permintaan Terkirim!</div>
+            <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6">
+              Permintaan Anda akan direview oleh admin dan diproses secepatnya.
+            </div>
+          </div>`;
+        openSheet('requestSheet');
+        loadPendingRequestCount();
+        setTimeout(() => closeSheet('requestSheet'), 3200);
+      } catch (e) {
+        if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = '✓ Kirim Permintaan'; }
+        showToast('Gagal mengirim: ' + e.message);
+      }
+    }
+
+    // ── REQUEST QUEUE (Admin View) ──
+    let _allRequests = [];
+
+    async function loadRequestQueue() {
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?select=*&order=created_at.desc`, {
+          headers: supaHeaders(),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        _allRequests = await res.json();
+        return _allRequests;
+      } catch (e) {
+        console.error('Failed to load requests:', e);
+        return [];
+      }
+    }
+
+    async function loadPendingRequestCount() {
+      if (!isAdmin) return;
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?status=eq.pending&select=id`, {
+          headers: supaHeaders(),
+        });
+        if (res.ok) {
+          const rows = await res.json();
+          const badge = document.getElementById('navPendingCount');
+          if (badge) {
+            badge.textContent = rows.length;
+            badge.style.display = rows.length > 0 ? '' : 'none';
+          }
+        }
+      } catch {}
+    }
+
+    function openReqDetail(req) {
+      const typeLabel = {
+        add_member: 'Tambah Anggota', add_spouse: 'Tambah Pasangan',
+        update_member: 'Perbarui Anggota', update_spouse: 'Perbarui Pasangan',
+      }[req.request_type] || req.request_type;
+
+      const pf = (label, value) => value ? `
+        <div class="preview-field">
+          <span class="preview-label">${label}</span>
+          <span class="preview-value">${value}</span>
+        </div>` : '';
+
+      const d = req.data || {};
+      const dataKeys = Object.entries(d).filter(([k,v]) => v).map(([k,v]) =>
+        pf(k.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()), v)
+      ).join('');
+
+      const statusBadge = (s) => `<span class="req-status-badge ${s}">${s==='pending'?'Pending':s==='in_progress'?'In Progress':'Completed'}</span>`;
+
+      document.getElementById('reqDetailTitle').textContent = `Permintaan #${(req.id||'').slice(-6).toUpperCase()}`;
+      document.getElementById('reqDetailBody').innerHTML = `
+        <div style="background:var(--surface2);border-radius:var(--radius);padding:0.85rem 1rem;margin-bottom:1rem;display:flex;gap:1rem;flex-wrap:wrap">
+          <div><span style="font-size:0.65rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Jenis</span><br><span style="font-size:0.85rem;color:var(--text)">${typeLabel}</span></div>
+          <div><span style="font-size:0.65rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Status</span><br>${statusBadge(req.status||'pending')}</div>
+          <div><span style="font-size:0.65rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Tanggal</span><br><span style="font-size:0.85rem;color:var(--text)">${new Date(req.created_at).toLocaleDateString('id-ID')}</span></div>
+        </div>
+        <div class="preview-section">
+          <div class="preview-section-title">Pemohon</div>
+          <div class="preview-grid">
+            ${pf('Nama', req.requestor_name)}
+            ${pf('Kontak', req.requestor_contact)}
+            ${req.notes ? `<div class="preview-field full">${pf('Catatan', req.notes)}</div>` : ''}
+          </div>
+        </div>
+        ${req.target_name ? `<div class="preview-section"><div class="preview-section-title">Target Data</div><div class="preview-grid">${pf('Nama Target',req.target_name)}</div></div>` : ''}
+        <div class="preview-section">
+          <div class="preview-section-title">Data yang Diajukan</div>
+          <div class="preview-grid">${dataKeys}</div>
+        </div>`;
+
+      document.getElementById('reqDetailFooter').innerHTML = `
+        <button class="btn-cancel" onclick="closeReqDetail()">Tutup</button>
+        ${req.status === 'pending' ? `<button class="btn-save" style="background:var(--surface2);border:1px solid var(--gold);color:var(--gold-light);flex:1.2" onclick="updateReqStatus('${req.id}','in_progress')">▶ In Progress</button>` : ''}
+        ${req.status !== 'completed' ? `<button class="btn-save" onclick="approveAndSaveRequest('${req.id}')">✓ Setujui & Simpan</button>` : ''}`;
+
+      document.getElementById('reqDetailOverlay').classList.add('open');
+    }
+
+    function closeReqDetail() {
+      document.getElementById('reqDetailOverlay').classList.remove('open');
+    }
+
+    async function updateReqStatus(reqId, newStatus) {
+      try {
+        await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?id=eq.${reqId}`, {
+          method: 'PATCH',
+          headers: supaHeaders(),
+          body: JSON.stringify({ status: newStatus }),
+        });
+        showToast('Status diperbarui.');
+        closeReqDetail();
+      } catch (e) {
+        showToast('Gagal: ' + e.message);
+      }
+    }
+
+    async function approveAndSaveRequest(reqId) {
+      const req = _allRequests.find(r => r.id === reqId);
+      if (!req) return;
+      const d = req.data || {};
+      try {
+        if (req.request_type === 'add_member') {
+          const g = d.generasi ? (parseInt((d.generasi||'').split(' - ')[0]) || null) : null;
+          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}`, {
+            method: 'POST', headers: supaHeaders(),
+            body: JSON.stringify({ ...d, generasi: g }),
+          });
+        } else if (req.request_type === 'update_member' && req.target_id) {
+          const g = d.generasi ? (parseInt((d.generasi||'').split(' - ')[0]) || null) : null;
+          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${req.target_id}`, {
+            method: 'PATCH', headers: supaHeaders(),
+            body: JSON.stringify({ ...d, generasi: g }),
+          });
+        } else if (req.request_type === 'add_spouse') {
+          const genCode = (d.generasi||'').split(' - ')[0];
+          await fetch(`${SUPABASE_URL}/rest/v1/spouses`, {
+            method: 'POST', headers: supaHeaders(),
+            body: JSON.stringify({ ...d, generasi: genCode || null }),
+          });
+        } else if (req.request_type === 'update_spouse' && req.target_id) {
+          const genCode = (d.generasi||'').split(' - ')[0];
+          await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${req.target_id}`, {
+            method: 'PATCH', headers: supaHeaders(),
+            body: JSON.stringify({ ...d, generasi: genCode || null }),
+          });
+        }
+        await updateReqStatus(reqId, 'completed');
+        await reloadData();
+        showToast('Data berhasil disimpan ke silsilah!');
+        closeReqDetail();
+      } catch (e) {
+        showToast('Gagal menyetujui: ' + e.message);
+      }
     }
 
     // ── SHEET HELPERS ──

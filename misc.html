@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Lainnya — Silsilah Trah Kariyorejan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--gold:#c9962a;--gold-light:#e8b84b;--gold-dim:rgba(201,150,42,0.15);--bg:#100e0a;--surface:#1a1610;--surface2:#231f18;--border:rgba(201,150,42,0.18);--text:#f0e8d8;--text-muted:#9e9080;--header-h:56px;}
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
+    #header{position:sticky;top:0;z-index:200;background:rgba(16,14,10,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;height:var(--header-h);display:flex;align-items:center;gap:0.75rem;}
+    #burgerBtn{flex-shrink:0;background:none;border:none;color:var(--text-muted);font-size:1.25rem;cursor:pointer;padding:0.25rem;display:flex;align-items:center;transition:color 0.15s;}
+    #burgerBtn:hover{color:var(--gold-light);}
+    .logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);white-space:nowrap;flex:1;}
+    #sidebarOverlay{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity 0.25s;}
+    #sidebarOverlay.open{opacity:1;pointer-events:all;}
+    #sidebar{position:fixed;top:0;left:0;bottom:0;width:270px;z-index:800;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);}
+    #sidebar.open{transform:translateX(0);}
+    .sidebar-head{padding:1.1rem 1.1rem 0.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .sidebar-logo{font-family:'Playfair Display',serif;font-size:0.88rem;color:var(--gold-light);line-height:1.35;flex:1;}
+    .sidebar-close{background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;color:var(--text-muted);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
+    .sidebar-close:hover{border-color:var(--gold);color:var(--gold-light);}
+    .sidebar-nav{list-style:none;padding:0.6rem 0;flex:1;overflow-y:auto;}
+    .sidebar-nav li a{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1.1rem;color:var(--text-muted);font-size:0.88rem;font-weight:500;text-decoration:none;transition:color 0.15s,background 0.15s;}
+    .sidebar-nav li a:hover{color:var(--text);background:var(--surface2);}
+    .sidebar-nav li.active a{color:var(--gold-light);background:var(--gold-dim);}
+    .nav-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0;}
+    .nav-sep{height:1px;background:var(--border);margin:0.4rem 1rem;}
+    .sidebar-footer{padding:0.75rem 1.1rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-muted);text-align:center;}
+    .page-content{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100dvh - var(--header-h));padding:2rem 1.5rem;text-align:center;}
+    .maintenance-icon{font-size:3.5rem;margin-bottom:1.25rem;animation:pulse 2.5s ease-in-out infinite;}
+    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+    .maintenance-title{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:0.6rem;}
+    .maintenance-sub{font-size:0.88rem;color:var(--text-muted);max-width:320px;line-height:1.65;margin-bottom:2rem;}
+    .back-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:0.5rem 1.25rem;color:var(--text-muted);font-size:0.82rem;text-decoration:none;transition:all 0.18s;}
+    .back-link:hover{border-color:var(--gold);color:var(--gold-light);}
+    .decoration{width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 1.5rem;}
+  </style>
+</head>
+<body>
+  <div id="header">
+    <button id="burgerBtn" onclick="openSidebar()">☰</button>
+    <div class="logo">⟡ Silsilah Trah Kariyorejan ⟡</div>
+  </div>
+  <div id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <nav id="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-logo" style="text-align: center;">
+      <span style="font-size: 1.3em; font-weight: bold; display: block; margin-bottom: 5px;">❖ SILSILAH ❖</span>
+      ⟡ Trah Kariyorejan ⟡</div>
+      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
+    </div>
+    <ul class="sidebar-nav">
+      <li><a href="dashboard.html"><span class="nav-icon">🏠</span> Beranda</a></li>
+      <li><a href="introduction.html"><span class="nav-icon">📖</span> Pengenalan</a></li>
+      <li><a href="biography.html"><span class="nav-icon">📜</span> Biografi</a></li>
+      <li><a href="index.html"><span class="nav-icon">🌿</span> Pohon Silsilah</a></li>
+      <div class="nav-sep"></div>
+      <li><a href="attendance.html"><span class="nav-icon">📅</span> Kehadiran Keluarga</a></li>
+      <li class="active"><a href="misc.html"><span class="nav-icon">⚙️</span> Lainnya</a></li>
+    </ul>
+    <div class="sidebar-footer">Trah Kariyorejan © 2025</div>
+  </nav>
+  <div class="page-content">
+    <div class="maintenance-icon">⚙️</div>
+    <div class="decoration"></div>
+    <div class="maintenance-title">Lainnya</div>
+    <div class="maintenance-sub">Halaman ini sedang dalam pengembangan. Berbagai fitur tambahan akan segera tersedia di sini.</div>
+    <a href="index.html" class="back-link">← Kembali ke Pohon Silsilah</a>
+  </div>
+  <script>
+    function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');}
+    function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+  </script>
+</body>
+</html>
