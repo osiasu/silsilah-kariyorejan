@@ -444,6 +444,9 @@
 
     /* ── FILTER BAR ── */
     #filterBar {
+      position: sticky;          /* ← added */
+      top: var(--header-h);      /* ← added: sticks just below the 56px header */
+      z-index: 180;              /* ← added: sits below header (200) and banner (190) */
       background: var(--surface);
       border-bottom: 1px solid var(--border);
       padding: 0.5rem 1rem;
