@@ -1051,9 +1051,7 @@
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="sidebar-head">
-      <div class="sidebar-logo" style="text-align: center;">
-        <span style="font-size: 1.1em; font-weight: bold; display: block; margin-bottom: 5px;">❖ SILSILAH KELUARGA ❖</span>
-        ⟡ Trah Kariyorejan ⟡</div>
+      <div class="sidebar-logo" style="text-align:center;"><span style="font-size:1.1em;font-weight:bold;display:block;margin-bottom:5px;">❖ SILSILAH KELUARGA ❖</span>⟡ Trah Kariyorejan ⟡</div>
       <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     <ul class="sidebar-nav">
@@ -1147,7 +1145,7 @@
   </div>
 
   <!-- SHARED OVERLAY -->
-  <div class="overlay" id="sheetOverlay" onclick="closeAllSheets()"></div>
+  <div class="overlay" id="sheetOverlay"></div>
 
   <!-- ADMIN FAB -->
   <button id="adminFab" onclick="openMemberForm(null)" title="Tambah Anggota">＋</button>
@@ -2912,41 +2910,42 @@
 
     function collectRequestFormData() {
       const g = (id) => { const el = document.getElementById(id); return el ? el.value.trim() : ''; };
+      const nullStr = v => v === '' ? null : v;   // store null not empty string
       const requestor_name = g('rq_requestor_name');
-      const requestor_contact = g('rq_requestor_contact');
-      const notes = g('rq_notes');
+      const requestor_contact = nullStr(g('rq_requestor_contact'));
+      const notes = nullStr(g('rq_notes'));
 
       let data = {};
       const isMember = _reqType === 'add_member' || _reqType === 'update_member';
 
       if (isMember) {
         data = {
-          no_induk: g('rq_no_induk'),
-          nama: g('rq_nama'),
-          gender: g('rq_gender'),
-          status: g('rq_status'),
-          tempat_lahir: g('rq_tempat_lahir'),
-          tanggal_lahir: g('rq_tanggal_lahir'),
-          gol_darah: g('rq_gol_darah'),
-          parent_id: g('rq_parent_id'),
-          generasi: g('rq_generasi'),
-          alamat: g('rq_alamat'),
-          kontak: g('rq_kontak'),
+          no_induk:      nullStr(g('rq_no_induk')),
+          nama:          nullStr(g('rq_nama')),
+          gender:        nullStr(g('rq_gender')),
+          status:        nullStr(g('rq_status')),
+          tempat_lahir:  nullStr(g('rq_tempat_lahir')),
+          tanggal_lahir: nullStr(g('rq_tanggal_lahir')),
+          gol_darah:     nullStr(g('rq_gol_darah')),
+          parent_id:     nullStr(g('rq_parent_id')),
+          generasi:      nullStr(g('rq_generasi')),
+          alamat:        nullStr(g('rq_alamat')),
+          kontak:        nullStr(g('rq_kontak')),
         };
       } else {
         // spouse
         const p = 'rq_sp_';
         data = {
-          nama: g(p+'nama'),
-          gender: g(p+'gender'),
-          status: g(p+'status'),
-          generasi: g(p+'generasi'),
-          gol_darah: g(p+'gol_darah'),
-          tempat_lahir: g(p+'tempat_lahir'),
-          tanggal_lahir: g(p+'tanggal_lahir'),
-          alamat: g(p+'alamat'),
-          kontak: g(p+'kontak'),
-          member_id: _reqTarget?.id || g('rq_parent_id'),
+          nama:          nullStr(g(p+'nama')),
+          gender:        nullStr(g(p+'gender')),
+          status:        nullStr(g(p+'status')),
+          generasi:      nullStr(g(p+'generasi')),
+          gol_darah:     nullStr(g(p+'gol_darah')),
+          tempat_lahir:  nullStr(g(p+'tempat_lahir')),
+          tanggal_lahir: nullStr(g(p+'tanggal_lahir')),
+          alamat:        nullStr(g(p+'alamat')),
+          kontak:        nullStr(g(p+'kontak')),
+          member_id:     nullStr(_reqTarget?.id || g('rq_parent_id')),
         };
       }
       return { requestor_name, requestor_contact, notes, data };
@@ -3194,7 +3193,11 @@
     async function approveAndSaveRequest(reqId) {
       const req = _allRequests.find(r => r.id === reqId);
       if (!req) return;
-      const d = req.data || {};
+      // Convert empty strings → null so DB check constraints aren't violated
+      const nullify = obj => Object.fromEntries(
+        Object.entries(obj).map(([k, v]) => [k, (v === '' || v === undefined) ? null : v])
+      );
+      const d = nullify(req.data || {});
       try {
         if (req.request_type === 'add_member') {
           const g = d.generasi ? (parseInt((d.generasi||'').split(' - ')[0]) || null) : null;
