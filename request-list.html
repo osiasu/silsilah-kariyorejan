@@ -6,10 +6,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root{--gold:#c9962a;--gold-light:#e8b84b;--gold-dim:rgba(201,150,42,0.15);--bg:#100e0a;--surface:#1a1610;--surface2:#231f18;--surface3:#2e2820;--border:rgba(201,150,42,0.18);--text:#f0e8d8;--text-muted:#9e9080;--red:#d94040;--blue:#4a7fcb;--radius:14px;--header-h:56px;}
+    :root{--gold:#c9962a;--gold-light:#e8b84b;--gold-dim:rgba(201,150,42,0.15);--bg:#100e0a;--surface:#1a1610;--surface2:#231f18;--surface3:#2e2820;--border:rgba(201,150,42,0.18);--text:#f0e8d8;--text-muted:#9e9080;--radius:14px;--header-h:56px;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
 
+    /* HEADER */
     #header{position:sticky;top:0;z-index:200;background:rgba(16,14,10,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;height:var(--header-h);display:flex;align-items:center;gap:0.75rem;}
     #burgerBtn{flex-shrink:0;background:none;border:none;color:var(--text-muted);font-size:1.25rem;cursor:pointer;padding:0.25rem;display:flex;align-items:center;transition:color 0.15s;}
     #burgerBtn:hover{color:var(--gold-light);}
@@ -17,7 +18,6 @@
     #adminBtn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.18s,background 0.18s;}
     #adminBtn:hover{border-color:var(--gold);background:var(--gold-dim);}
     #adminBtn.admin-active{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 8px rgba(201,150,42,0.35);}
-
     #adminBanner{display:none;background:var(--gold-dim);border-bottom:1px solid var(--gold);padding:0.3rem 1rem;font-size:0.72rem;color:var(--gold-light);text-align:center;letter-spacing:0.05em;}
     #adminBanner.visible{display:block;}
 
@@ -36,30 +36,46 @@
     .sidebar-nav li.active a{color:var(--gold-light);background:var(--gold-dim);}
     .nav-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0;}
     .nav-sep{height:1px;background:var(--border);margin:0.4rem 1rem;}
-    .nav-badge{margin-left:auto;font-size:0.6rem;font-weight:700;background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,150,42,0.3);border-radius:999px;padding:0.1rem 0.45rem;letter-spacing:0.04em;}
+    .nav-badge{margin-left:auto;font-size:0.6rem;font-weight:700;background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,150,42,0.3);border-radius:999px;padding:0.1rem 0.45rem;}
     .sidebar-footer{padding:0.75rem 1.1rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-muted);text-align:center;}
 
-    /* ACCESS GATE */
-    #accessGate{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100dvh - var(--header-h));padding:2rem;text-align:center;}
+    /* ACCESS GATE — sits below header so sidebar is always reachable */
+    #accessGate{
+      position:fixed; top:var(--header-h); left:0; right:0; bottom:0;
+      z-index:500; background:var(--bg);
+      display:flex; align-items:center; justify-content:center;
+    }
     #accessGate.hidden{display:none;}
+
+    /* MAIN */
     #mainContent{display:none;padding:1rem;max-width:760px;margin:0 auto;}
     #mainContent.visible{display:block;}
 
     /* PIN BOX */
     .pin-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem 1.75rem;width:calc(100% - 2rem);max-width:340px;display:flex;flex-direction:column;gap:1rem;box-shadow:0 8px 40px rgba(0,0,0,0.5);}
     .pin-logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);text-align:center;}
-    .pin-sub{font-size:0.78rem;color:var(--text-muted);text-align:center;}
+    .pin-sub{font-size:0.78rem;color:var(--text-muted);text-align:center;line-height:1.55;}
+    .pin-tabs{display:flex;gap:0.5rem;}
+    .pin-tab{flex:1;padding:0.45rem;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;text-align:center;}
+    .pin-tab.active{border-color:var(--gold);background:var(--gold-dim);color:var(--gold-light);}
     .pin-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1.2rem;letter-spacing:0.3em;text-align:center;padding:0.65rem;outline:none;transition:border-color 0.18s;color-scheme:dark;}
     .pin-input:focus{border-color:var(--gold);}
     .pin-error{font-size:0.75rem;color:#e07070;text-align:center;min-height:1rem;}
-    .btn-save{flex:2;padding:0.65rem;border-radius:10px;border:none;background:var(--gold);color:#1a1205;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:opacity 0.15s;width:100%;}
+    .btn-save{padding:0.65rem;border-radius:10px;border:none;background:var(--gold);color:#1a1205;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:opacity 0.15s;width:100%;}
     .btn-save:hover{opacity:0.88;}
+    .btn-cancel{padding:0.65rem;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;transition:border-color 0.15s;width:100%;}
+    .btn-cancel:hover{border-color:var(--gold);color:var(--text);}
+
+    /* PIN OVERLAY (admin upgrade within page) */
+    #pinOverlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
+    #pinOverlay.open{display:flex;}
 
     /* PAGE HEADER */
     .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;}
     .page-title{font-family:'Playfair Display',serif;font-size:1.15rem;color:var(--gold-light);}
     .refresh-btn{background:var(--surface2);border:1px solid var(--border);border-radius:999px;color:var(--text-muted);font-size:0.78rem;padding:0.35rem 0.9rem;cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;}
     .refresh-btn:hover{border-color:var(--gold);color:var(--gold-light);}
+    .guest-notice{background:rgba(74,127,203,0.1);border:1px solid rgba(74,127,203,0.25);border-radius:10px;padding:0.6rem 0.9rem;font-size:0.78rem;color:#7aaae0;margin-bottom:1rem;display:flex;align-items:center;gap:0.5rem;}
 
     /* STATUS TABS */
     .status-tabs{display:flex;gap:0.5rem;margin-bottom:1rem;overflow-x:auto;scrollbar-width:none;}
@@ -71,14 +87,14 @@
     .req-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.85rem 1rem;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
     .req-card:hover{border-color:var(--gold);background:var(--surface2);}
     .req-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.45rem;}
-    .req-id{font-size:0.72rem;font-weight:700;color:var(--gold-light);font-family:'DM Sans',sans-serif;letter-spacing:0.04em;}
+    .req-id{font-size:0.72rem;font-weight:700;color:var(--gold-light);letter-spacing:0.04em;}
     .req-status-badge{display:inline-block;border-radius:999px;padding:0.18rem 0.6rem;font-size:0.65rem;font-weight:700;letter-spacing:0.04em;flex-shrink:0;}
     .req-status-badge.pending{background:rgba(201,150,42,0.15);color:var(--gold);border:1px solid rgba(201,150,42,0.3);}
     .req-status-badge.in_progress{background:rgba(74,127,203,0.15);color:#7aaae0;border:1px solid rgba(74,127,203,0.3);}
     .req-status-badge.completed{background:rgba(74,203,74,0.1);color:#70c070;border:1px solid rgba(74,203,74,0.25);}
     .req-card-name{font-size:0.9rem;font-weight:500;color:var(--text);margin-bottom:0.2rem;}
     .req-card-meta{font-size:0.75rem;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:0.5rem;}
-    .req-card-meta span::before{content:'· ';color:var(--border);}
+    .req-card-meta span::before{content:'· ';}
     .req-card-meta span:first-child::before{content:'';}
     .req-type-chip{font-size:0.65rem;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:0.1rem 0.45rem;color:var(--text-muted);margin-right:0.35rem;}
 
@@ -92,31 +108,24 @@
     .detail-close:hover{border-color:var(--gold);color:var(--gold-light);}
     .detail-body{overflow-y:auto;padding:1rem 1.25rem;flex:1;}
     .detail-footer{padding:0.85rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.65rem;flex-shrink:0;}
-    .btn-cancel{flex:1;padding:0.65rem;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-size:0.85rem;cursor:pointer;transition:border-color 0.15s;font-family:'DM Sans',sans-serif;}
-    .btn-cancel:hover{border-color:var(--gold);color:var(--text);}
-    .btn-action{flex:1.5;padding:0.65rem;border-radius:10px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold-light);font-size:0.82rem;font-weight:600;cursor:pointer;transition:background 0.15s;font-family:'DM Sans',sans-serif;}
+    .btn-action{flex:1.5;padding:0.65rem;border-radius:10px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold-light);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background 0.15s;}
     .btn-action:hover{background:rgba(201,150,42,0.25);}
-    .btn-approve{flex:2;padding:0.65rem;border-radius:10px;border:none;background:var(--gold);color:#1a1205;font-size:0.85rem;font-weight:700;cursor:pointer;transition:opacity 0.15s;font-family:'DM Sans',sans-serif;}
+    .btn-approve{flex:2;padding:0.65rem;border-radius:10px;border:none;background:var(--gold);color:#1a1205;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:'DM Sans',sans-serif;transition:opacity 0.15s;}
     .btn-approve:hover{opacity:0.88;}
 
     .preview-section{margin-bottom:1rem;}
     .preview-section-title{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);font-weight:600;margin-bottom:0.6rem;padding-bottom:0.3rem;border-bottom:1px solid var(--border);}
     .preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.5rem 1rem;}
     .preview-field{display:flex;flex-direction:column;gap:0.1rem;}
-    .preview-field.full{grid-column:1 / -1;}
+    .preview-field.full{grid-column:1/-1;}
     .preview-label{font-size:0.62rem;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-muted);font-weight:600;}
     .preview-value{font-size:0.85rem;color:var(--text);}
     .preview-value.empty{color:var(--text-muted);font-style:italic;}
 
-    /* EMPTY STATE */
     .empty-state{text-align:center;padding:3rem 1rem;color:var(--text-muted);}
-    .empty-state .empty-icon{font-size:2.5rem;margin-bottom:0.75rem;}
+    .empty-icon{font-size:2.5rem;margin-bottom:0.75rem;}
     .spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:3rem auto;}
     @keyframes spin{to{transform:rotate(360deg)}}
-
-    /* PIN OVERLAY */
-    #pinOverlay{position:fixed;inset:0;z-index:800;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
-    #pinOverlay.open{display:flex;}
   </style>
 </head>
 <body>
@@ -124,17 +133,18 @@
   <div id="header">
     <button id="burgerBtn" onclick="openSidebar()">☰</button>
     <div class="logo">⟡ Antrian Permintaan ⟡</div>
-    <button id="adminBtn" onclick="toggleAdminPrompt()" title="Super Admin">🔐</button>
+    <button id="adminBtn" onclick="toggleAdminUpgrade()" title="Masuk sebagai Super Admin">🔐</button>
   </div>
 
-  <div id="adminBanner">🔐 Mode Super Admin Aktif — <span style="cursor:pointer;text-decoration:underline" onclick="logoutAdmin()">Keluar</span></div>
+  <div id="adminBanner">🔐 Mode Super Admin Aktif — <span style="cursor:pointer;text-decoration:underline" onclick="logoutAdmin()">Keluar ke Mode Tamu</span></div>
 
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
   <nav id="sidebar">
     <div class="sidebar-head">
-      <div class="sidebar-logo" style="text-align: center;">
-      <span style="font-size: 1.3em; font-weight: bold; display: block; margin-bottom: 5px;">❖ SILSILAH ❖</span>
-      ⟡ Trah Kariyorejan ⟡</div>
+      <div class="sidebar-logo" style="text-align:center;">
+        <span style="font-size:1.1em;font-weight:bold;display:block;margin-bottom:5px;">❖ SILSILAH KELUARGA ❖</span>
+        ⟡ Trah Kariyorejan ⟡
+      </div>
       <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     <ul class="sidebar-nav">
@@ -143,53 +153,58 @@
       <li><a href="biography.html"><span class="nav-icon">📜</span> Biografi</a></li>
       <li><a href="index.html"><span class="nav-icon">🌿</span> Pohon Silsilah</a></li>
       <div class="nav-sep"></div>
-      <li id="navReqList" class="active" style="display:none"><a href="request-list.html"><span class="nav-icon">📋</span> Antrian Permintaan <span class="nav-badge" id="navPendingBadge" style="display:none">0</span></a></li>
-      <div class="nav-sep" id="navSep2" style="display:none"></div>
+      <li class="active"><a href="request-list.html"><span class="nav-icon">📋</span> Antrian Permintaan <span class="nav-badge" id="navPendingBadge" style="display:none">0</span></a></li>
+      <div class="nav-sep"></div>
       <li><a href="attendance.html"><span class="nav-icon">📅</span> Kehadiran Keluarga</a></li>
       <li><a href="misc.html"><span class="nav-icon">⚙️</span> Lainnya</a></li>
     </ul>
     <div class="sidebar-footer">masenorr © 2025</div>
   </nav>
 
-  <!-- PIN OVERLAY -->
-  <div id="pinOverlay">
-    <div class="pin-box">
-      <div class="pin-logo">🔐 Super Admin</div>
-      <div class="pin-sub">Halaman ini hanya dapat diakses oleh Super Admin</div>
-      <input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmPin()">
-      <div class="pin-error" id="pinError"></div>
-      <button class="btn-save" onclick="confirmPin()">Masuk</button>
-      <a href="index.html" style="font-size:0.78rem;color:var(--text-muted);text-align:center;text-decoration:none;margin-top:0.25rem">← Kembali ke Silsilah</a>
-    </div>
-  </div>
-
-  <!-- ACCESS GATE (shown until admin auth) -->
+  <!-- ACCESS GATE — starts below header so burger stays reachable -->
   <div id="accessGate">
     <div class="pin-box">
-      <div class="pin-logo">🔒 Akses Terbatas</div>
-      <div class="pin-sub">Halaman Antrian Permintaan hanya dapat diakses oleh Super Admin. Silakan masukkan PIN admin.</div>
+      <div class="pin-logo">📋 Antrian Permintaan</div>
+      <div class="pin-sub">Masukkan PIN untuk melihat daftar permintaan data. Tamu dapat melihat antrian (read-only). Super Admin dapat menyetujui permintaan.</div>
+      <div class="pin-tabs">
+        <div class="pin-tab active" id="tabGuest" onclick="switchPinTab('guest')">👤 Tamu</div>
+        <div class="pin-tab" id="tabAdmin" onclick="switchPinTab('admin')">🔐 Super Admin</div>
+      </div>
       <input type="password" class="pin-input" id="gateInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmGate()">
       <div class="pin-error" id="gateError"></div>
       <button class="btn-save" onclick="confirmGate()">Masuk</button>
-      <a href="index.html" style="font-size:0.78rem;color:var(--text-muted);text-align:center;text-decoration:none;margin-top:0.25rem">← Kembali ke Silsilah</a>
+      <a href="index.html" style="font-size:0.78rem;color:var(--text-muted);text-align:center;text-decoration:none;">← Kembali ke Silsilah</a>
     </div>
   </div>
 
-  <!-- MAIN CONTENT (admin only) -->
+  <!-- MAIN CONTENT -->
   <div id="mainContent">
     <div class="page-header">
       <div class="page-title">📋 Antrian Permintaan Data</div>
       <button class="refresh-btn" onclick="loadAndRender()">↻ Refresh</button>
     </div>
-
+    <div id="guestNotice" class="guest-notice" style="display:none">
+      👤 Anda masuk sebagai <strong>Tamu</strong> — tampilan read-only. Login sebagai Super Admin untuk menyetujui permintaan.
+    </div>
     <div class="status-tabs">
       <button class="status-tab active" onclick="setFilter('all',this)">Semua</button>
       <button class="status-tab" onclick="setFilter('pending',this)">⏳ Pending</button>
       <button class="status-tab" onclick="setFilter('in_progress',this)">▶ In Progress</button>
       <button class="status-tab" onclick="setFilter('completed',this)">✓ Selesai</button>
     </div>
-
     <div id="reqList"><div class="spinner"></div></div>
+  </div>
+
+  <!-- ADMIN UPGRADE PIN OVERLAY -->
+  <div id="pinOverlay">
+    <div class="pin-box">
+      <div class="pin-logo">🔐 Super Admin</div>
+      <div class="pin-sub">Masukkan PIN Super Admin untuk mengaktifkan mode approval</div>
+      <input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmAdminPin()">
+      <div class="pin-error" id="pinError"></div>
+      <button class="btn-save" onclick="confirmAdminPin()">Masuk sebagai Admin</button>
+      <button class="btn-cancel" onclick="closePinOverlay()">Batal</button>
+    </div>
   </div>
 
   <!-- REQUEST DETAIL MODAL -->
@@ -207,36 +222,46 @@
   <script>
     const SUPABASE_URL = 'https://lckowkndmwiadwifilsv.supabase.co';
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxja293a25kbXdpYWR3aWZpbHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA0MTgsImV4cCI6MjA5MjkwNjQxOH0.VrnY0DfgP_AW1UUJAI2sgNhZ8i8ok22nyWHpj4iQ-YQ';
-    const ADMIN_PIN = '7215';
+    const ADMIN_PIN  = '7215';
+    const GUEST_PIN  = '8138';
     const TABLE_REQUESTS = 'data_requests';
-    const TABLE_MEMBERS = 'members';
+    const TABLE_MEMBERS  = 'members';
 
     let isAdmin = false;
     let _allRequests = [];
     let _currentFilter = 'all';
-    let _currentReq = null;
+    let _activePinTab = 'guest'; // 'guest' | 'admin'
 
     function supaHeaders() {
-      return { 'Content-Type':'application/json', 'apikey':SUPABASE_KEY, 'Authorization':`Bearer ${SUPABASE_KEY}` };
+      return {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`};
     }
+
+    // ── COOKIES ──
+    function setCookie(name,val,days){const d=new Date();d.setTime(d.getTime()+days*86400000);document.cookie=`${name}=${encodeURIComponent(val)};expires=${d.toUTCString()};path=/;SameSite=Lax`;}
+    function getCookie(name){const m=document.cookie.match(new RegExp('(?:^|; )'+name+'=([^;]*)'));return m?decodeURIComponent(m[1]):null;}
 
     // ── SIDEBAR ──
     function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');}
     function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
 
-    // ── GATE (page-level auth) ──
+    // ── PIN TAB ──
+    function switchPinTab(tab) {
+      _activePinTab = tab;
+      document.getElementById('tabGuest').classList.toggle('active', tab === 'guest');
+      document.getElementById('tabAdmin').classList.toggle('active', tab === 'admin');
+      document.getElementById('gateInput').value = '';
+      document.getElementById('gateError').textContent = '';
+      document.getElementById('gateInput').focus();
+    }
+
+    // ── GATE AUTH ──
     function confirmGate() {
       const val = document.getElementById('gateInput').value;
-      if (val === ADMIN_PIN) {
-        isAdmin = true;
-        document.getElementById('accessGate').classList.add('hidden');
-        document.getElementById('mainContent').classList.add('visible');
-        document.getElementById('adminBtn').classList.add('admin-active');
-        document.getElementById('adminBanner').classList.add('visible');
-        document.getElementById('navReqList').style.display = '';
-        document.getElementById('navSep2').style.display = '';
-        loadAndRender();
-        updatePendingBadge();
+      const expectedPin = _activePinTab === 'admin' ? ADMIN_PIN : GUEST_PIN;
+      if (val === expectedPin || (val === ADMIN_PIN && _activePinTab === 'guest')) {
+        const role = (val === ADMIN_PIN) ? 'admin' : 'guest';
+        setCookie('trah_auth', role, 30);
+        enterApp(role);
       } else {
         document.getElementById('gateError').textContent = 'PIN salah. Coba lagi.';
         document.getElementById('gateInput').value = '';
@@ -244,83 +269,95 @@
       }
     }
 
-    // ── ADMIN PROMPT (header button) ──
-    function toggleAdminPrompt() {
+    function enterApp(role) {
+      document.getElementById('accessGate').classList.add('hidden');
+      document.getElementById('mainContent').classList.add('visible');
+      if (role === 'admin') applyAdminMode();
+      else {
+        isAdmin = false;
+        document.getElementById('guestNotice').style.display = 'flex';
+      }
+      loadAndRender();
+      updatePendingBadge();
+    }
+
+    function applyAdminMode() {
+      isAdmin = true;
+      setCookie('trah_auth', 'admin', 30);
+      document.getElementById('adminBtn').classList.add('admin-active');
+      document.getElementById('adminBanner').classList.add('visible');
+      document.getElementById('guestNotice').style.display = 'none';
+    }
+
+    // ── ADMIN UPGRADE (from within the page) ──
+    function toggleAdminUpgrade() {
       if (isAdmin) { logoutAdmin(); return; }
       document.getElementById('pinOverlay').classList.add('open');
       document.getElementById('pinInput').value = '';
       document.getElementById('pinError').textContent = '';
       setTimeout(() => document.getElementById('pinInput').focus(), 100);
     }
-    function confirmPin() {
+    function confirmAdminPin() {
       const val = document.getElementById('pinInput').value;
       if (val === ADMIN_PIN) {
-        isAdmin = true;
         document.getElementById('pinOverlay').classList.remove('open');
-        document.getElementById('adminBtn').classList.add('admin-active');
-        document.getElementById('adminBanner').classList.add('visible');
-        document.getElementById('accessGate').classList.add('hidden');
-        document.getElementById('mainContent').classList.add('visible');
-        document.getElementById('navReqList').style.display = '';
-        document.getElementById('navSep2').style.display = '';
-        loadAndRender();
-        updatePendingBadge();
+        applyAdminMode();
+        loadAndRender(); // re-render to show action buttons
       } else {
         document.getElementById('pinError').textContent = 'PIN salah.';
         document.getElementById('pinInput').value = '';
         document.getElementById('pinInput').focus();
       }
     }
+    function closePinOverlay() {
+      document.getElementById('pinOverlay').classList.remove('open');
+    }
     function logoutAdmin() {
       isAdmin = false;
+      setCookie('trah_auth', 'guest', 30);
       document.getElementById('adminBtn').classList.remove('admin-active');
       document.getElementById('adminBanner').classList.remove('visible');
-      document.getElementById('mainContent').classList.remove('visible');
-      document.getElementById('accessGate').classList.remove('hidden');
+      document.getElementById('guestNotice').style.display = 'flex';
+      loadAndRender(); // re-render to hide action buttons
     }
 
-    // ── LOAD DATA ──
+    // ── LOAD & RENDER ──
     async function loadAndRender() {
       document.getElementById('reqList').innerHTML = '<div class="spinner"></div>';
       try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?select=*&order=created_at.desc`, { headers: supaHeaders() });
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?select=*&order=created_at.desc`, {headers:supaHeaders()});
         if (!res.ok) throw new Error(await res.text());
         _allRequests = await res.json();
         renderList();
       } catch(e) {
-        document.getElementById('reqList').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Gagal memuat data: ${e.message}</p></div>`;
+        document.getElementById('reqList').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Gagal memuat: ${e.message}</p></div>`;
       }
     }
 
     function setFilter(f, btn) {
       _currentFilter = f;
-      document.querySelectorAll('.status-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.status-tab').forEach(t=>t.classList.remove('active'));
       btn.classList.add('active');
       renderList();
     }
 
     function renderList() {
-      const filtered = _currentFilter === 'all' ? _allRequests : _allRequests.filter(r => r.status === _currentFilter);
+      const filtered = _currentFilter === 'all' ? _allRequests : _allRequests.filter(r=>r.status===_currentFilter);
       if (!filtered.length) {
-        document.getElementById('reqList').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>Tidak ada permintaan${_currentFilter !== 'all' ? ' dengan status ini' : ''}.</p></div>`;
+        document.getElementById('reqList').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>Tidak ada permintaan${_currentFilter!=='all'?' dengan status ini':''}.</p></div>`;
         return;
       }
-      const typeLabel = { add_member:'Tambah Anggota', add_spouse:'Tambah Pasangan', update_member:'Perbarui Anggota', update_spouse:'Perbarui Pasangan' };
-      const html = filtered.map(r => {
-        const name = r.target_name || (r.data && r.data.nama) || '—';
-        const date = new Date(r.created_at).toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
-        const statusLabel = { pending:'Pending', in_progress:'In Progress', completed:'Selesai' }[r.status] || r.status;
+      const typeLabel={add_member:'Tambah Anggota',add_spouse:'Tambah Pasangan',update_member:'Perbarui Anggota',update_spouse:'Perbarui Pasangan'};
+      const statusLabel={pending:'Pending',in_progress:'In Progress',completed:'Selesai'};
+      const html = filtered.map(r=>{
+        const name = r.target_name||(r.data&&r.data.nama)||'—';
+        const date = new Date(r.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
         return `<div class="req-card" onclick="openDetail('${r.id}')">
           <div class="req-card-top">
-            <div>
-              <div class="req-id">#${(r.id||'').slice(-8).toUpperCase()}</div>
-            </div>
-            <span class="req-status-badge ${r.status||'pending'}">${statusLabel}</span>
+            <div class="req-id">#${(r.id||'').slice(-8).toUpperCase()}</div>
+            <span class="req-status-badge ${r.status||'pending'}">${statusLabel[r.status]||r.status}</span>
           </div>
-          <div class="req-card-name">
-            <span class="req-type-chip">${typeLabel[r.request_type]||r.request_type}</span>
-            ${name}
-          </div>
+          <div class="req-card-name"><span class="req-type-chip">${typeLabel[r.request_type]||r.request_type}</span>${name}</div>
           <div class="req-card-meta">
             <span>Pemohon: ${r.requestor_name||'—'}</span>
             <span>${date}</span>
@@ -332,119 +369,97 @@
 
     // ── DETAIL ──
     function openDetail(id) {
-      _currentReq = _allRequests.find(r => r.id === id);
-      if (!_currentReq) return;
-      const r = _currentReq;
-      const typeLabel = { add_member:'Tambah Anggota', add_spouse:'Tambah Pasangan', update_member:'Perbarui Anggota', update_spouse:'Perbarui Pasangan' };
-      const statusLabel = { pending:'⏳ Pending', in_progress:'▶ In Progress', completed:'✓ Selesai' }[r.status] || r.status;
-      const date = new Date(r.created_at).toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+      const r = _allRequests.find(x=>x.id===id);
+      if (!r) return;
+      const typeLabel={add_member:'Tambah Anggota',add_spouse:'Tambah Pasangan',update_member:'Perbarui Anggota',update_spouse:'Perbarui Pasangan'};
+      const statusLabel={pending:'⏳ Pending',in_progress:'▶ In Progress',completed:'✓ Selesai'};
+      const date = new Date(r.created_at).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+      const pf=(label,value)=>`<div class="preview-field${!value?' empty':''}"><span class="preview-label">${label}</span><span class="preview-value${!value?' empty':''}">${value||'—'}</span></div>`;
+      const d=r.data||{};
+      const dataHtml=Object.entries(d).filter(([,v])=>v).map(([k,v])=>pf(k.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()),v)).join('');
 
-      const pf = (label, value) => `<div class="preview-field${!value?' empty':''}"><span class="preview-label">${label}</span><span class="preview-value${!value?' empty':''}">${value||'—'}</span></div>`;
-
-      const d = r.data || {};
-      const dataHtml = Object.entries(d).filter(([,v])=>v).map(([k,v])=>
-        pf(k.replace(/_/g,' ').replace(/\b\w/g,c=>c.toUpperCase()), v)
-      ).join('');
-
-      document.getElementById('detailTitle').textContent = `#${(r.id||'').slice(-8).toUpperCase()}`;
-      document.getElementById('detailBody').innerHTML = `
-        <div style="background:var(--surface2);border-radius:var(--radius);padding:0.85rem 1rem;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:1rem;">
+      document.getElementById('detailTitle').textContent=`#${(r.id||'').slice(-8).toUpperCase()}`;
+      document.getElementById('detailBody').innerHTML=`
+        <div style="background:var(--surface2);border-radius:var(--radius,14px);padding:0.85rem 1rem;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:1rem;">
           <div><span style="font-size:0.63rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Jenis</span><br><span style="font-size:0.85rem">${typeLabel[r.request_type]||r.request_type}</span></div>
-          <div><span style="font-size:0.63rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Status</span><br><span class="req-status-badge ${r.status}">${statusLabel}</span></div>
+          <div><span style="font-size:0.63rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Status</span><br><span class="req-status-badge ${r.status}">${statusLabel[r.status]||r.status}</span></div>
           <div><span style="font-size:0.63rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Tanggal</span><br><span style="font-size:0.82rem;color:var(--text-muted)">${date}</span></div>
         </div>
-        <div class="preview-section">
-          <div class="preview-section-title">Pemohon</div>
-          <div class="preview-grid">
-            ${pf('Nama',r.requestor_name)} ${pf('Kontak',r.requestor_contact)}
-            ${r.notes?`<div class="preview-field full">${pf('Catatan',r.notes)}</div>`:''}
-          </div>
+        <div class="preview-section"><div class="preview-section-title">Pemohon</div>
+          <div class="preview-grid">${pf('Nama',r.requestor_name)}${pf('Kontak',r.requestor_contact)}${r.notes?`<div class="preview-field full">${pf('Catatan',r.notes)}</div>`:''}</div>
         </div>
         ${r.target_name?`<div class="preview-section"><div class="preview-section-title">Target Data</div><div class="preview-grid">${pf('Nama Target',r.target_name)}</div></div>`:''}
-        <div class="preview-section">
-          <div class="preview-section-title">Data yang Diajukan</div>
+        <div class="preview-section"><div class="preview-section-title">Data yang Diajukan</div>
           <div class="preview-grid">${dataHtml||pf('','Tidak ada data')}</div>
         </div>`;
 
-      let footerHtml = `<button class="btn-cancel" onclick="closeDetail()">Tutup</button>`;
-      if (r.status === 'pending') footerHtml += `<button class="btn-action" onclick="updateStatus('${r.id}','in_progress')">▶ Proses</button>`;
-      if (r.status !== 'completed') footerHtml += `<button class="btn-approve" onclick="approveRequest('${r.id}')">✓ Setujui & Simpan</button>`;
-      document.getElementById('detailFooter').innerHTML = footerHtml;
-
+      // Action buttons: only shown to admin
+      let footerHtml = `<button class="btn-cancel" style="flex:1" onclick="closeDetail()">Tutup</button>`;
+      if (isAdmin) {
+        if (r.status==='pending') footerHtml+=`<button class="btn-action" onclick="updateStatus('${r.id}','in_progress')">▶ Proses</button>`;
+        if (r.status!=='completed') footerHtml+=`<button class="btn-approve" onclick="approveRequest('${r.id}')">✓ Setujui & Simpan</button>`;
+      }
+      document.getElementById('detailFooter').innerHTML=footerHtml;
       document.getElementById('reqDetailOverlay').classList.add('open');
     }
 
-    function closeDetail() {
-      document.getElementById('reqDetailOverlay').classList.remove('open');
-      _currentReq = null;
-    }
+    function closeDetail(){document.getElementById('reqDetailOverlay').classList.remove('open');}
 
-    async function updateStatus(id, status) {
+    async function updateStatus(id,status){
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?id=eq.${id}`, {
-          method:'PATCH', headers:supaHeaders(), body:JSON.stringify({status})
-        });
+        await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?id=eq.${id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({status})});
         showToast('Status diperbarui.');
         closeDetail();
         await loadAndRender();
         updatePendingBadge();
-      } catch(e) { showToast('Gagal: '+e.message); }
+      } catch(e){showToast('Gagal: '+e.message);}
     }
 
-    async function approveRequest(id) {
-      const r = _allRequests.find(x => x.id === id);
-      if (!r) return;
-      const d = r.data || {};
+    async function approveRequest(id){
+      const r=_allRequests.find(x=>x.id===id);
+      if(!r) return;
+      const d=r.data||{};
       try {
-        if (r.request_type === 'add_member') {
-          const g = d.generasi ? (parseInt((d.generasi||'').split(' - ')[0]) || null) : null;
-          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}`, {
-            method:'POST', headers:supaHeaders(), body:JSON.stringify({...d, generasi:g})
-          });
-        } else if (r.request_type === 'update_member' && r.target_id) {
-          const g = d.generasi ? (parseInt((d.generasi||'').split(' - ')[0]) || null) : null;
-          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${r.target_id}`, {
-            method:'PATCH', headers:supaHeaders(), body:JSON.stringify({...d, generasi:g})
-          });
-        } else if (r.request_type === 'add_spouse') {
-          const gc = (d.generasi||'').split(' - ')[0];
-          await fetch(`${SUPABASE_URL}/rest/v1/spouses`, {
-            method:'POST', headers:supaHeaders(), body:JSON.stringify({...d, generasi:gc||null})
-          });
-        } else if (r.request_type === 'update_spouse' && r.target_id) {
-          const gc = (d.generasi||'').split(' - ')[0];
-          await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${r.target_id}`, {
-            method:'PATCH', headers:supaHeaders(), body:JSON.stringify({...d, generasi:gc||null})
-          });
+        if(r.request_type==='add_member'){
+          const g=d.generasi?(parseInt((d.generasi||'').split(' - ')[0])||null):null;
+          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}`,{method:'POST',headers:supaHeaders(),body:JSON.stringify({...d,generasi:g})});
+        } else if(r.request_type==='update_member'&&r.target_id){
+          const g=d.generasi?(parseInt((d.generasi||'').split(' - ')[0])||null):null;
+          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${r.target_id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({...d,generasi:g})});
+        } else if(r.request_type==='add_spouse'){
+          const gc=(d.generasi||'').split(' - ')[0];
+          await fetch(`${SUPABASE_URL}/rest/v1/spouses`,{method:'POST',headers:supaHeaders(),body:JSON.stringify({...d,generasi:gc||null})});
+        } else if(r.request_type==='update_spouse'&&r.target_id){
+          const gc=(d.generasi||'').split(' - ')[0];
+          await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${r.target_id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({...d,generasi:gc||null})});
         }
-        await updateStatus(id, 'completed');
+        await updateStatus(id,'completed');
         showToast('✓ Data berhasil disimpan ke silsilah!');
-      } catch(e) { showToast('Gagal menyetujui: '+e.message); }
+      } catch(e){showToast('Gagal menyetujui: '+e.message);}
     }
 
-    async function updatePendingBadge() {
+    async function updatePendingBadge(){
       try {
-        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?status=eq.pending&select=id`, { headers:supaHeaders() });
-        if (res.ok) {
-          const rows = await res.json();
-          const badge = document.getElementById('navPendingBadge');
-          badge.textContent = rows.length;
-          badge.style.display = rows.length > 0 ? '' : 'none';
-        }
-      } catch {}
+        const res=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?status=eq.pending&select=id`,{headers:supaHeaders()});
+        if(res.ok){const rows=await res.json();const b=document.getElementById('navPendingBadge');b.textContent=rows.length;b.style.display=rows.length>0?'':'none';}
+      }catch{}
     }
 
-    // ── TOAST ──
-    function showToast(msg) {
-      let t = document.getElementById('toast');
-      if (!t) { t = document.createElement('div'); t.id='toast'; t.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1205;padding:0.5rem 1.2rem;border-radius:999px;font-size:0.8rem;font-weight:600;z-index:9999;transition:opacity 0.3s;white-space:nowrap;'; document.body.appendChild(t); }
-      t.textContent = msg; t.style.opacity = '1';
-      clearTimeout(t._t); t._t = setTimeout(() => t.style.opacity='0', 2800);
+    function showToast(msg){
+      let t=document.getElementById('toast');
+      if(!t){t=document.createElement('div');t.id='toast';t.style.cssText='position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:var(--gold);color:#1a1205;padding:0.5rem 1.2rem;border-radius:999px;font-size:0.8rem;font-weight:600;z-index:9999;transition:opacity 0.3s;white-space:nowrap;';document.body.appendChild(t);}
+      t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2800);
     }
 
-    // Init — show gate immediately
+    // ── INIT ──
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('gateInput').focus();
+      const auth = getCookie('trah_auth');
+      if (auth === 'guest' || auth === 'admin') {
+        enterApp(auth);
+      } else {
+        // show gate
+        setTimeout(() => document.getElementById('gateInput').focus(), 100);
+      }
     });
   </script>
 </body>

@@ -402,7 +402,9 @@
 
     /* ── LOGIN OVERLAY (dashboard access) ── */
     #loginOverlay {
-      position: fixed; inset: 0; z-index: 900;
+      position: fixed;
+      top: var(--header-h); left: 0; right: 0; bottom: 0;
+      z-index: 500; /* below sidebar (800) so burger stays accessible */
       background: var(--bg);
       display: flex; align-items: center; justify-content: center;
       flex-direction: column; gap: 0;
@@ -873,6 +875,9 @@
     /* Admin-only nav items */
     .nav-admin-only { display: none; }
     .nav-admin-only.visible { display: block; }
+    /* Guest-visible nav items (shown after any login) */
+    .nav-guest-visible { display: none; }
+    .nav-guest-visible.visible { display: block; }
 
     /* ── REQUEST TYPE MODAL ── */
     #requestTypeSheet { max-width: 420px; }
@@ -1042,13 +1047,13 @@
 
   <!-- SIDEBAR OVERLAY -->
   <div id="sidebarOverlay" onclick="closeSidebar()"></div>
- 
+
   <!-- SIDEBAR -->
   <nav id="sidebar">
     <div class="sidebar-head">
       <div class="sidebar-logo" style="text-align: center;">
-      <span style="font-size: 1.3em; font-weight: bold; display: block; margin-bottom: 5px;">❖ SILSILAH ❖</span>
-      ⟡ Trah Kariyorejan ⟡</div>
+        <span style="font-size: 1.1em; font-weight: bold; display: block; margin-bottom: 5px;">❖ SILSILAH KELUARGA ❖</span>
+        ⟡ Trah Kariyorejan ⟡</div>
       <button class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     <ul class="sidebar-nav">
@@ -1073,13 +1078,13 @@
         </a>
       </li>
       <div class="nav-sep"></div>
-      <li class="nav-admin-only" id="navRequestList">
+      <li class="nav-guest-visible" id="navRequestList">
         <a href="request-list.html">
           <span class="nav-icon">📋</span> Antrian Permintaan
           <span class="nav-badge" id="navPendingCount" style="display:none">0</span>
         </a>
       </li>
-      <div class="nav-sep nav-admin-only" id="navSep2"></div>
+      <div class="nav-sep nav-guest-visible" id="navSep2"></div>
       <li>
         <a href="attendance.html">
           <span class="nav-icon">📅</span> Kehadiran Keluarga
@@ -2554,15 +2559,8 @@
     function confirmPin() {
       const val = document.getElementById('pinInput').value;
       if (val === ADMIN_PIN) {
-        isAdmin = true;
         document.getElementById('pinOverlay').classList.remove('open');
-        document.getElementById('adminBtn').classList.add('admin-active');
-        document.getElementById('adminBanner').classList.add('visible');
-        document.getElementById('adminFab').classList.add('visible');
-        // Show admin-only sidebar items
-        document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.add('visible'));
-        loadPendingRequestCount();
-        // Re-render to show edit buttons inside any open detail sheet
+        applyAdminMode();
         renderAll();
       } else {
         document.getElementById('pinError').textContent = 'PIN salah. Coba lagi.';
@@ -2577,10 +2575,10 @@
 
     function logoutAdmin() {
       isAdmin = false;
+      setCookie('trah_auth', 'guest', 30); // revert to guest, not logged out
       document.getElementById('adminBtn').classList.remove('admin-active');
       document.getElementById('adminBanner').classList.remove('visible');
       document.getElementById('adminFab').classList.remove('visible');
-      // Hide admin sidebar items
       document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.remove('visible'));
       closeAllSheets();
     }
@@ -3250,14 +3248,33 @@
       document.getElementById('sheetOverlay').classList.remove('open');
     }
 
-    // ── LOGIN (dashboard access) ──
+    // ── COOKIE HELPERS ──
+    function setCookie(name, val, days) {
+      const d = new Date();
+      d.setTime(d.getTime() + days * 86400000);
+      document.cookie = `${name}=${encodeURIComponent(val)};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+    }
+    function getCookie(name) {
+      const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : null;
+    }
+    function deleteCookie(name) {
+      document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;SameSite=Lax`;
+    }
+
+    // ── LOGIN (guest access) ──
     const LOGIN_PIN = '8138';
 
     function confirmLogin() {
       const val = document.getElementById('loginInput').value;
-      if (val === LOGIN_PIN) {
+      if (val === LOGIN_PIN || val === ADMIN_PIN) {
+        const role = val === ADMIN_PIN ? 'admin' : 'guest';
+        setCookie('trah_auth', role, 30);
         document.getElementById('loginOverlay').classList.add('hidden');
         document.getElementById('loginInput').value = '';
+        // Show guest-visible nav items
+        document.querySelectorAll('.nav-guest-visible').forEach(el => el.classList.add('visible'));
+        if (role === 'admin') applyAdminMode();
       } else {
         document.getElementById('loginError').textContent = 'PIN salah. Coba lagi.';
         document.getElementById('loginInput').value = '';
@@ -3265,10 +3282,28 @@
       }
     }
 
-    // Show login on first load
+    function applyAdminMode() {
+      isAdmin = true;
+      setCookie('trah_auth', 'admin', 30);
+      document.getElementById('adminBtn').classList.add('admin-active');
+      document.getElementById('adminBanner').classList.add('visible');
+      document.getElementById('adminFab').classList.add('visible');
+      document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.add('visible'));
+      document.querySelectorAll('.nav-guest-visible').forEach(el => el.classList.add('visible'));
+      loadPendingRequestCount();
+    }
+
+    // Show login on first load (check cookie first)
     window.addEventListener('DOMContentLoaded', () => {
-      document.getElementById('loginOverlay').classList.remove('hidden');
-      setTimeout(() => document.getElementById('loginInput').focus(), 100);
+      const auth = getCookie('trah_auth');
+      if (auth === 'guest' || auth === 'admin') {
+        document.getElementById('loginOverlay').classList.add('hidden');
+        document.querySelectorAll('.nav-guest-visible').forEach(el => el.classList.add('visible'));
+        if (auth === 'admin') applyAdminMode();
+      } else {
+        document.getElementById('loginOverlay').classList.remove('hidden');
+        setTimeout(() => document.getElementById('loginInput').focus(), 100);
+      }
     });
 
     init();
