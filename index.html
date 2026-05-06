@@ -875,9 +875,6 @@
     /* Admin-only nav items */
     .nav-admin-only { display: none; }
     .nav-admin-only.visible { display: block; }
-    /* Guest-visible nav items (shown after any login) */
-    .nav-guest-visible { display: none; }
-    .nav-guest-visible.visible { display: block; }
 
     /* ── REQUEST TYPE MODAL ── */
     #requestTypeSheet { max-width: 420px; }
@@ -1076,13 +1073,13 @@
         </a>
       </li>
       <div class="nav-sep"></div>
-      <li class="nav-guest-visible" id="navRequestList">
+      <li id="navRequestList">
         <a href="request-list.html">
           <span class="nav-icon">📋</span> Antrian Permintaan
           <span class="nav-badge" id="navPendingCount" style="display:none">0</span>
         </a>
       </li>
-      <div class="nav-sep nav-guest-visible" id="navSep2"></div>
+      <div class="nav-sep" id="navSep2"></div>
       <li>
         <a href="attendance.html">
           <span class="nav-icon">📅</span> Kehadiran Keluarga
@@ -3275,8 +3272,6 @@
         setCookie('trah_auth', role, 30);
         document.getElementById('loginOverlay').classList.add('hidden');
         document.getElementById('loginInput').value = '';
-        // Show guest-visible nav items
-        document.querySelectorAll('.nav-guest-visible').forEach(el => el.classList.add('visible'));
         if (role === 'admin') applyAdminMode();
       } else {
         document.getElementById('loginError').textContent = 'PIN salah. Coba lagi.';
@@ -3292,7 +3287,6 @@
       document.getElementById('adminBanner').classList.add('visible');
       document.getElementById('adminFab').classList.add('visible');
       document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.add('visible'));
-      document.querySelectorAll('.nav-guest-visible').forEach(el => el.classList.add('visible'));
       loadPendingRequestCount();
     }
 
@@ -3301,7 +3295,6 @@
       const auth = getCookie('trah_auth');
       if (auth === 'guest' || auth === 'admin') {
         document.getElementById('loginOverlay').classList.add('hidden');
-        document.querySelectorAll('.nav-guest-visible').forEach(el => el.classList.add('visible'));
         if (auth === 'admin') applyAdminMode();
       } else {
         document.getElementById('loginOverlay').classList.remove('hidden');
