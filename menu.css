@@ -15,6 +15,7 @@
   --text: #f0e8d8;
   --text-muted: #9e9080;
   --header-h: 56px;
+  --tab-h: 60px;
 }
 
 [data-theme="light"] {
