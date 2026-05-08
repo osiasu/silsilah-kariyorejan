@@ -3,43 +3,30 @@
 <head>
   <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Antrian Permintaan — Silsilah Trah Kariyorejan</title>
+  <script>
+    (function() {
+      var theme = localStorage.getItem('trah_theme') || 'dark';
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="menu.css">
   <style>
     :root{--gold:#c9962a;--gold-light:#e8b84b;--gold-dim:rgba(201,150,42,0.15);--bg:#100e0a;--surface:#1a1610;--surface2:#231f18;--surface3:#2e2820;--border:rgba(201,150,42,0.18);--text:#f0e8d8;--text-muted:#9e9080;--radius:14px;--header-h:56px;}
+    [data-theme="light"]{--bg:#f5f3ef;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e5e2d8;--border:rgba(201,150,42,0.15);--text:#2a2520;--text-muted:#6b6560;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
 
     /* HEADER */
-    #header{position:sticky;top:0;z-index:200;background:rgba(16,14,10,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;height:var(--header-h);display:flex;align-items:center;gap:0.75rem;}
-    #burgerBtn{flex-shrink:0;background:none;border:none;color:var(--text-muted);font-size:1.25rem;cursor:pointer;padding:0.25rem;display:flex;align-items:center;transition:color 0.15s;}
-    #burgerBtn:hover{color:var(--gold-light);}
-    .logo{font-family:'Playfair Display',serif;font-size:1rem;color:var(--gold-light);white-space:nowrap;flex:1;}
+    #header{position:sticky;top:0;z-index:200;background:var(--surface);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;height:var(--header-h);display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
     #adminBtn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.18s,background 0.18s;}
     #adminBtn:hover{border-color:var(--gold);background:var(--gold-dim);}
     #adminBtn.admin-active{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 8px rgba(201,150,42,0.35);}
     #adminBanner{display:none;background:var(--gold-dim);border-bottom:1px solid var(--gold);padding:0.3rem 1rem;font-size:0.72rem;color:var(--gold-light);text-align:center;letter-spacing:0.05em;}
     #adminBanner.visible{display:block;}
 
-    /* SIDEBAR */
-    #sidebarOverlay{position:fixed;inset:0;z-index:700;background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);opacity:0;pointer-events:none;transition:opacity 0.25s;}
-    #sidebarOverlay.open{opacity:1;pointer-events:all;}
-    #sidebar{position:fixed;top:0;left:0;bottom:0;width:270px;z-index:800;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;transform:translateX(-100%);transition:transform 0.28s cubic-bezier(0.32,0.72,0,1);}
-    #sidebar.open{transform:translateX(0);}
-    .sidebar-head{padding:1.1rem 1.1rem 0.75rem;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
-    .sidebar-logo{font-family:'Playfair Display',serif;font-size:0.88rem;color:var(--gold-light);line-height:1.35;flex:1;}
-    .sidebar-close{background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;color:var(--text-muted);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
-    .sidebar-close:hover{border-color:var(--gold);color:var(--gold-light);}
-    .sidebar-nav{list-style:none;padding:0.6rem 0;flex:1;overflow-y:auto;}
-    .sidebar-nav li a,.sidebar-nav li button{display:flex;align-items:center;gap:0.75rem;padding:0.7rem 1.1rem;color:var(--text-muted);font-size:0.88rem;font-weight:500;text-decoration:none;cursor:pointer;transition:color 0.15s,background 0.15s;border:none;background:none;width:100%;text-align:left;font-family:'DM Sans',sans-serif;}
-    .sidebar-nav li a:hover,.sidebar-nav li button:hover{color:var(--text);background:var(--surface2);}
-    .sidebar-nav li.active a{color:var(--gold-light);background:var(--gold-dim);}
-    .nav-icon{font-size:1.05rem;width:22px;text-align:center;flex-shrink:0;}
-    .nav-sep{height:1px;background:var(--border);margin:0.4rem 1rem;}
-    .nav-badge{margin-left:auto;font-size:0.6rem;font-weight:700;background:var(--gold-dim);color:var(--gold);border:1px solid rgba(201,150,42,0.3);border-radius:999px;padding:0.1rem 0.45rem;}
-    .sidebar-footer{padding:0.75rem 1.1rem;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-muted);text-align:center;}
-
-    /* ACCESS GATE — sits below header so sidebar is always reachable */
+    /* ACCESS GATE */
     #accessGate{
       position:fixed; top:var(--header-h); left:0; right:0; bottom:0;
       z-index:500; background:var(--bg);
@@ -131,34 +118,41 @@
 <body>
 
   <div id="header">
-    <button id="burgerBtn" onclick="openSidebar()">☰</button>
-    <div class="logo">⟡ Antrian Permintaan ⟡</div>
-    <button id="adminBtn" onclick="toggleAdminUpgrade()" title="Masuk sebagai Super Admin">🔐</button>
+    <div class="header__left">
+      <!-- <div class="logo">⟡ Antrian Permintaan ⟡</div> -->
+    </div>
+    <div class="header__main">
+      <div class="header__menu">
+        <div class="header__menu-icon">
+          <div class="header__menu-line is-top"></div>
+          <div class="header__menu-line is-bottom"></div>
+        </div>
+        <span class="header__menu-txt">Menu</span>
+      </div>
+      <div class="header__theme">
+        <div class="header__theme-night">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 16 16" fill="none">
+            <path d="M14.845 8.36965C14.7735 9.69243 14.3205 10.9662 13.5406 12.037C12.7607 13.1079 11.6874 13.9298 10.4503 14.4036C9.21321 14.8774 7.86538 14.9827 6.56972 14.7068C5.27407 14.431 4.08605 13.7857 3.14929 12.849C2.21253 11.9123 1.56714 10.7244 1.29113 9.42878C1.01511 8.13315 1.12029 6.78531 1.59395 5.54818C2.06762 4.31106 2.88948 3.23761 3.9602 2.45761C5.03092 1.67761 6.30465 1.22444 7.62741 1.1529C7.93599 1.13613 8.09752 1.50337 7.9337 1.7647C7.38581 2.64132 7.15121 3.67774 7.26818 4.70485C7.38515 5.73196 7.84679 6.6891 8.57776 7.42008C9.30873 8.15105 10.2659 8.61269 11.293 8.72966C12.3201 8.84662 13.3565 8.61203 14.2331 8.06413C14.4953 7.90033 14.8617 8.06108 14.845 8.36965Z" stroke="currentColor" stroke-width="1.71429" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="header__theme-day">
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20" fill="none">
+            <path d="M10.0007 15.8333C13.2223 15.8333 15.834 13.2217 15.834 10C15.834 6.77833 13.2223 4.16666 10.0007 4.16666C6.77899 4.16666 4.16732 6.77833 4.16732 10C4.16732 13.2217 6.77899 15.8333 10.0007 15.8333Z" fill="currentColor"/>
+          </svg>
+        </div>
+      </div>
+      <div class="header__prc">
+        <div id="progress" class="header__prc-txt">0%</div>
+      </div>
+    </div>
+    <div class="header__right">
+      <button id="adminBtn" onclick="toggleAdminUpgrade()" title="Masuk sebagai Super Admin">🔐</button>
+    </div>
   </div>
 
   <div id="adminBanner">🔐 Mode Super Admin Aktif — <span style="cursor:pointer;text-decoration:underline" onclick="logoutAdmin()">Keluar ke Mode Tamu</span></div>
 
-  <div id="sidebarOverlay" onclick="closeSidebar()"></div>
-  <nav id="sidebar">
-    <div class="sidebar-head">
-      <div class="sidebar-logo" style="text-align:center;"><span style="font-size:1.1em;font-weight:bold;display:block;margin-bottom:5px;">❖ SILSILAH KELUARGA ❖</span>⟡ Trah Kariyorejan ⟡</div>
-      <button class="sidebar-close" onclick="closeSidebar()">✕</button>
-    </div>
-    <ul class="sidebar-nav">
-      <li><a href="dashboard.html"><span class="nav-icon">🏠</span> Beranda</a></li>
-      <li><a href="introduction.html"><span class="nav-icon">📖</span> Pengenalan</a></li>
-      <li><a href="biography.html"><span class="nav-icon">📜</span> Biografi</a></li>
-      <li><a href="index.html"><span class="nav-icon">🌿</span> Pohon Silsilah</a></li>
-      <div class="nav-sep"></div>
-      <li class="active"><a href="request-list.html"><span class="nav-icon">📋</span> Antrian Permintaan <span class="nav-badge" id="navPendingBadge" style="display:none">0</span></a></li>
-      <div class="nav-sep"></div>
-      <li><a href="attendance.html"><span class="nav-icon">📅</span> Kehadiran Keluarga</a></li>
-      <li><a href="misc.html"><span class="nav-icon">⚙️</span> Lainnya</a></li>
-    </ul>
-    <div class="sidebar-footer">masenorr © 2025</div>
-  </nav>
-
-  <!-- ACCESS GATE — starts below header so burger stays reachable -->
+  <!-- menu.js injects the fullscreen overlay menu -->
   <div id="accessGate">
     <div class="pin-box">
       <div class="pin-logo">📋 Antrian Permintaan</div>
@@ -238,8 +232,7 @@
     function getCookie(name){const m=document.cookie.match(new RegExp('(?:^|; )'+name+'=([^;]*)'));return m?decodeURIComponent(m[1]):null;}
 
     // ── SIDEBAR ──
-    function openSidebar(){document.getElementById('sidebar').classList.add('open');document.getElementById('sidebarOverlay').classList.add('open');}
-    function closeSidebar(){document.getElementById('sidebar').classList.remove('open');document.getElementById('sidebarOverlay').classList.remove('open');}
+
 
     // ── PIN TAB ──
     function switchPinTab(tab) {
@@ -463,5 +456,6 @@
       }
     });
   </script>
+  <script src="menu.js"></script>
 </body>
 </html>
