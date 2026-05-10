@@ -85,20 +85,56 @@
 
   function openMenu() {
     isMenuOpen = true;
-    document.querySelector('.header__menu')?.classList.add('open');
-    document.querySelector('.menu-close-btn')?.classList.add('open');
-    document.querySelector('.header__menu-txt') && (document.querySelector('.header__menu-txt').textContent = 'Close');
-    document.getElementById('menuOverlay')?.classList.add('open');
+    const headerMenu = document.querySelector('.header__menu');
+    const closeBtn = document.querySelector('.menu-close-btn');
+    const overlay = document.getElementById('menuOverlay');
+
+    headerMenu?.classList.add('open');
+    closeBtn?.classList.add('open');
+
+    const menuTxt = document.querySelector('.header__menu-txt');
+    if (menuTxt) menuTxt.textContent = 'Close';
+
+    overlay?.classList.add('open');
     document.body.classList.add('menu-open');
+
+    triggerStaggerAnimation();
+  }
+
+  function triggerStaggerAnimation() {
+    const primaryLinks = document.querySelectorAll('.menu-section.primary .menu-link');
+    const secondaryLinks = document.querySelectorAll('.menu-section.secondary .menu-link');
+
+    setTimeout(() => {
+      primaryLinks.forEach((link, i) => {
+        setTimeout(() => link.classList.add('is-visible'), i * 60);
+      });
+
+      secondaryLinks.forEach((link, i) => {
+        setTimeout(() => link.classList.add('is-visible'), (primaryLinks.length + i) * 60);
+      });
+    }, 200);
   }
 
   function closeMenu() {
     isMenuOpen = false;
-    document.querySelector('.header__menu')?.classList.remove('open');
-    document.querySelector('.menu-close-btn')?.classList.remove('open');
-    document.querySelector('.header__menu-txt') && (document.querySelector('.header__menu-txt').textContent = 'Menu');
-    document.getElementById('menuOverlay')?.classList.remove('open');
+    const headerMenu = document.querySelector('.header__menu');
+    const closeBtn = document.querySelector('.menu-close-btn');
+    const overlay = document.getElementById('menuOverlay');
+    const allLinks = document.querySelectorAll('.menu-link');
+
+    headerMenu?.classList.remove('open');
+    closeBtn?.classList.remove('open');
+
+    const menuTxt = document.querySelector('.header__menu-txt');
+    if (menuTxt) menuTxt.textContent = 'Menu';
+
+    overlay?.classList.remove('open');
     document.body.classList.remove('menu-open');
+
+    setTimeout(() => {
+      allLinks.forEach(link => link.classList.remove('is-visible'));
+    }, 400);
   }
 
   function setActiveMenuLink() {
