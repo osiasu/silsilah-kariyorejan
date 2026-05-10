@@ -11,7 +11,7 @@
     })();
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="menu.css">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -19,7 +19,9 @@
     html { scroll-behavior: smooth; }
 
     body {
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
       background: var(--bg);
       color: var(--text);
       min-height: 100dvh;
@@ -33,9 +35,9 @@
       border: 1px solid var(--border);
       border-radius: 999px;
       color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem;
-      padding: 0.45rem 2.2rem 0.45rem 2.2rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.875rem;
+      padding: 0.5rem 2rem 0.5rem 2rem;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -44,11 +46,11 @@
 
     .search-icon {
       position: absolute;
-      left: 0.65rem;
+      left: 0.5rem;
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       pointer-events: none;
     }
 
@@ -133,93 +135,93 @@
 
     .sheet-header {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 0.75rem 1.25rem 0.5rem; flex-shrink: 0;
+      padding: 0.75rem 1rem 0.5rem; flex-shrink: 0;
       border-bottom: 1px solid var(--border);
     }
-    .sheet-title { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: var(--gold-light); }
+    .sheet-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; font-weight: 700; color: var(--gold-light); }
     .sheet-close {
       background: var(--surface2); border: 1px solid var(--border); border-radius: 50%;
-      width: 28px; height: 28px; color: var(--text-muted); font-size: 0.85rem;
+      width: 28px; height: 28px; color: var(--text-muted); font-size: 0.875rem;
       cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s;
     }
     .sheet-close:hover { border-color: var(--gold); color: var(--gold-light); }
 
-    .sheet-body { overflow-y: auto; padding: 1rem 1.25rem 2rem; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
+    .sheet-body { overflow-y: auto; padding: 0.75rem; flex: 1; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
 
     /* ── DETAIL VIEW ── */
     .detail-avatar {
       width: 56px; height: 56px; border-radius: 50%;
-      font-size: 1.3rem; font-weight: 700;
+      font-size: 1.25rem; font-weight: 700;
       display: flex; align-items: center; justify-content: center;
-      font-family: 'Playfair Display', serif; flex-shrink: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif; flex-shrink: 0;
     }
-    .detail-hero { display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem; }
+    .detail-hero { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.75rem; }
     .detail-hero-info { flex: 1; min-width: 0; }
-    .detail-hero-name { font-family: 'Playfair Display', serif; font-size: 1.15rem; color: var(--text); line-height: 1.2; }
-    .detail-hero-sub { font-size: 0.78rem; color: var(--text-muted); margin-top: 0.2rem; }
+    .detail-hero-name { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.125rem; color: var(--text); line-height: 1.35; }
+    .detail-hero-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.125rem; }
 
-    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem 1rem; }
-    .detail-field { display: flex; flex-direction: column; gap: 0.15rem; }
+    .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.375rem 0.75rem; }
+    .detail-field { display: flex; flex-direction: column; }
     .detail-field.full { grid-column: 1 / -1; }
-    .detail-label { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 600; }
-    .detail-value { font-size: 0.88rem; color: var(--text); }
+    .detail-label { font-size: 0.625rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); font-weight: 600; }
+    .detail-value { font-size: 0.875rem; color: var(--text); }
     .detail-value.empty { color: var(--text-muted); font-style: italic; }
 
-    .detail-section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin: 1.25rem 0 0.6rem; padding-bottom: 0.35rem; border-bottom: 1px solid var(--border); }
+    .detail-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin: 0.75rem 0 0.375rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--border); }
 
     .detail-spouse-btn {
-      display: flex; align-items: center; gap: 0.6rem;
+      display: flex; align-items: center; gap: 0.5rem;
       background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 0.65rem 0.85rem; cursor: pointer; transition: border-color 0.15s; width: 100%; text-align: left;
+      padding: 0.5rem 0.75rem; cursor: pointer; transition: border-color 0.15s; width: 100%; text-align: left;
     }
     .detail-spouse-btn:hover { border-color: var(--gold); }
-    .detail-spouse-btn .ds-name { font-size: 0.88rem; color: var(--text); }
-    .detail-spouse-btn .ds-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .detail-spouse-btn .ds-name { font-size: 0.875rem; color: var(--text); }
+    .detail-spouse-btn .ds-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.125rem; }
 
     .admin-edit-btn {
-      margin-top: 1.25rem; width: 100%; padding: 0.65rem;
+      margin-top: 0.75rem; width: 100%; padding: 0.5rem;
       background: var(--gold-dim); border: 1px solid var(--gold); border-radius: var(--radius);
-      color: var(--gold-light); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 500;
+      color: var(--gold-light); font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 500;
       cursor: pointer; transition: background 0.18s; display: none;
     }
-    .admin-edit-btn:hover { background: rgba(201,150,42,0.25); }
+    .admin-edit-btn:hover { background: rgba(184,130,46,0.25); }
     .admin-edit-btn.visible { display: block; }
 
     /* ── FORM ── */
-    .form-section-title { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin: 1.1rem 0 0.5rem; padding-bottom: 0.3rem; border-bottom: 1px solid var(--border); }
+    .form-section-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; margin: 1rem 0 0.5rem; padding-bottom: 0.25rem; border-bottom: 1px solid var(--border); }
     .form-section-title:first-child { margin-top: 0; }
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.65rem 0.85rem; }
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 0.75rem; }
     .form-field { display: flex; flex-direction: column; gap: 0.25rem; }
     .form-field.full { grid-column: 1 / -1; }
-    .form-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
+    .form-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
     .form-label span { color: var(--red); margin-left: 2px; }
     .form-input, .form-select, .form-textarea {
       background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
-      color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.85rem;
+      color: var(--text); font-family: 'Inter', sans-serif; font-size: 0.75rem;
       padding: 0.5rem 0.75rem; outline: none; transition: border-color 0.18s; width: 100%;
     }
     .form-input:focus, .form-select:focus, .form-textarea:focus { border-color: var(--gold); }
     .form-input::placeholder, .form-textarea::placeholder { color: var(--text-muted); }
     .form-select option { background: var(--surface2); }
     .form-textarea { resize: vertical; min-height: 72px; }
-    .form-actions { display: flex; gap: 0.65rem; margin-top: 1.25rem; }
-    .btn-cancel { flex: 1; padding: 0.65rem; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); font-family: 'DM Sans', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.18s; }
+    .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
+    .btn-cancel { flex: 1; padding: 0.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 0.75rem; cursor: pointer; transition: all 0.18s; }
     .btn-cancel:hover { border-color: var(--text-muted); color: var(--text); }
-    .btn-save { flex: 2; padding: 0.65rem; background: var(--gold); border: none; border-radius: var(--radius); color: #1a1205; font-family: 'DM Sans', sans-serif; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: opacity 0.18s; }
+    .btn-save { flex: 2; padding: 0.5rem; background: var(--gold); border: none; border-radius: var(--radius); color: #1a1205; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: opacity 0.18s; }
     .btn-save:hover { opacity: 0.88; }
     .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* ── ADMIN BUTTON (header) ── */
     #adminBtn:hover { border-color: var(--gold); background: var(--gold-dim); }
-    #adminBtn.admin-active { border-color: var(--gold); background: var(--gold-dim); box-shadow: 0 0 8px rgba(201,150,42,0.35); }
+    #adminBtn.admin-active { border-color: var(--gold); background: var(--gold-dim); box-shadow: 0 0 8px rgba(184,130,46,0.35); }
 
     /* Admin mode banner under header */
     #adminBanner {
       display: none;
       background: var(--gold-dim);
       border-bottom: 1px solid var(--gold);
-      padding: 0.3rem 1rem;
-      font-size: 0.72rem;
+      padding: 0.25rem 1rem;
+      font-size: 0.75rem;
       color: var(--gold-light);
       text-align: center;
       letter-spacing: 0.05em;
@@ -230,7 +232,7 @@
     #adminFab {
       position: fixed;
       bottom: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px) + 1rem);
-      right: 1.25rem;
+      right: 1rem;
       z-index: 350;
       width: 52px; height: 52px;
       border-radius: 50%;
@@ -240,7 +242,7 @@
       font-size: 1.5rem;
       font-weight: 300;
       cursor: pointer;
-      box-shadow: 0 4px 18px rgba(201,150,42,0.45);
+      box-shadow: 0 4px 18px rgba(184,130,46,0.45);
       display: none;
       align-items: center; justify-content: center;
       transition: opacity 0.2s, transform 0.2s;
@@ -250,9 +252,9 @@
 
 
     .detail-back-btn {
-      display: flex; align-items: center; gap: 0.35rem;
+      display: flex; align-items: center; gap: 0.25rem;
       background: none; border: none;
-      color: var(--text-muted); font-size: 0.8rem;
+      color: var(--text-muted); font-size: 0.75rem;
       cursor: pointer; padding: 0.5rem 1rem 0;
       transition: color 0.15s;
     }
@@ -272,29 +274,29 @@
       display: none;
       width: calc(100% - 2rem);
       margin: 0.5rem 1rem 0;
-      padding: 0.7rem;
+      padding: 0.75rem;
       border-radius: 10px;
       border: 1px solid var(--gold);
       background: var(--gold-dim);
       color: var(--gold-light);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.18s;
     }
     .admin-edit-btn.visible { display: block; }
-    .admin-edit-btn:hover { background: rgba(201,150,42,0.22); }
+    .admin-edit-btn:hover { background: rgba(184,130,46,0.22); }
 
     .admin-delete-btn {
       display: none;
       width: calc(100% - 2rem);
-      margin: 0.4rem 1rem 1rem;
-      padding: 0.6rem;
+      margin: 0.25rem 1rem 1rem;
+      padding: 0.5rem;
       border-radius: 10px;
       border: 1px solid rgba(217,64,64,0.4);
       background: rgba(217,64,64,0.08);
       color: #e07070;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.18s;
@@ -314,7 +316,7 @@
 
     /* ── FORM SHEET BODY ── */
     .form-section-title {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
       color: var(--gold); text-transform: uppercase;
       padding: 0.75rem 1rem 0.25rem;
     }
@@ -322,18 +324,18 @@
       display: grid; grid-template-columns: 1fr 1fr;
       gap: 0.5rem; padding: 0 1rem;
     }
-    .form-field { display: flex; flex-direction: column; gap: 0.3rem; }
+    .form-field { display: flex; flex-direction: column; gap: 0.25rem; }
     .form-field.full { grid-column: 1 / -1; }
-    .form-label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
+    .form-label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; }
     .form-label span { color: #e07070; }
     .form-input, .form-select, .form-textarea {
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 8px;
       color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem;
-      padding: 0.5rem 0.65rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.5rem 0.5rem;
       outline: none;
       transition: border-color 0.15s;
       width: 100%; box-sizing: border-box;
@@ -343,26 +345,27 @@
       border-color: var(--gold);
     }
     .form-textarea { resize: vertical; min-height: 68px; }
+    .form-actions { display: flex; gap: 0.5rem; margin-top: 0.75rem; }
     .form-actions {
       display: flex; gap: 0.75rem;
-      padding: 1rem;
-      padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+      padding: 0.75rem;
+      padding-bottom: calc(0.75rem + env(safe-area-inset-bottom, 0px));
       border-top: 1px solid var(--border);
       margin-top: 0.75rem;
     }
     .btn-cancel {
-      flex: 1; padding: 0.65rem;
+      flex: 1; padding: 0.5rem;
       border-radius: 10px; border: 1px solid var(--border);
       background: var(--surface); color: var(--text-muted);
-      font-size: 0.85rem; cursor: pointer;
+      font-size: 0.75rem; cursor: pointer;
       transition: border-color 0.15s;
     }
     .btn-cancel:hover { border-color: var(--gold); color: var(--text); }
     .btn-save {
-      flex: 2; padding: 0.65rem;
+      flex: 2; padding: 0.5rem;
       border-radius: 10px; border: none;
       background: var(--gold); color: #1a1205;
-      font-size: 0.85rem; font-weight: 700;
+      font-size: 0.75rem; font-weight: 700;
       cursor: pointer; transition: opacity 0.15s;
     }
     .btn-save:hover { opacity: 0.88; }
@@ -386,49 +389,55 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 2rem 1.75rem 1.75rem;
+      padding: 1.5rem 1rem 1rem;
       width: calc(100% - 2rem); max-width: 340px;
       display: flex; flex-direction: column; gap: 1rem;
       box-shadow: 0 8px 40px rgba(0,0,0,0.5);
     }
     .login-logo {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 1rem; font-weight: 700;
       color: var(--gold-light); letter-spacing: 0.05em;
       text-align: center; margin-bottom: 0.25rem;
     }
     .login-title {
-      font-size: 0.78rem; color: var(--text-muted);
+      font-size: 0.75rem; color: var(--text-muted);
       text-align: center; margin-bottom: 0.5rem;
     }
     #loginError {
       font-size: 0.75rem; color: #e07070;
       text-align: center; min-height: 1rem;
     }
-    #pinBox { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1.75rem 1.5rem; width: min(340px,90vw); text-align: center; }
-    #pinBox h3 { font-family: 'Playfair Display', serif; color: var(--gold-light); margin-bottom: 0.4rem; }
-    #pinBox p { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.1rem; }
-    #pinInput { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 1.1rem; letter-spacing: 0.25em; text-align: center; padding: 0.6rem; outline: none; margin-bottom: 0.75rem; transition: border-color 0.18s; }
+    #pinBox { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1rem; width: min(340px,90vw); text-align: center; }
+    #pinBox h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; color: var(--gold-light); margin-bottom: 0.25rem; }
+    #pinBox p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; }
+    #pinInput { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 1rem; letter-spacing: 0.25em; text-align: center; padding: 0.5rem; outline: none; margin-bottom: 0.75rem; transition: border-color 0.18s; }
     #pinInput:focus { border-color: var(--gold); }
-    #pinError { font-size: 0.78rem; color: var(--red); margin-bottom: 0.65rem; min-height: 1.2em; }
+    #pinError { font-size: 0.75rem; color: var(--red); margin-bottom: 0.5rem; min-height: 1.2em; }
     .pin-actions { display: flex; gap: 0.5rem; }
 
     .clickable-name { cursor: pointer; transition: color 0.15s; }
     .clickable-name:hover { color: var(--gold-light); }
 
-    /* ── FILTER BAR ── */
+/* ── FILTER BAR ── */
     #filterBar {
-      position: sticky;          /* ← added */
-      top: var(--header-h);      /* ← added: sticks just below the 56px header */
-      z-index: 180;              /* ← added: sits below header (200) and banner (190) */
-      background: var(--surface);
+      position: fixed;
+      top: var(--header-h);
+      left: 0;
+      right: 0;
+      z-index: 180;
+      background: transparent;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
-      padding: 0.5rem 1rem;
+      padding: 0.75rem;
       display: flex;
       align-items: center;
+      justify-content: flex-start;
       gap: 0.5rem;
       overflow-x: auto;
       scrollbar-width: none;
+      scroll-snap-type: x mandatory;
     }
     #filterBar::-webkit-scrollbar { display: none; }
 
@@ -438,13 +447,31 @@
       border: 1px solid var(--border);
       border-radius: 999px;
       color: var(--text-muted);
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
       font-weight: 500;
-      padding: 0.3rem 0.85rem;
+      padding: 0.5rem 1rem;
       cursor: pointer;
       transition: all 0.18s;
       white-space: nowrap;
+      scroll-snap-align: center;
+    }
+    #filterBar::-webkit-scrollbar { display: none; }
+
+    .filter-chip {
+      flex-shrink: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 0.25rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.18s;
+      white-space: nowrap;
+      scroll-snap-align: center;
     }
     .filter-chip:hover, .filter-chip.active {
       background: var(--gold-dim);
@@ -453,67 +480,81 @@
     }
 
     #counterText {
-      margin-left: auto;
       flex-shrink: 0;
-      font-size: 0.72rem;
+      margin-left: auto;
+      font-size: 0.75rem;
       color: var(--text-muted);
       white-space: nowrap;
     }
 
-    /* ── MAIN CONTENT ── */
+/* ── MAIN CONTENT ── */
     #content {
       padding: 1rem;
+      padding-top: 3rem;
       max-width: 680px;
       margin: 0 auto;
     }
 
     /* ── LIST VIEW ── */
-    .gen-group { margin-bottom: 1.5rem; }
+    .gen-group { margin-bottom: 1rem; }
 
     .gen-header {
-      font-family: 'Playfair Display', serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
       font-size: 0.75rem;
-      letter-spacing: 0.12em;
+      letter-spacing: 0.125rem;
       text-transform: uppercase;
       color: var(--gold);
-      padding: 0.25rem 0 0.6rem;
+      padding: 0.75rem 0 0.375rem;
       border-bottom: 1px solid var(--border);
-      margin-bottom: 0.6rem;
+      margin-bottom: 0.5rem;
     }
 
     .member-card {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 0.75rem;
       background: var(--surface);
-      border: 1px solid transparent;
+      border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 0.7rem 0.85rem;
-      margin-bottom: 0.45rem;
-      transition: border-color 0.15s, background 0.15s;
+      padding: 0.75rem;
+      margin-bottom: 0.5rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
       cursor: default;
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s;
     }
-    .member-card:hover { border-color: var(--border); background: var(--surface2); }
+    .member-card:hover {
+      border-color: var(--gold);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08), 0 12px 32px rgba(0,0,0,0.12);
+      transform: translateY(-1px);
+    }
+    .member-card:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.06), 0 4px 16px rgba(0,0,0,0.06);
+    }
 
     .avatar {
-      width: 38px;
-      height: 38px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       font-weight: 600;
       flex-shrink: 0;
-      font-family: 'Playfair Display', serif;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      transition: box-shadow 0.2s;
     }
-    .avatar.female { background: rgba(217,64,64,0.18); color: #e07070; border: 1.5px solid rgba(217,64,64,0.3); }
-    .avatar.male   { background: rgba(74,127,203,0.18); color: #7aaae0; border: 1.5px solid rgba(74,127,203,0.3); }
+    .avatar.female { background: rgba(200,80,80,0.2); color: #e07070; border: 2px solid rgba(200,80,80,0.4); }
+    .avatar.male   { background: rgba(80,130,200,0.2); color: #6a9fd4; border: 2px solid rgba(80,130,200,0.4); }
+    .member-card:hover .avatar { box-shadow: 0 3px 10px rgba(0,0,0,0.28); }
 
     .card-info { flex: 1; min-width: 0; }
     .card-name {
       font-weight: 500;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
+      line-height: 1.5;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -521,7 +562,7 @@
     .card-spouse {
       font-size: 0.75rem;
       color: var(--text-muted);
-      margin-top: 0.1rem;
+      margin-top: 0.25rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -530,86 +571,221 @@
 
     .card-badge {
       flex-shrink: 0;
-      font-size: 0.65rem;
+      font-size: 0.625rem;
       font-weight: 600;
       background: var(--gold-dim);
       color: var(--gold);
-      border: 1px solid rgba(201,150,42,0.25);
+      border: 1px solid rgba(184,130,46,0.25);
       border-radius: 999px;
-      padding: 0.15rem 0.55rem;
+      padding: 0.25rem 0.5rem;
       letter-spacing: 0.04em;
     }
 
-    mark { background: rgba(232,184,75,0.3); color: var(--gold-light); border-radius: 3px; padding: 0 2px; }
+    mark { background: rgba(184,130,46,0.25); color: var(--gold-light); border-radius: 3px; padding: 0 2px; }
 
-    /* ── TREE VIEW ── */
+/* ── TREE VIEW ── */
+    #treeRoot {
+      overflow-x: auto;
+      padding: 1rem;
+      scroll-behavior: smooth;
+      transform-origin: top center;
+    }
     #treeRoot ul {
       list-style: none;
-      padding-left: 1.25rem;
-      margin-top: 0.2rem;
-      border-left: 1px dashed var(--border);
+      padding-left: 0;
+      margin-top: 0;
     }
-
     #treeRoot > ul { padding-left: 0; border-left: none; }
 
     .tree-node {
-      margin: 0.35rem 0;
+      margin: 0.5rem 0;
       position: relative;
+    }
+
+    /* Curved connector — vertical line */
+    #treeRoot ul > .tree-node::before {
+      content: '';
+      position: absolute;
+      left: -0.5rem;
+      top: 0;
+      bottom: 50%;
+      width: 1px;
+      background: var(--border);
+    }
+
+    /* Curved connector — horizontal elbow */
+    #treeRoot ul > .tree-node::after {
+      content: '';
+      position: absolute;
+      left: -0.5rem;
+      top: 50%;
+      width: 0.5rem;
+      height: 1px;
+      background: var(--border);
+    }
+
+    [data-theme="light"] #treeRoot ul > .tree-node::before {
+      background: rgba(184,130,46,0.12);
+    }
+    [data-theme="light"] #treeRoot ul > .tree-node::after {
+      background: rgba(184,130,46,0.12);
+    }
+
+    /* Collapse/expand animation */
+    #treeRoot ul ul {
+      overflow: hidden;
+      max-height: 0;
+      opacity: 0;
+      transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+      padding-left: 1rem;
+    }
+    #treeRoot ul ul.open {
+      max-height: 9999px;
+      opacity: 1;
     }
 
     .tree-row {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.4rem 0.6rem;
-      border-radius: 10px;
-      transition: background 0.15s;
+      padding: 0.375rem 0.5rem;
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid transparent;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05), 0 2px 8px rgba(0,0,0,0.05);
+      transition: box-shadow 0.2s, border-color 0.2s, transform 0.15s, opacity 0.2s;
+      cursor: pointer;
+      position: relative;
     }
-    .tree-row:hover { background: var(--surface2); }
+    .tree-row:hover {
+      border-color: var(--border);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08), 0 8px 24px rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+    .tree-row:active { transform: translateY(0); }
+
+    /* Focus mode */
+    .tree-branch.focused .tree-row {
+      border-color: var(--gold);
+      box-shadow: 0 2px 8px rgba(184,130,46,0.2), 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .tree-branch.dimmed .tree-row { opacity: 0.4; }
+    .tree-branch.dimmed .tree-row:hover { opacity: 0.7; }
 
     .tree-toggle {
-      width: 20px;
-      height: 20px;
+      width: 24px;
+      height: 24px;
       flex-shrink: 0;
-      background: var(--surface3);
+      background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 6px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       color: var(--gold);
       cursor: pointer;
-      transition: background 0.15s;
+      transition: background 0.15s, border-color 0.15s, transform 0.2s;
     }
-    .tree-toggle:hover { background: var(--gold-dim); }
+    .tree-toggle:hover { background: var(--gold-dim); border-color: var(--gold); }
+    .tree-toggle.expanded { transform: rotate(180deg); }
 
     .tree-dot {
-      width: 8px;
-      height: 8px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       flex-shrink: 0;
     }
-    .tree-dot.female { background: #e07070; }
-    .tree-dot.male   { background: #7aaae0; }
-    .tree-dot.root   { background: var(--gold-light); width: 10px; height: 10px; }
+    .tree-dot.female { background: #e07070; box-shadow: 0 0 0 3px rgba(224,112,112,0.2); }
+    .tree-dot.male   { background: #6a9fd4; box-shadow: 0 0 0 3px rgba(106,159,212,0.2); }
+    .tree-dot.root   { background: var(--gold-light); box-shadow: 0 0 0 3px rgba(212,165,90,0.2); width: 12px; height: 12px; }
+
+    [data-theme="light"] .tree-row { box-shadow: 0 1px 2px rgba(0,0,0,0.03), 0 2px 8px rgba(0,0,0,0.03); }
+    [data-theme="light"] .tree-row:hover { box-shadow: 0 2px 4px rgba(0,0,0,0.05), 0 8px 24px rgba(0,0,0,0.06); }
+    [data-theme="light"] .tree-dot.female { box-shadow: 0 0 0 3px rgba(224,112,112,0.12); }
+    [data-theme="light"] .tree-dot.male   { box-shadow: 0 0 0 3px rgba(106,159,212,0.12); }
+    [data-theme="light"] .tree-dot.root   { box-shadow: 0 0 0 3px rgba(212,165,90,0.12); }
 
     .tree-label {
-      font-size: 0.9rem;
-      line-height: 1.3;
+      font-size: 0.875rem;
+      line-height: 1.5;
     }
     .tree-label.root-label {
-      font-family: 'Playfair Display', serif;
-      font-size: 1rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.9375rem;
       color: var(--gold-light);
     }
 
     .tree-spouse {
       font-size: 0.75rem;
       color: var(--text-muted);
-      margin-left: 0.3rem;
+      margin-left: 0.25rem;
     }
     .tree-spouse::before { content: "& "; }
+
+    /* ── TREE ACTIONS (zoom controls) ── */
+    #treeActions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      gap: 0.5rem;
+    }
+    .tree-actions-left { display: flex; align-items: center; gap: 0.5rem; }
+    .tree-actions-right { display: flex; align-items: center; gap: 0.5rem; }
+
+    .pill-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      color: var(--text-muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      white-space: nowrap;
+    }
+    .pill-btn:hover { border-color: var(--gold); color: var(--gold-light); }
+    .pill-btn.active { border-color: var(--gold); color: var(--gold-light); background: var(--gold-dim); }
+
+    .zoom-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 0.125rem 0.25rem;
+    }
+    .zoom-btn {
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      background: none;
+      border: none;
+      border-radius: 50%;
+      color: var(--text-muted);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .zoom-btn:hover { background: var(--surface3); color: var(--text); }
+    .zoom-btn:active { transform: scale(0.92); }
+
+    .zoom-indicator {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.625rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      min-width: 2.5rem;
+      text-align: center;
+      letter-spacing: 0.04em;
+    }
+
+    /* Tree canvas zoom level */
+    #treeView { transform-origin: top center; transition: transform 0.2s ease; }
 
     /* ── VIEW TRANSITIONS ── */
     #listView, #treeView {
@@ -644,8 +820,8 @@
       padding: 3rem 1rem;
       color: var(--text-muted);
     }
-    #emptyState .empty-icon { font-size: 2.5rem; margin-bottom: 0.75rem; }
-    #emptyState p { font-size: 0.9rem; }
+    #emptyState .empty-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    #emptyState p { font-size: 0.75rem; }
 
     /* ── BOTTOM TAB BAR ── */
     #tabBar {
@@ -656,7 +832,7 @@
       z-index: 300;
       height: calc(var(--tab-h) + env(safe-area-inset-bottom, 0px));
       padding-bottom: env(safe-area-inset-bottom, 0px);
-      background: var(--surface);
+      background: transparent;
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid var(--border);
@@ -674,47 +850,26 @@
       background: none;
       border: none;
       color: var(--text-muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.68rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
       font-weight: 500;
       cursor: pointer;
       transition: color 0.18s;
       padding: 0;
     }
     .tab-btn .tab-icon {
-      font-size: 1.25rem;
+      font-size: 1rem;
       line-height: 1;
     }
     .tab-btn.active { color: var(--gold-light); }
-    .tab-btn.active .tab-icon { filter: drop-shadow(0 0 6px rgba(232,184,75,0.5)); }
+    .tab-btn.active .tab-icon { filter: drop-shadow(0 0 6px rgba(184,130,46,0.5)); }
 
     /* ── EXPAND/COLLAPSE PILL ── */
-    #treeActions {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-
-    .pill-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      color: var(--text-muted);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 0.3rem 0.85rem;
-      cursor: pointer;
-      transition: all 0.18s;
-    }
-    .pill-btn:hover { border-color: var(--gold); color: var(--gold-light); }
-
-    /* ── LOADING ── */
     #loading {
       text-align: center;
       padding: 3rem 1rem;
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.75rem;
     }
     .spinner {
       width: 32px;
@@ -733,10 +888,19 @@
       body { padding-bottom: 0; }
     }
 
-    /* ── DESKTOP TWEAKS ── */
+/* ── DESKTOP TWEAKS ── */
     @media (min-width: 680px) {
-      #content { padding: 1.5rem; }
-      .member-card { padding: 0.85rem 1rem; }
+      #content { padding: 1rem; padding-top: 3rem; }
+      .member-card { padding: 0.75rem 1rem; }
+      #filterBar {
+        max-width: 680px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 1px solid var(--border);
+        border-right: 1px solid var(--border);
+        border-radius: 0 0 12px 12px;
+        justify-content: flex-start;
+      }
       #tabBar {
         max-width: 680px;
         left: 50%;
@@ -750,30 +914,30 @@
     /* ── REQUEST TYPE MODAL ── */
     #requestTypeSheet { max-width: 420px; }
     .request-type-btn {
-      display: flex; align-items: flex-start; gap: 0.9rem;
+      display: flex; align-items: flex-start; gap: 0.75rem;
       background: var(--surface2); border: 1px solid var(--border);
-      border-radius: var(--radius); padding: 1rem 1.1rem;
+      border-radius: var(--radius); padding: 1rem 1rem;
       cursor: pointer; transition: border-color 0.15s, background 0.15s;
       width: 100%; text-align: left;
     }
     .request-type-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
-    .rtb-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0.05rem; }
-    .rtb-title { font-size: 0.9rem; font-weight: 600; color: var(--text); margin-bottom: 0.2rem; }
-    .rtb-sub { font-size: 0.75rem; color: var(--text-muted); line-height: 1.45; }
+    .rtb-icon { font-size: 1.5rem; flex-shrink: 0; margin-top: 0rem; }
+    .rtb-title { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 0.25rem; }
+    .rtb-sub { font-size: 0.75rem; color: var(--text-muted); line-height: 1.6; }
 
     /* ── REQUEST FORM SHEET ── */
     #requestSheet { max-width: 640px; }
 
     .req-section-title {
-      font-size: 0.68rem; font-weight: 700; letter-spacing: 0.08em;
+      font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em;
       color: var(--gold); text-transform: uppercase;
       padding: 0.75rem 1rem 0.25rem;
     }
     .requestor-badge {
-      display: inline-flex; align-items: center; gap: 0.4rem;
+      display: inline-flex; align-items: center; gap: 0.25rem;
       background: rgba(74,127,203,0.12); border: 1px solid rgba(74,127,203,0.25);
       border-radius: 999px; padding: 0.25rem 0.75rem;
-      font-size: 0.72rem; color: #7aaae0; font-weight: 500;
+      font-size: 0.75rem; color: #7aaae0; font-weight: 500;
       margin: 0 1rem 0.5rem;
     }
 
@@ -783,14 +947,14 @@
     }
     .member-search-input {
       width: 100%; background: var(--surface); border: 1px solid var(--border);
-      border-radius: 10px; color: var(--text); font-family: 'DM Sans', sans-serif;
-      font-size: 0.85rem; padding: 0.5rem 0.65rem 0.5rem 2.2rem;
+      border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: 0.75rem; padding: 0.5rem 0.5rem 0.5rem 2rem;
       outline: none; transition: border-color 0.15s; box-sizing: border-box;
     }
     .member-search-input:focus { border-color: var(--gold); }
     .member-search-icon {
-      position: absolute; left: 1.65rem; top: 50%;
-      transform: translateY(-50%); font-size: 0.85rem; color: var(--text-muted);
+      position: absolute; left: 1.5rem; top: 50%;
+      transform: translateY(-50%); font-size: 0.75rem; color: var(--text-muted);
       pointer-events: none;
     }
     .member-pick-list {
@@ -799,23 +963,23 @@
       margin: 0.5rem 1rem; background: var(--surface);
     }
     .member-pick-item {
-      display: flex; align-items: center; gap: 0.65rem;
-      padding: 0.55rem 0.85rem; cursor: pointer;
+      display: flex; align-items: center; gap: 0.5rem;
+      padding: 0.5rem 0.75rem; cursor: pointer;
       transition: background 0.12s; border-bottom: 1px solid var(--border);
-      font-size: 0.85rem;
+      font-size: 0.75rem;
     }
     .member-pick-item:last-child { border-bottom: none; }
     .member-pick-item:hover { background: var(--surface2); }
     .member-pick-item .mpi-name { color: var(--text); }
-    .member-pick-item .mpi-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.1rem; }
+    .member-pick-item .mpi-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0rem; }
     .selected-member-card {
       display: flex; align-items: center; gap: 0.75rem;
       background: var(--gold-dim); border: 1px solid var(--gold);
-      border-radius: var(--radius); padding: 0.7rem 0.85rem;
+      border-radius: var(--radius); padding: 0.75rem 0.75rem;
       margin: 0 1rem 0.75rem;
     }
-    .selected-member-card .smc-name { font-size: 0.88rem; color: var(--text); }
-    .selected-member-card .smc-sub { font-size: 0.72rem; color: var(--text-muted); margin-top: 0.15rem; }
+    .selected-member-card .smc-name { font-size: 0.75rem; color: var(--text); }
+    .selected-member-card .smc-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 0rem; }
 
     /* ── PREVIEW MODAL ── */
     #previewOverlay {
@@ -831,46 +995,46 @@
       box-shadow: 0 8px 40px rgba(0,0,0,0.6);
     }
     .preview-header {
-      padding: 0.85rem 1.25rem 0.65rem;
+      padding: 0.75rem 1rem 0.5rem;
       border-bottom: 1px solid var(--border);
       display: flex; align-items: center; justify-content: space-between;
       flex-shrink: 0;
     }
-    .preview-title { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold-light); }
-    .preview-body { overflow-y: auto; padding: 1rem 1.25rem; flex: 1; }
+    .preview-title { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; color: var(--gold-light); }
+    .preview-body { overflow-y: auto; padding: 0.75rem; flex: 1; }
     .preview-section { margin-bottom: 1rem; }
     .preview-section-title {
-      font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.1em;
-      color: var(--gold); font-weight: 600; margin-bottom: 0.6rem;
-      padding-bottom: 0.3rem; border-bottom: 1px solid var(--border);
+      font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--gold); font-weight: 600; margin-bottom: 0.5rem;
+      padding-bottom: 0.25rem; border-bottom: 1px solid var(--border);
     }
     .preview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem 1rem; }
-    .preview-field { display: flex; flex-direction: column; gap: 0.1rem; }
+    .preview-field { display: flex; flex-direction: column; gap: 0rem; }
     .preview-field.full { grid-column: 1 / -1; }
-    .preview-label { font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
-    .preview-value { font-size: 0.85rem; color: var(--text); }
+    .preview-label { font-size: 0.5rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--text-muted); font-weight: 600; }
+    .preview-value { font-size: 0.75rem; color: var(--text); }
     .preview-value.empty { color: var(--text-muted); font-style: italic; }
     .preview-footer {
-      padding: 0.85rem 1.25rem; border-top: 1px solid var(--border);
-      display: flex; gap: 0.65rem; flex-shrink: 0;
+      padding: 0.75rem 1rem; border-top: 1px solid var(--border);
+      display: flex; gap: 0.5rem; flex-shrink: 0;
     }
 
     /* ── REQUEST QUEUE (admin view inline) ── */
-    .req-queue-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+    .req-queue-table { width: 100%; border-collapse: collapse; font-size: 0.75rem; }
     .req-queue-table th {
-      text-align: left; font-size: 0.65rem; text-transform: uppercase;
+      text-align: left; font-size: 0.5rem; text-transform: uppercase;
       letter-spacing: 0.08em; color: var(--text-muted); font-weight: 600;
-      padding: 0.5rem 0.65rem; border-bottom: 1px solid var(--border);
+      padding: 0.5rem 0.5rem; border-bottom: 1px solid var(--border);
     }
-    .req-queue-table td { padding: 0.65rem 0.65rem; border-bottom: 1px solid rgba(201,150,42,0.08); }
+    .req-queue-table td { padding: 0.5rem 0.5rem; border-bottom: 1px solid rgba(184,130,46,0.08); }
     .req-queue-table tr:hover td { background: var(--surface2); }
-    .req-id-link { color: var(--gold-light); cursor: pointer; font-weight: 600; text-decoration: underline dotted; font-size: 0.78rem; }
+    .req-id-link { color: var(--gold-light); cursor: pointer; font-weight: 600; text-decoration: underline dotted; font-size: 0.75rem; }
     .req-status-badge {
       display: inline-block; border-radius: 999px;
-      padding: 0.18rem 0.6rem; font-size: 0.65rem; font-weight: 700;
+      padding: 0.25rem 0.5rem; font-size: 0.5rem; font-weight: 700;
       letter-spacing: 0.04em;
     }
-    .req-status-badge.pending { background: rgba(201,150,42,0.15); color: var(--gold); border: 1px solid rgba(201,150,42,0.3); }
+    .req-status-badge.pending { background: var(--gold-dim); color: var(--gold); border: 1px solid rgba(184,130,46,0.25); }
     .req-status-badge.in_progress { background: rgba(74,127,203,0.15); color: #7aaae0; border: 1px solid rgba(74,127,203,0.3); }
     .req-status-badge.completed { background: rgba(74,203,74,0.1); color: #70c070; border: 1px solid rgba(74,203,74,0.25); }
 
@@ -892,7 +1056,7 @@
       width: 56px; height: 56px; border-radius: 50%;
       background: rgba(74,203,74,0.12); border: 2px solid rgba(74,203,74,0.35);
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin: 0 auto 0.85rem;
+      font-size: 1.5rem; margin: 0 auto 0.75rem;
     }
   </style>
 </head>
@@ -900,8 +1064,8 @@
 
   <!-- HEADER -->
   <div id="header">
-    <div class="header__left">
-      <!-- <div class="logo">⟡ Pohon Silsilah ⟡</div> -->
+<div class="header__left">
+      <div class="logo">Antrian Permintaan</div>
     </div>
     <div class="header__main">
       <div class="header__menu">
@@ -918,9 +1082,7 @@
           </svg>
         </div>
         <div class="header__theme-day">
-          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20" fill="none">
-            <path d="M10.0007 15.8333C13.2223 15.8333 15.834 13.2217 15.834 10C15.834 6.77833 13.2223 4.16666 10.0007 4.16666C6.77899 4.16666 4.16732 6.77833 4.16732 10C4.16732 13.2217 6.77899 15.8333 10.0007 15.8333Z" fill="currentColor"/>
-          </svg>
+          <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="currentColor"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
       </div>
       <div class="header__prc">
@@ -961,8 +1123,17 @@
     <!-- TREE VIEW -->
     <div id="treeView" class="hidden">
       <div id="treeActions">
-        <button class="pill-btn" onclick="expandAll()">▼ Buka Semua</button>
-        <button class="pill-btn" onclick="collapseAll()">▲ Tutup Semua</button>
+        <div class="tree-actions-left">
+          <button class="pill-btn" id="expandBtn" onclick="expandAll()">▼ Buka</button>
+          <button class="pill-btn" id="collapseBtn" onclick="collapseAll()">▲ Tutup</button>
+        </div>
+        <div class="tree-actions-right">
+          <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomOutBtn" title="Perkecil">−</button>
+            <span class="zoom-indicator" id="zoomIndicator">100%</span>
+            <button class="zoom-btn" id="zoomInBtn" title="Perbesar">+</button>
+          </div>
+        </div>
       </div>
       <div id="treeRoot"></div>
     </div>
@@ -1020,11 +1191,11 @@
       <span class="sheet-title">Ajukan Permintaan Data</span>
       <button class="sheet-close" onclick="closeSheet('requestTypeSheet')">✕</button>
     </div>
-    <div class="sheet-body" style="padding:1.25rem">
-      <p style="font-size:0.84rem;color:var(--text-muted);margin-bottom:1.1rem;line-height:1.55">
+    <div class="sheet-body" style="padding:1rem">
+      <p style="font-size:0.75rem;color:var(--text-muted);margin-bottom:1rem;line-height:1.55">
         Pilih jenis permintaan yang ingin Anda ajukan. Data akan direview oleh admin sebelum disimpan ke silsilah.
       </p>
-      <div style="display:flex;flex-direction:column;gap:0.85rem">
+      <div style="display:flex;flex-direction:column;gap:0.75rem">
         <button class="request-type-btn" onclick="startRequestForm('add_member')">
           <span class="rtb-icon">👤</span>
           <div>
@@ -1120,8 +1291,8 @@
 
   <script>
     // ── SUPABASE CONFIG ── (replace with your project values)
-    const SUPABASE_URL  = '__SUPABASE_URL__';
-    const SUPABASE_KEY  = '__SUPABASE_KEY__';
+    const SUPABASE_URL  = 'https://lckowkndmwiadwifilsv.supabase.co';
+    const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxja293a25kbXdpYWR3aWZpbHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA0MTgsImV4cCI6MjA5MjkwNjQxOH0.VrnY0DfgP_AW1UUJAI2sgNhZ8i8ok22nyWHpj4iQ-YQ';
     const TABLE_MEMBERS = 'members';   // resident rows
     const TABLE_SPOUSES = 'spouses';   // spouse rows
 
@@ -1129,7 +1300,7 @@
     const sheetURL = "data.csv";
 
     // ── ADMIN STATE ──
-    const ADMIN_PIN = '__ADMIN_PIN__';
+    const ADMIN_PIN = '7215';
     let isAdmin = false;
 
     // Generation label map — shared across list rendering and badges
@@ -1178,12 +1349,12 @@
         renderAll();
       } catch (err) {
         loadingEl.innerHTML = `
-          <div style="padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.85rem;line-height:1.7">
+          <div style="padding:1.5rem;text-align:center;color:var(--text-muted);font-size:0.75rem;line-height:1.7">
             <div style="font-size:1.5rem;margin-bottom:0.5rem">⚠️</div>
             <strong style="color:var(--text)">Gagal memuat data</strong><br>
             ${err.message}<br><br>
             <strong style="color:var(--gold-light)">Opsi lokal:</strong> Buat <code>data.js</code> berisi:<br>
-            <code style="display:block;text-align:left;background:var(--surface2);border-radius:8px;padding:0.6rem 0.8rem;margin-top:0.5rem;white-space:pre;overflow-x:auto">window.CSV_DATA = \`(isi data.csv)\`;</code>
+            <code style="display:block;text-align:left;background:var(--surface2);border-radius:8px;padding:0.5rem 0.75rem;margin-top:0.5rem;white-space:pre;overflow-x:auto">window.CSV_DATA = \`(isi data.csv)\`;</code>
           </div>`;
         console.error(err);
       }
@@ -1399,7 +1570,7 @@
       children.forEach(child => {
         const isRoot = !child['Parent ID'];
         const li = document.createElement('li');
-        li.className = 'tree-node';
+        li.className = 'tree-node tree-branch';
         li.dataset.id = child.ID;
         li.dataset.gen = (child.Generasi || '').split(' - ')[0];
         li.dataset.name = ((child.Nama || '') + ' ' + (child.Pasangan || '')).toLowerCase();
@@ -1414,15 +1585,18 @@
           const toggle = document.createElement('div');
           toggle.className = 'tree-toggle';
           toggle.textContent = '+';
-          toggle.onclick = () => {
-            const hidden = subtree.classList.toggle('hidden');
-            toggle.textContent = hidden ? '+' : '−';
+          toggle.onclick = (e) => {
+            e.stopPropagation();
+            const isOpen = subtree.classList.contains('open');
+            subtree.classList.toggle('open');
+            toggle.textContent = isOpen ? '+' : '−';
+            toggle.classList.toggle('expanded', !isOpen);
           };
           row.appendChild(toggle);
-          subtree.classList.add('hidden');
+          subtree.classList.remove('open');
         } else {
           const spacer = document.createElement('div');
-          spacer.style.width = '20px';
+          spacer.style.width = '24px';
           spacer.style.flexShrink = '0';
           row.appendChild(spacer);
         }
@@ -1453,13 +1627,44 @@
 
     // ── TREE ACTIONS ──
     function expandAll() {
-      document.querySelectorAll('#treeRoot ul').forEach(ul => ul.classList.remove('hidden'));
-      document.querySelectorAll('#treeRoot .tree-toggle').forEach(t => t.textContent = '−');
+      document.querySelectorAll('#treeRoot ul').forEach(ul => ul.classList.add('open'));
+      document.querySelectorAll('#treeRoot .tree-toggle').forEach(t => { t.textContent = '−'; t.classList.add('expanded'); });
+      document.getElementById('expandBtn')?.classList.add('active');
+      document.getElementById('collapseBtn')?.classList.remove('active');
     }
 
     function collapseAll() {
-      document.querySelectorAll('#treeRoot > ul ul').forEach(ul => ul.classList.add('hidden'));
-      document.querySelectorAll('#treeRoot .tree-toggle').forEach(t => t.textContent = '+');
+      document.querySelectorAll('#treeRoot > ul ul').forEach(ul => ul.classList.remove('open'));
+      document.querySelectorAll('#treeRoot .tree-toggle').forEach(t => { t.textContent = '+'; t.classList.remove('expanded'); });
+      document.getElementById('collapseBtn')?.classList.add('active');
+      document.getElementById('expandBtn')?.classList.remove('active');
+    }
+
+    // ── ZOOM CONTROLS ──
+    let treeZoom = 1;
+    const MIN_ZOOM = 0.5;
+    const MAX_ZOOM = 1.5;
+    const ZOOM_STEP = 0.1;
+
+    function updateZoom() {
+      document.getElementById('treeRoot').style.transform = `scale(${treeZoom})`;
+      document.getElementById('zoomIndicator').textContent = `${Math.round(treeZoom * 100)}%`;
+      document.getElementById('zoomInBtn').disabled = treeZoom >= MAX_ZOOM;
+      document.getElementById('zoomOutBtn').disabled = treeZoom <= MIN_ZOOM;
+    }
+
+    document.getElementById('zoomInBtn')?.addEventListener('click', () => {
+      treeZoom = Math.min(MAX_ZOOM, treeZoom + ZOOM_STEP);
+      updateZoom();
+    });
+    document.getElementById('zoomOutBtn')?.addEventListener('click', () => {
+      treeZoom = Math.max(MIN_ZOOM, treeZoom - ZOOM_STEP);
+      updateZoom();
+    });
+
+    function resetTreeZoom() {
+      treeZoom = 1;
+      updateZoom();
     }
 
     // ── SEARCH ──
@@ -1499,9 +1704,9 @@
       while (p) {
         p.style.display = '';
         const ul = p.querySelector('ul');
-        if (ul) ul.classList.remove('hidden');
+        if (ul) ul.classList.add('open');
         const t = p.querySelector('.tree-toggle');
-        if (t) t.textContent = '−';
+        if (t) { t.textContent = '−'; t.classList.add('expanded'); }
         p = p.parentElement.closest('.tree-node');
       }
     }
@@ -1549,7 +1754,7 @@
       toEl.classList.add('view-enter');
 
       if (view === 'list') renderList(filteredData());
-      else renderTree();
+      else { renderTree(); resetTreeZoom(); }
 
       // Exit animation on current panel
       fromEl.classList.add('view-exit');
@@ -1648,9 +1853,9 @@
         ${opts.map(o=>`<option value="${o}"${cur===o?' selected':''}>${o}</option>`).join('')}
       </select>`;
       return `
-      <div class="spouse-block" data-idx="${idx}" data-sp-id="${id}" style="border:1px solid var(--border);border-radius:10px;padding:0.75rem 0.75rem 0.5rem;margin:0 1rem 0.75rem;position:relative">
+      .spouse-block[data-idx="${idx}"][data-sp-id="${id}"] { border:1px solid var(--border); border-radius:10px; padding: 0.5rem 0.75rem 0.375rem; margin: 0 0.75rem 0.5rem; position: relative; }
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:0.5rem">
-          <span style="font-size:0.7rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em">Pasangan ${idx + 1}</span>
+          <span style="font-size:0.75rem;font-weight:700;color:var(--gold);text-transform:uppercase;letter-spacing:0.06em">Pasangan ${idx + 1}</span>
           ${idx > 0 ? `<button onclick="removeSpouseBlock(${idx})" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;padding:0">✕</button>` : ''}
         </div>
         <div class="form-grid">
@@ -1804,7 +2009,7 @@
 
       <div class="form-section-title" style="display:flex;align-items:center;justify-content:space-between">
         <span>Data Pasangan</span>
-        <button onclick="addSpouseBlock()" style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:6px;color:var(--gold-light);font-size:0.72rem;padding:0.2rem 0.65rem;cursor:pointer">+ Tambah Pasangan</button>
+        <button onclick="addSpouseBlock()" style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:6px;color:var(--gold-light);font-size:0.75rem;padding:0.25rem 0.5rem;cursor:pointer">+ Tambah Pasangan</button>
       </div>
       <div id="spouseBlocksContainer">
         ${(() => {
@@ -1833,17 +2038,17 @@
 
       <div class="form-section-title" style="display:flex;align-items:center;justify-content:space-between;margin-top:0.5rem">
         <span>Data Anak</span>
-        <button onclick="openAddChildForm('${d?.ID||''}')" style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:6px;color:var(--gold-light);font-size:0.72rem;padding:0.2rem 0.65rem;cursor:pointer">+ Tambah Anak</button>
+        <button onclick="openAddChildForm('${d?.ID||''}')" style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:6px;color:var(--gold-light);font-size:0.75rem;padding:0.25rem 0.5rem;cursor:pointer">+ Tambah Anak</button>
       </div>
       ${(() => {
         if (!d?.ID) return `<p style="font-size:0.75rem;color:var(--text-muted);padding:0 1rem 0.5rem">Simpan anggota terlebih dahulu sebelum menambah anak.</p>`;
         const children = allData.filter(c => c['Parent ID'] === d.ID);
         if (!children.length) return `<p style="font-size:0.75rem;color:var(--text-muted);padding:0 1rem 0.5rem">Belum ada data anak.</p>`;
-        return `<div style="padding:0 1rem 0.5rem;display:flex;flex-direction:column;gap:0.4rem">` +
+        return `<div style="padding:0 1rem 0.5rem;display:flex;flex-direction:column;gap:0.25rem">` +
           children.map(c => `
             <div style="display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.75rem">
-              <span style="font-size:0.85rem;color:var(--text)">${c.Nama}</span>
-              <button onclick="openMemberForm('${c.ID}','member')" style="background:none;border:none;color:var(--gold-light);font-size:0.72rem;cursor:pointer">Edit</button>
+              <span style="font-size:0.75rem;color:var(--text)">${c.Nama}</span>
+              <button onclick="openMemberForm('${c.ID}','member')" style="background:none;border:none;color:var(--gold-light);font-size:0.75rem;cursor:pointer">Edit</button>
             </div>`).join('') + `</div>`;
       })()}
 
@@ -2086,7 +2291,7 @@
       if (!el) {
         el = document.createElement('p');
         el.id = 'formError';
-        el.style.cssText = 'color:#e07070;font-size:0.8rem;margin:0.5rem 1rem 0;';
+        el.style.cssText = 'color:#e07070;font-size:0.75rem;margin:0.5rem 1rem 0;';
         document.getElementById('formBody').prepend(el);
       }
       el.textContent = msg;
@@ -2099,7 +2304,7 @@
         toast.id = 'toast';
         toast.style.cssText = `position:fixed;bottom:calc(var(--tab-h) + 1.5rem);left:50%;
           transform:translateX(-50%);background:var(--gold);color:#1a1205;
-          padding:0.5rem 1.2rem;border-radius:999px;font-size:0.8rem;font-weight:600;
+          padding:0.5rem 1rem;border-radius:999px;font-size:0.75rem;font-weight:600;
           z-index:9999;transition:opacity 0.3s;white-space:nowrap;`;
         document.body.appendChild(toast);
       }
@@ -2196,7 +2401,7 @@
       const statusSpan = s => {
         const ns = normaliseStatus(s);
         if (!ns) return '';
-        return `<span style="font-size:0.72rem;padding:0.2rem 0.65rem;border-radius:999px;background:${isWafat(ns)?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${isWafat(ns)?'#e07070':'#70c070'}">${ns}</span>`;
+        return `<span style="font-size:0.75rem;padding:0.25rem 0.5rem;border-radius:999px;background:${isWafat(ns)?'rgba(217,64,64,0.15)':'rgba(74,203,74,0.12)'};color:${isWafat(ns)?'#e07070':'#70c070'}">${ns}</span>`;
       };
       const field = (label, value) => `
         <div class="detail-field">
@@ -2256,7 +2461,7 @@
             const spG = sp.Gender === 'P' ? 'female' : 'male';
             const spStatus = normaliseStatus(sp.Status);
             return `<button class="detail-spouse-btn" onclick="openDetail('${sp.ID}','spouse_row')">
-              <div class="avatar ${spG}" style="width:36px;height:36px;font-size:0.85rem">${(sp.Nama||'?').charAt(0).toUpperCase()}</div>
+              <div class="avatar ${spG}" style="width:36px;height:36px;font-size:0.75rem">${(sp.Nama||'?').charAt(0).toUpperCase()}</div>
               <div style="flex:1">
                 <div class="ds-name">${sp.Nama}</div>
                 <div class="ds-sub">${spouseGenLabels[(sp.Generasi||'').split(' - ')[0]] || sp.Generasi || 'Pasangan'}${spStatus ? ' · ' + statusSpan(spStatus) : ''}</div>
@@ -2272,7 +2477,7 @@
             const cG = detectGender(c);
             const cStatus = normaliseStatus(c.Status || '');
             return `<button class="detail-spouse-btn" onclick="openDetail('${c.ID}','member')">
-              <div class="avatar ${cG}" style="width:36px;height:36px;font-size:0.85rem">${(c.Nama||'?').charAt(0).toUpperCase()}</div>
+              <div class="avatar ${cG}" style="width:36px;height:36px;font-size:0.75rem">${(c.Nama||'?').charAt(0).toUpperCase()}</div>
               <div style="flex:1">
                 <div class="ds-name">${c.Nama}</div>
                 <div class="ds-sub">${genLabels[(c.Generasi||'').split(' - ')[0]] || c.Generasi || ''}${cStatus ? ' · ' + statusSpan(cStatus) : ''}</div>
@@ -2681,12 +2886,12 @@
       const o = _reqTarget.obj;
       const cardHtml = `
         <div class="selected-member-card">
-          <div class="avatar ${kind==='spouse'?(o.Gender==='P'?'female':'male'):detectGender(o)}" style="width:36px;height:36px;font-size:0.9rem">${(o.Nama||'?').charAt(0)}</div>
+          <div class="avatar ${kind==='spouse'?(o.Gender==='P'?'female':'male'):detectGender(o)}" style="width:36px;height:36px;font-size:0.75rem">${(o.Nama||'?').charAt(0)}</div>
           <div style="flex:1">
             <div class="smc-name">${o.Nama}</div>
             <div class="smc-sub">${kind==='member'?(o['No Induk']||''):'Pasangan dari: '+(allData.find(m=>m.ID===o['Member ID'])?.Nama||'—')}</div>
           </div>
-          <button onclick="clearRequestTarget()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.8rem">Ubah</button>
+          <button onclick="clearRequestTarget()" style="background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:0.75rem">Ubah</button>
         </div>`;
       const card = document.getElementById('selectedTargetCard');
       card.innerHTML = cardHtml;
@@ -2847,7 +3052,7 @@
       dataHtml += '</div>';
 
       document.getElementById('previewBody').innerHTML = `
-        <div style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:var(--radius);padding:0.7rem 1rem;margin-bottom:1rem;font-size:0.8rem;color:var(--gold-light)">
+        <div style="background:var(--gold-dim);border:1px solid var(--gold);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1rem;font-size:0.75rem;color:var(--gold-light)">
           <strong>Jenis Permintaan:</strong> ${typeLabel}
         </div>
         ${targetInfo}
@@ -2907,10 +3112,10 @@
         closeSheet('requestSheet');
         // Show success message
         document.getElementById('requestBody').innerHTML = `
-          <div style="text-align:center;padding:2.5rem 1rem">
+          <div style="text-align:center;padding:2rem 1rem">
             <div class="success-check">✓</div>
-            <div style="font-family:'Playfair Display',serif;font-size:1.05rem;color:var(--text);margin-bottom:0.5rem">Permintaan Terkirim!</div>
-            <div style="font-size:0.82rem;color:var(--text-muted);line-height:1.6">
+            <div style="font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;color:var(--text);margin-bottom:0.5rem">Permintaan Terkirim!</div>
+            <div style="font-size:0.75rem;color:var(--text-muted);line-height:1.6">
               Permintaan Anda akan direview oleh admin dan diproses secepatnya.
             </div>
           </div>`;
@@ -2978,10 +3183,10 @@
 
       document.getElementById('reqDetailTitle').textContent = `Permintaan #${(req.id||'').slice(-6).toUpperCase()}`;
       document.getElementById('reqDetailBody').innerHTML = `
-        <div style="background:var(--surface2);border-radius:var(--radius);padding:0.85rem 1rem;margin-bottom:1rem;display:flex;gap:1rem;flex-wrap:wrap">
-          <div><span style="font-size:0.65rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Jenis</span><br><span style="font-size:0.85rem;color:var(--text)">${typeLabel}</span></div>
-          <div><span style="font-size:0.65rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Status</span><br>${statusBadge(req.status||'pending')}</div>
-          <div><span style="font-size:0.65rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Tanggal</span><br><span style="font-size:0.85rem;color:var(--text)">${new Date(req.created_at).toLocaleDateString('id-ID')}</span></div>
+        <div style="background:var(--surface2);border-radius:var(--radius);padding:0.75rem 1rem;margin-bottom:1rem;display:flex;gap:1rem;flex-wrap:wrap">
+          <div><span style="font-size:0.5rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Jenis</span><br><span style="font-size:0.75rem;color:var(--text)">${typeLabel}</span></div>
+          <div><span style="font-size:0.5rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Status</span><br>${statusBadge(req.status||'pending')}</div>
+          <div><span style="font-size:0.5rem;text-transform:uppercase;color:var(--text-muted);letter-spacing:0.07em">Tanggal</span><br><span style="font-size:0.75rem;color:var(--text)">${new Date(req.created_at).toLocaleDateString('id-ID')}</span></div>
         </div>
         <div class="preview-section">
           <div class="preview-section-title">Pemohon</div>
@@ -3099,7 +3304,7 @@
     }
 
     // ── LOGIN (guest access) ──
-    const LOGIN_PIN = '__GUEST_PIN__';
+    const LOGIN_PIN = '8138';
 
     function confirmLogin() {
       const val = document.getElementById('loginInput').value;
@@ -3146,7 +3351,7 @@
       <div class="login-logo">⟡ Silsilah Trah Kariyorejan ⟡</div>
       <div class="login-title">Masukkan PIN untuk melanjutkan</div>
       <input type="password" id="loginInput" placeholder="••••" maxlength="8"
-        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:1.2rem;letter-spacing:0.3em;text-align:center;padding:0.65rem;outline:none;transition:border-color 0.18s;box-sizing:border-box;color-scheme:dark"
+        style="width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:1rem;letter-spacing:0.3em;text-align:center;padding:0.5rem;outline:none;transition:border-color 0.18s;box-sizing:border-box;color-scheme:dark"
         onkeydown="if(event.key==='Enter')confirmLogin()" />
       <div id="loginError"></div>
       <button class="btn-save" onclick="confirmLogin()">Masuk</button>
