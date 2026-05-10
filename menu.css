@@ -64,6 +64,13 @@
   display: none;
 }
 
+/* Logo image - desktop only */
+.logo-link { display: flex !important; align-items: center; text-decoration: none; visibility: visible !important; opacity: 1 !important; }
+.logo-img { width: 120px; height: auto; object-fit: contain; }
+@media (max-width: 680px) {
+  .logo-img { width: 60px; }
+}
+
 /* Center pill */
 .header__main {
   flex: 0 0 auto;
