@@ -119,7 +119,9 @@
 
   <div id="header">
     <div class="header__left">
-      <div class="logo">Antrian Permintaan</div>
+      <a href="index.html" class="logo-link">
+        <img class="logo-img" src="https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png" alt="Logo">
+      </a>
     </div>
     <div class="header__main">
       <div class="header__menu">
@@ -443,8 +445,36 @@
       t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2800);
     }
 
+    // ── LOGO THEME SWITCHING ──
+    const LOGO_DARK = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png';
+    const LOGO_LIGHT = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-light_jocjef.png';
+    function updateLogo() {
+      const logoImg = document.querySelector('.logo-img');
+      if (!logoImg) return;
+      const currentTheme = localStorage.getItem('trah_theme') || 'dark';
+      logoImg.src = currentTheme === 'dark' ? LOGO_DARK : LOGO_LIGHT;
+    }
+    new MutationObserver(() => updateLogo()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+    // ── LOGO POSITIONING (Mobile = right, Desktop = left) ──
+    function positionLogoForMobile() {
+      const logoLink = document.querySelector('.logo-link');
+      const headerRight = document.querySelector('.header__right');
+      const headerLeft = document.querySelector('.header__left');
+      if (!logoLink) return;
+
+      if (window.innerWidth < 680 && headerRight) {
+        headerRight.appendChild(logoLink);
+      } else if (headerLeft) {
+        headerLeft.appendChild(logoLink);
+      }
+    }
+    setTimeout(positionLogoForMobile, 0);
+
     // ── INIT ──
     window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(positionLogoForMobile, 10);
+      updateLogo();
       const auth = getCookie('trah_auth');
       if (auth === 'guest' || auth === 'admin') {
         enterApp(auth);

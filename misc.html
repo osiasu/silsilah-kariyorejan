@@ -31,7 +31,9 @@
 
   <div id="header">
     <div class="header__left">
-      <div class="logo">Lainnya</div>
+      <a href="index.html" class="logo-link">
+        <img class="logo-img" src="https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png" alt="Logo">
+      </a>
     </div>
     <div class="header__main">
       <div class="header__menu">
@@ -66,6 +68,33 @@
     <a href="index.html" class="back-link">← Kembali ke Pohon Silsilah</a>
   </div>
 
+  <script>
+  // Logo theme switching
+  const LOGO_DARK = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png';
+  const LOGO_LIGHT = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-light_jocjef.png';
+  function updateLogo() {
+    const logoImg = document.querySelector('.logo-img');
+    if (!logoImg) return;
+    logoImg.src = (localStorage.getItem('trah_theme') || 'dark') === 'dark' ? LOGO_DARK : LOGO_LIGHT;
+  }
+  new MutationObserver(() => updateLogo()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  updateLogo();
+
+  // Logo positioning (Mobile = right, Desktop = left)
+  function positionLogoForMobile() {
+    const logoLink = document.querySelector('.logo-link');
+    const headerLeft = document.querySelector('.header__left');
+    const headerRight = document.querySelector('.header__right');
+    if (!logoLink || !headerRight) return;
+    if (window.innerWidth < 680) {
+      headerRight.appendChild(logoLink);
+    } else if (headerLeft) {
+      headerLeft.appendChild(logoLink);
+    }
+  }
+  window.addEventListener('resize', positionLogoForMobile);
+  positionLogoForMobile();
+</script>
   <script src="menu.js"></script>
 </body>
 </html>

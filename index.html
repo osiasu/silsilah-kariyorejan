@@ -74,6 +74,13 @@
     }
     #searchBox:not(:placeholder-shown) ~ #clearBtn { display: flex; }
 
+    /* Logo - desktop only */
+    .logo-link { display: none; }
+    .logo-img { width: 120px; height: auto; object-fit: contain; }
+    @media (min-width: 680px) {
+      .logo-link { display: flex; align-items: center; text-decoration: none; }
+    }
+
     /* Search wrap — relative so absolute children (icon, clearBtn) anchor correctly */
     #searchWrap {
       position: relative;
@@ -81,7 +88,6 @@
       align-items: center;
       flex: 1;
       min-width: 0;
-      max-width: 260px;
     }
     #searchBox { width: 100%; }
 
@@ -1065,7 +1071,9 @@
   <!-- HEADER -->
   <div id="header">
 <div class="header__left">
-      <div class="logo">Antrian Permintaan</div>
+      <a href="index.html" class="logo-link">
+        <img class="logo-img" src="https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png" alt="Logo" style="width: 60px;">
+      </a>
     </div>
     <div class="header__main">
       <div class="header__menu">
@@ -1319,6 +1327,62 @@
     let currentGen = '';
     let currentKeyword = '';
     let treeExpanded = false;
+
+    // ── SEARCH WRAP POSITIONING (Desktop = right, Mobile = left) ──
+    function positionSearchForMobile() {
+      const searchWrap = document.getElementById('searchWrap');
+      const headerLeft = document.querySelector('.header__left');
+      const headerRight = document.querySelector('.header__right');
+      if (!searchWrap || !headerLeft || !headerRight) return;
+
+      if (window.innerWidth < 680) {
+        // Mobile: move to header__left
+        if (searchWrap.parentElement !== headerLeft) {
+          headerLeft.appendChild(searchWrap);
+        }
+      } else {
+        // Desktop: move to header__right
+        if (searchWrap.parentElement !== headerRight) {
+          headerRight.prepend(searchWrap);
+        }
+      }
+    }
+    window.addEventListener('resize', positionSearchForMobile);
+
+// ── LOGO POSITIONING (Mobile = right, Desktop = left) ──
+    function positionLogoForMobile() {
+      const logoLink = document.querySelector('.logo-link');
+      const headerRight = document.querySelector('.header__right');
+      const headerLeft = document.querySelector('.header__left');
+      if (!logoLink) return;
+
+      // Always move to target position, no parent check
+      if (window.innerWidth < 680) {
+        headerRight.appendChild(logoLink);
+      } else {
+        headerLeft.appendChild(logoLink);
+      }
+    }
+    window.addEventListener('resize', positionLogoForMobile);
+    setTimeout(positionLogoForMobile, 100);
+
+    // ── LOGO THEME SWITCHING ──
+    const LOGO_DARK = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png';
+    const LOGO_LIGHT = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-light_jocjef.png';
+
+    function updateLogo() {
+      const logoImg = document.querySelector('.logo-img');
+      if (!logoImg) return;
+      const currentTheme = localStorage.getItem('trah_theme') || 'dark';
+      logoImg.src = currentTheme === 'dark' ? LOGO_DARK : LOGO_LIGHT;
+    }
+    window.addEventListener('resize', updateLogo);
+
+    // Auto-update logo when theme changes ( MutationObserver )
+    const themeObserver = new MutationObserver(() => {
+      updateLogo();
+    });
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     // ── INIT ──
     async function init() {
@@ -3334,6 +3398,9 @@
 
     // Show login on first load (check cookie first)
     window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(positionSearchForMobile, 10); // Initial searchWrap position
+      setTimeout(positionLogoForMobile, 50); // Logo after searchWrap is done
+      updateLogo(); // Initial logo based on theme
       const auth = getCookie('trah_auth');
       if (auth === 'guest' || auth === 'admin') {
         document.getElementById('loginOverlay').classList.add('hidden');
