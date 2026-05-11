@@ -3401,9 +3401,8 @@ html::-webkit-scrollbar {
 
     // Show login on first load (check cookie first)
     window.addEventListener('DOMContentLoaded', () => {
-      // Initial positioning for searchWrap and logo
-      positionSearchForMobile();
-      positionLogoForMobile();
+      positionSearchForMobile(); // Initial search positioning
+      positionLogoForMobile(); // Initial logo positioning
       updateLogo(); // Initial logo based on theme
       const auth = getCookie('trah_auth');
       if (auth === 'guest' || auth === 'admin') {
