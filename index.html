@@ -1340,9 +1340,13 @@ html::-webkit-scrollbar {
 // ── SEARCH WRAP POSITIONING (Desktop = right, Mobile = left) ──
     function positionSearchForMobile() {
       const searchWrap = document.getElementById('searchWrap');
+      const searchBox = document.getElementById('searchBox');
       const headerLeft = document.querySelector('.header__left');
       const headerRight = document.querySelector('.header__right');
       if (!searchWrap || !headerLeft || !headerRight) return;
+
+      // Jika input focused, jangan move (hindari keyboard close)
+      if (searchBox && searchBox === document.activeElement) return;
 
       if (window.innerWidth < 680) {
         // Mobile: move to header__left
