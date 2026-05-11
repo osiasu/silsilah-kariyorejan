@@ -35,6 +35,10 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
 
+    /* Hide scrollbar but keep scrolling */
+    html { scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar { display: none; }
+
     /* PAGE CONTENT (page-specific only) */
     .page-content { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100dvh - var(--header-h)); padding:2rem 1.5rem; text-align:center; }
     .maintenance-icon { font-size:3.5rem; margin-bottom:1.25rem; opacity:0.85; animation: pulse 2.5s ease-in-out infinite; }
