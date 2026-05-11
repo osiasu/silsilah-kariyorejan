@@ -44,6 +44,22 @@
     .back-link { display:inline-flex; align-items:center; gap:0.5rem; background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:0.5rem 1.25rem; color:var(--text-muted); font-size:0.82rem; text-decoration:none; transition:all 0.18s; }
     .back-link:hover { border-color:var(--gold); color:var(--gold-light); }
     .decoration { width:120px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:0 auto 1.5rem; }
+
+    /* Dashboard */
+    .dashboard-frame {
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      box-shadow: 0 8px 32px rgba(184,130,46,0.12);
+      overflow: hidden;
+      max-width: 800px;
+      width: 100%;
+    }
+    .dashboard-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
   </style>
 </head>
 <body>
@@ -80,14 +96,10 @@
   </div>
 
   <div class="page-content">
-    <div class="maintenance-icon">🏗️</div>
-    <div class="decoration"></div>
-    <div class="maintenance-title">Beranda</div>
-    <div class="maintenance-sub">
-      Halaman ini sedang dalam pengembangan. Kami sedang menyiapkan konten terbaik untuk Anda.
-      Terima kasih atas kesabaran Anda.
+    <div class="dashboard-frame">
+      <img src="https://res.cloudinary.com/dteeybsew/image/upload/v1778486880/cover_cu19xt.png" alt="Dashboard Preview">
     </div>
-    <a href="index.html" class="back-link">← Kembali ke Pohon Silsilah</a>
+    <a href="index.html" class="back-link" style="margin-top:2rem">← Ke Pohon Silsilah</a>
   </div>
 
   <script>
