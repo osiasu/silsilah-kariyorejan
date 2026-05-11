@@ -131,6 +131,7 @@
 
     overlay?.classList.remove('open');
     document.body.classList.remove('menu-open');
+    document.documentElement.classList.remove('hide-scrollbar');
 
     setTimeout(() => {
       allLinks.forEach(link => link.classList.remove('is-visible'));

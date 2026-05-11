@@ -496,4 +496,7 @@
   .menu-panel { border-radius: 16px; }
 }
 
-body.menu-open { overflow: hidden; }
+/* When menu is open */
+body.menu-open {
+  /* No special handling needed - scrollbar handled by page CSS */
+}

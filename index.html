@@ -16,7 +16,15 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html { scroll-behavior: smooth; }
+    html { 
+  scroll-behavior: smooth; 
+  /* Hide scrollbar but keep scrolling functionality */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
 
     body {
       font-family: 'Inter', sans-serif;
@@ -74,11 +82,11 @@
     }
     #searchBox:not(:placeholder-shown) ~ #clearBtn { display: flex; }
 
-    /* Logo - desktop only */
-    .logo-link { display: none; }
+    /* Logo - always visible in all views */
+    .logo-link { display: flex; align-items: center; text-decoration: none; }
     .logo-img { width: 60px; height: auto; object-fit: contain; }
+    
     @media (min-width: 680px) {
-      .logo-link { display: flex; align-items: center; text-decoration: none; }
       .logo-img { width: 120px; }
     }
 
@@ -1329,7 +1337,7 @@
     let currentKeyword = '';
     let treeExpanded = false;
 
-    // ── SEARCH WRAP POSITIONING (Desktop = right, Mobile = left) ──
+// ── SEARCH WRAP POSITIONING (Desktop = right, Mobile = left) ──
     function positionSearchForMobile() {
       const searchWrap = document.getElementById('searchWrap');
       const headerLeft = document.querySelector('.header__left');
@@ -1338,34 +1346,28 @@
 
       if (window.innerWidth < 680) {
         // Mobile: move to header__left
-        if (searchWrap.parentElement !== headerLeft) {
-          headerLeft.appendChild(searchWrap);
-        }
+        headerLeft.appendChild(searchWrap);
       } else {
         // Desktop: move to header__right
-        if (searchWrap.parentElement !== headerRight) {
-          headerRight.prepend(searchWrap);
-        }
+        headerRight.prepend(searchWrap);
       }
     }
     window.addEventListener('resize', positionSearchForMobile);
 
-// ── LOGO POSITIONING (Mobile = right, Desktop = left) ──
+    // ── LOGO POSITIONING (Mobile = right, Desktop = left) ──
     function positionLogoForMobile() {
       const logoLink = document.querySelector('.logo-link');
       const headerRight = document.querySelector('.header__right');
       const headerLeft = document.querySelector('.header__left');
       if (!logoLink) return;
 
-      // Always move to target position, no parent check
-      if (window.innerWidth < 680) {
+      if (window.innerWidth < 680 && headerRight) {
         headerRight.appendChild(logoLink);
-      } else {
+      } else if (headerLeft) {
         headerLeft.appendChild(logoLink);
       }
     }
     window.addEventListener('resize', positionLogoForMobile);
-    setTimeout(positionLogoForMobile, 100);
 
     // ── LOGO THEME SWITCHING ──
     const LOGO_DARK = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png';
@@ -3399,8 +3401,9 @@
 
     // Show login on first load (check cookie first)
     window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(positionSearchForMobile, 10); // Initial searchWrap position
-      setTimeout(positionLogoForMobile, 50); // Logo after searchWrap is done
+      // Initial positioning for searchWrap and logo
+      positionSearchForMobile();
+      positionLogoForMobile();
       updateLogo(); // Initial logo based on theme
       const auth = getCookie('trah_auth');
       if (auth === 'guest' || auth === 'admin') {
