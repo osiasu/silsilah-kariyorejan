@@ -1528,7 +1528,8 @@ html::-webkit-scrollbar {
     function filteredData() {
       return allData.filter(d => {
         const matchGen = !currentGen || (d.Generasi || '').split(' - ')[0] === currentGen;
-        const text = ((d.Nama || '') + ' ' + (d.Pasangan || '')).toLowerCase();
+        const spouseNames = getMemberSpouses(d.ID).map(sp => (sp.Nama || '')).join(' ');
+        const text = ((d.Nama || '') + ' ' + (d.Pasangan || '') + ' ' + spouseNames).toLowerCase();
         const matchKw = !currentKeyword || text.includes(currentKeyword);
         return matchGen && matchKw;
       });
@@ -1644,7 +1645,8 @@ html::-webkit-scrollbar {
         li.className = 'tree-node tree-branch';
         li.dataset.id = child.ID;
         li.dataset.gen = (child.Generasi || '').split(' - ')[0];
-        li.dataset.name = ((child.Nama || '') + ' ' + (child.Pasangan || '')).toLowerCase();
+        const treeSpouseNames = getMemberSpouses(child.ID).map(sp => (sp.Nama || '')).join(' ');
+        li.dataset.name = ((child.Nama || '') + ' ' + (child.Pasangan || '') + ' ' + treeSpouseNames).toLowerCase();
 
         const row = document.createElement('div');
         row.className = 'tree-row';
