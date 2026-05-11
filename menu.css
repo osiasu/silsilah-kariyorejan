@@ -202,7 +202,7 @@
 }
 
 .menu-panel {
-  width: 269px;
+  width: 280px;
   background: var(--surface);
   border-radius: 20px;
   border: 1px solid var(--border);
@@ -321,6 +321,10 @@
   padding: 1rem 1.5rem 0.25rem;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scrollbar-width: none;
+}
+.menu-content::-webkit-scrollbar {
+  display: none;
 }
 
 .menu-section { margin-bottom: 0.25rem; }
