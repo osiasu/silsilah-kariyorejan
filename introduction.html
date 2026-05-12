@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Pengenalan — Silsilah Trah Kariyorejan</title>
+  <title>Kata Pengantar — Silsilah Trah Kariyorejan</title>
   <script>
     (function() {
       var theme = localStorage.getItem('trah_theme') || 'dark';
@@ -14,18 +14,327 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="menu.css">
   <style>
-    :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--header-h:56px;}
-    [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.12);--text:#1a1611;--text-muted:#7a6f62;}
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
-    .page-content{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100dvh - var(--header-h));padding:2rem 1.5rem;text-align:center;}
-    .maintenance-icon{font-size:3.5rem;margin-bottom:1.25rem;animation:pulse 2.5s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-    .maintenance-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:0.6rem;}
-    .maintenance-sub{font-size:0.88rem;color:var(--text-muted);max-width:320px;line-height:1.65;margin-bottom:2rem;}
-    .back-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:0.5rem 1.25rem;color:var(--text-muted);font-size:0.82rem;text-decoration:none;transition:all 0.18s;}
-    .back-link:hover{border-color:var(--gold);color:var(--gold-light);}
-    .decoration{width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 1.5rem;}
+    :root {
+      --gold: #b8822e;
+      --gold-light: #d4a55a;
+      --gold-dim: rgba(184,130,46,0.12);
+      --bg: #0f0d0a;
+      --surface: #1a1611;
+      --surface2: #221d15;
+      --surface3: #2d2720;
+      --border: rgba(184,130,46,0.15);
+      --text: #f0ebe2;
+      --text-muted: #8a7d6e;
+      --header-h: 56px;
+      --card-radius: 18px;
+    }
+    [data-theme="light"] {
+      --bg: #faf8f5;
+      --surface: #ffffff;
+      --surface2: #f3f0ea;
+      --surface3: #e8e4da;
+      --border: rgba(184,130,46,0.12);
+      --text: #1a1611;
+      --text-muted: #7a6f62;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; scrollbar-width: none; }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── PAGE LAYOUT ── */
+    .intro-wrapper {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 1.5rem 1.5rem 2rem;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HERO HEADER ── */
+    .intro-hero {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .intro-hero::after {
+      content: '';
+      display: block;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 1.5rem auto 0;
+    }
+    .intro-label {
+      font-family: 'Inter', sans-serif;
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 0.75rem;
+    }
+    .intro-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 1rem;
+    }
+    .intro-salam {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      font-style: italic;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── CARD ── */
+    .intro-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 2.5rem 2rem;
+      box-shadow: 0 4px 40px rgba(0,0,0,0.25);
+    }
+
+    /* ── ORNAMENT LEFT BAR ── */
+    .intro-card {
+      position: relative;
+      overflow: hidden;
+    }
+    .intro-card::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, var(--gold-light), var(--gold), transparent);
+      border-radius: var(--card-radius) 0 0 var(--card-radius);
+    }
+
+    /* ── PARAGRAPHS ── */
+    .intro-body p {
+      font-size: 0.93rem;
+      line-height: 1.85;
+      color: var(--text);
+      margin-bottom: 1.25rem;
+      text-align: center;
+    }
+    .example-block p { text-align: left; }
+    .intro-body p:last-child { margin-bottom: 0; }
+
+    .bismillah {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--gold-light);
+      margin-bottom: 1.75rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ── GENERATION TABLE ── */
+    .gen-section {
+      margin: 2rem 0;
+    }
+    .gen-heading {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .gen-heading::before {
+      content: '';
+      display: block;
+      width: 20px;
+      height: 1.5px;
+      background: var(--gold);
+      flex-shrink: 0;
+    }
+    .gen-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 0.5rem;
+    }
+    .gen-table tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    .gen-table tr:hover {
+      background: var(--gold-dim);
+    }
+    .gen-table tr:last-child { border-bottom: none; }
+    .gen-table td {
+      padding: 0.6rem 0.75rem;
+      font-size: 0.88rem;
+      vertical-align: middle;
+    }
+    .gen-table td:first-child {
+      width: 120px;
+      font-weight: 600;
+      color: var(--gold-light);
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .gen-table td:last-child {
+      color: var(--text-muted);
+    }
+
+    /* ── EXAMPLE BLOCK ── */
+    .example-block {
+      margin: 2rem 0 2.5rem;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .example-header {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1rem;
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+    }
+    .example-code {
+      background: var(--surface3);
+      padding: 0.6rem 1rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.85rem;
+      color: var(--gold-light);
+      border-bottom: 1px solid var(--border);
+    }
+    .example-arti {
+      padding: 1rem 1rem;
+    }
+    .example-arti p {
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: var(--text-muted);
+      margin-bottom: 0.4rem;
+    }
+    .example-arti p:last-child { margin-bottom: 0; }
+
+    /* ── NUMBER BADGE ── */
+    .num-badge {
+      display: inline-block;
+      background: var(--gold-dim);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.05rem 0.4rem;
+      font-family: 'Courier New', monospace;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      vertical-align: middle;
+      margin-right: 0.25rem;
+    }
+
+    /* ── CLOSING NOTE ── */
+    .closing-note {
+      font-size: 0.88rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      padding-top: 1.5rem;
+      margin-top: 0.5rem;
+    }
+
+    /* ── SIGNATURE ── */
+    .intro-signature {
+      margin-top: 2.5rem;
+      text-align: right;
+      padding-right: 1rem;
+    }
+    .intro-signature .date {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 0.25rem;
+    }
+    .intro-signature .greeting {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+    }
+    .intro-signature .penyusun {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--gold-light);
+      letter-spacing: 0.03em;
+    }
+    .signature-line {
+      display: block;
+      width: 160px;
+      height: 1px;
+      background: var(--border);
+      margin-left: auto;
+      margin-bottom: 0.4rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 640px) {
+      .intro-wrapper {
+        padding: 1.5rem 1rem 2rem;
+      }
+      .intro-card {
+        padding: 1.5rem 1rem;
+      }
+      .intro-body p {
+        font-size: 0.82rem;
+        line-height: 1.75;
+      }
+      .bismillah {
+        font-size: 0.95rem;
+      }
+      .example-arti p {
+        font-size: 0.70rem;
+        line-height: 1.65;
+      }
+      .example-code {
+        font-size: 0.70rem;
+      }
+      .example-header {
+        font-size: 0.66rem;
+      }
+      .gen-table td:first-child {
+        width: 100px;
+        font-size: 0.8rem;
+      }
+      .gen-table td {
+        font-size: 0.82rem;
+        padding: 0.5rem 0.5rem;
+      }
+      .intro-signature {
+        padding-right: 0;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -63,13 +372,90 @@
     </div>
   </div>
 
-  <div class="page-content">
-    <div class="maintenance-icon">📖</div>
-    <div class="decoration"></div>
-    <div class="maintenance-title">Pengenalan</div>
-    <div class="maintenance-sub">Halaman ini sedang dalam pengembangan. Konten pengenalan tentang sejarah dan latar belakang Trah Kariyorejan akan segera hadir.</div>
-    <a href="index.html" class="back-link">← Kembali ke Pohon Silsilah</a>
-  </div>
+  <main class="intro-wrapper">
+
+    <!-- HERO -->
+    <header class="intro-hero">
+      <div class="intro-label">Silsilah Trah Kariyo Rejo</div>
+      <h1 class="intro-title">Kata Pengantar</h1>
+      <p class="intro-salam">
+        Assalamu'alaikum warahmatullahi wabarakaatuh
+      </p>
+    </header>
+
+    <!-- CONTENT CARD -->
+    <article class="intro-card">
+      <div class="intro-body">
+
+        <p class="bismillah">Bismillahirrahmanirrahim</p>
+
+        <p>Dengan menyebut nama Allah Yang Maha Pengasih dan Maha Penyayang, puji syukur ke hadhirat Allah SWT karena dengan rahmat dan karunia-Nya, kami dapat membukukan Silsilah Trah Kariyo Rejo ini.</p>
+
+        <p>Penyusunan silsilah dengan memakai metode penomoran sub-sub yang sekaligus menjadi nomor induk, bertujuan untuk mempermudah dalam membaca urut-urutan silsilah. Jumlah angka yang tertera di depan nama, menunjukkan generasi dari Simbah Kariyo Rejo.</p>
+
+        <!-- GENERATION TABLE -->
+        <div class="gen-section">
+          <h2 class="gen-heading">Sistem Nomor Generasi</h2>
+          <table class="gen-table">
+            <tbody>
+              <tr>
+                <td><span class="num-badge">1</span> angka</td>
+                <td>Generasi anak</td>
+              </tr>
+              <tr>
+                <td><span class="num-badge">2</span> angka</td>
+                <td>Generasi cucu</td>
+              </tr>
+              <tr>
+                <td><span class="num-badge">3</span> angka</td>
+                <td>Generasi buyut</td>
+              </tr>
+              <tr>
+                <td><span class="num-badge">4</span> angka</td>
+                <td>Generasi canggah</td>
+              </tr>
+              <tr>
+                <td><span class="num-badge">5</span> angka</td>
+                <td>Generasi wareng — dan seterusnya</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- EXAMPLE -->
+        <div class="example-block">
+          <div class="example-header">Contoh Pembacaan Nomor</div>
+          <div class="example-code">5.1.1.3 — Athallah Rasyadizaan Suryanata</div>
+          <div class="example-arti">
+            <p>Di depan nama tersebut ada <strong>4 angka</strong>, berarti Athallah Rasyadizaan Suryanata adalah generasi <strong>Canggah</strong> dari Simbah Kariyorejo.</p>
+            <p>Angka-angka tersebut (5.1.1.3) memiliki arti:</p>
+            <p><span class="num-badge">5</span> Dari anak ke-5 Kariyo Rejo, yaitu Ratiyem</p>
+            <p><span class="num-badge">1</span> Dari anak ke-1 Ratiyem, yaitu Murtiyem</p>
+            <p><span class="num-badge">1</span> Dari anak ke-1 Murtiyem, yaitu Jaka Suryanta</p>
+            <p><span class="num-badge">3</span> Anak ke-3 dari Jaka Suryanta</p>
+            <p>Untuk menantu, nomor induk mengikuti suami/istri.</p>
+          </div>
+        </div>
+
+
+        <p class="closing-note">Penyusun menyadari bahwa Buku Silsilah ini masih jauh dari sempurna. Besar harapan kami Bapak/Ibu/Saudara bersedia memberikan masukan, kritik, saran, metode pendataan yang lebih sistematis, serta data-data terbaru untuk penyempurnaan buku ini. Mudah-mudahan Buku Silsilah ini bermanfaat dan bisa dijadikan pegangan dalam mempererat tali silaturahmi Keluarga Besar Trah Kariyo Rejo.</p>
+
+        <!-- CLOSING SALAM -->
+        <p style="text-align:center; margin-top: 1.5rem; font-style: italic; color: var(--text-muted); font-size: 0.9rem;">
+          Wassalamu'alaikum warahmatullahi wabarakaatuh
+        </p>
+
+        <!-- SIGNATURE -->
+        <div class="intro-signature">
+          <div class="date">Bantul, 4 Juni 2019</div>
+          <span class="signature-line"></span>
+          <div class="penyusun">Penyusun</div>
+        </div>
+
+      </div>
+    </article>
+
+    </main>
 
   <script src="menu.js"></script>
 </body>
