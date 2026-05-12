@@ -75,14 +75,14 @@
       </a>
     </div>
     <div class="header__main">
-      <div class="header__menu">
+      <button class="header__menu" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="menuOverlay">
         <div class="header__menu-icon">
           <div class="header__menu-line is-top"></div>
           <div class="header__menu-line is-bottom"></div>
         </div>
         <span class="header__menu-txt">Menu</span>
-      </div>
-      <div class="header__theme">
+      </button>
+      <button class="header__theme" type="button" aria-label="Ganti tema">
         <div class="header__theme-night">
           <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 16 16" fill="none">
             <path d="M14.845 8.36965C14.7735 9.69243 14.3205 10.9662 13.5406 12.037C12.7607 13.1079 11.6874 13.9298 10.4503 14.4036C9.21321 14.8774 7.86538 14.9827 6.56972 14.7068C5.27407 14.431 4.08605 13.7857 3.14929 12.849C2.21253 11.9123 1.56714 10.7244 1.29113 9.42878C1.01511 8.13315 1.12029 6.78531 1.59395 5.54818C2.06762 4.31106 2.88948 3.23761 3.9602 2.45761C5.03092 1.67761 6.30465 1.22444 7.62741 1.1529C7.93599 1.13613 8.09752 1.50337 7.9337 1.7647C7.38581 2.64132 7.15121 3.67774 7.26818 4.70485C7.38515 5.73196 7.84679 6.6891 8.57776 7.42008C9.30873 8.15105 10.2659 8.61269 11.293 8.72966C12.3201 8.84662 13.3565 8.61203 14.2331 8.06413C14.4953 7.90033 14.8617 8.06108 14.845 8.36965Z" stroke="currentColor" stroke-width="1.71429" stroke-linecap="round" stroke-linejoin="round"/>
@@ -91,48 +91,22 @@
         <div class="header__theme-day">
           <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="currentColor"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-      </div>
+      </button>
       <div class="header__prc">
         <div id="progress" class="header__prc-txt">0%</div>
       </div>
     </div>
-    <div class="header__right"></div>
+    <div class="header__right">
+      <a class="header__cta" href="index.html">Pohon Silsilah</a>
+    </div>
   </div>
 
   <div class="page-content">
     <div class="dashboard-frame">
       <img src="https://res.cloudinary.com/dteeybsew/image/upload/v1778486880/cover_cu19xt.png" alt="Dashboard Preview">
     </div>
-    <a href="index.html" class="back-link" style="margin-top:2rem">← Ke Pohon Silsilah</a>
   </div>
 
-  <script>
-  // Logo theme switching
-  const LOGO_DARK = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png';
-  const LOGO_LIGHT = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-light_jocjef.png';
-  function updateLogo() {
-    const logoImg = document.querySelector('.logo-img');
-    if (!logoImg) return;
-    logoImg.src = (localStorage.getItem('trah_theme') || 'dark') === 'dark' ? LOGO_DARK : LOGO_LIGHT;
-  }
-  new MutationObserver(() => updateLogo()).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
-  updateLogo();
-
-  // Logo positioning (Mobile = right, Desktop = left)
-  function positionLogoForMobile() {
-    const logoLink = document.querySelector('.logo-link');
-    const headerLeft = document.querySelector('.header__left');
-    const headerRight = document.querySelector('.header__right');
-    if (!logoLink || !headerRight) return;
-    if (window.innerWidth < 680) {
-      headerRight.appendChild(logoLink);
-    } else if (headerLeft) {
-      headerLeft.appendChild(logoLink);
-    }
-  }
-  window.addEventListener('resize', positionLogoForMobile);
-  positionLogoForMobile();
-</script>
   <script src="menu.js"></script>
 </body>
 </html>

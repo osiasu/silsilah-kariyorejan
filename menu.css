@@ -66,9 +66,33 @@
 
 /* Logo image - desktop only */
 .logo-link { display: flex !important; align-items: center; text-decoration: none; visibility: visible !important; opacity: 1 !important; }
-.logo-img { width: 120px; height: auto; object-fit: contain; }
+.logo-img { width: 96px; height: auto; object-fit: contain; }
+.header__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 32px;
+  padding: 0.35rem 0.9rem;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--text-muted);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  background: color-mix(in srgb, var(--surface2) 72%, transparent);
+  transition: color 0.2s var(--ease-premium), border-color 0.2s var(--ease-premium), background 0.2s var(--ease-premium), transform 0.2s var(--ease-premium);
+}
+.header__cta:hover {
+  color: var(--gold-light);
+  border-color: var(--gold);
+  background: var(--gold-dim);
+  transform: translateY(-1px);
+}
 @media (max-width: 680px) {
   .logo-img { width: 60px; }
+  .header__cta { display: none; }
 }
 
 /* Center pill */
@@ -218,6 +242,7 @@
   transition: clip-path 0.6s var(--ease-out-expo);
   box-shadow: 0 24px 80px rgba(0,0,0,.6);
 }
+
 .menu-overlay.open .menu-panel {
   clip-path: inset(0 0 0% 0 round 0 0 20px 20px);
 }
@@ -419,11 +444,14 @@
 }
 .menu-section.secondary .menu-link.active { color: var(--gold-light); }
 .menu-section.secondary .menu-link .menu-icon {
-  font-size: 1rem;
   width: 20px;
-  text-align: center;
+  height: 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
 }
+.menu-section.secondary .menu-link .menu-icon svg { width: 18px; height: 18px; stroke-width: 1.75; }
 
 /* ── SOCIAL + FOOTER ── */
 .menu-social {
@@ -465,6 +493,7 @@
   border: 1px solid var(--border);
   transition: all 0.3s var(--ease-premium);
 }
+.menu-social-link svg { width: 16px; height: 16px; stroke-width: 1.75; }
 .menu-social-link:hover {
   border-color: var(--gold);
   color: var(--gold-light);
@@ -504,5 +533,21 @@
 
 /* When menu is open */
 body.menu-open {
-  /* No special handling needed - scrollbar handled by page CSS */
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-overlay,
+  .menu-panel,
+  .header__menu-line,
+  .menu-close-line,
+  .menu-link,
+  .menu-social-link,
+  .header__menu,
+  .header__theme,
+  .menu-theme-btn {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
+  }
 }
