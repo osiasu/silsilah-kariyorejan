@@ -39,17 +39,18 @@ html::-webkit-scrollbar {
 
     #searchBox {
       width: 100%;
-      background: var(--surface2);
+      height: 34px;
+      background: color-mix(in srgb, var(--surface2) 72%, transparent);
       border: 1px solid var(--border);
       border-radius: 999px;
       color: var(--text);
       font-family: 'Inter', sans-serif;
-      font-size: 0.875rem;
-      padding: 0.5rem 2rem 0.5rem 2rem;
+      font-size: 0.78rem;
+      padding: 0.45rem 2rem 0.45rem 1.95rem;
       outline: none;
-      transition: border-color 0.2s;
+      transition: border-color 0.2s, background 0.2s;
     }
-    #searchBox:focus { border-color: var(--gold); }
+    #searchBox:focus { border-color: var(--gold); background: var(--surface2); }
     #searchBox::placeholder { color: var(--text-muted); }
 
     .search-icon {
@@ -58,7 +59,7 @@ html::-webkit-scrollbar {
       top: 50%;
       transform: translateY(-50%);
       color: var(--text-muted);
-      font-size: 0.75rem;
+      font-size: 0.68rem;
       pointer-events: none;
     }
 
@@ -87,7 +88,7 @@ html::-webkit-scrollbar {
     .logo-img { width: 60px; height: auto; object-fit: contain; }
     
     @media (min-width: 680px) {
-      .logo-img { width: 120px; }
+      .logo-img { width: 96px; }
     }
 
     /* Search wrap — relative so absolute children (icon, clearBtn) anchor correctly */
@@ -97,6 +98,7 @@ html::-webkit-scrollbar {
       align-items: center;
       flex: 1;
       min-width: 0;
+      max-width: 320px;
     }
     #searchBox { width: 100%; }
 
@@ -107,7 +109,7 @@ html::-webkit-scrollbar {
       border: 1px solid var(--border);
       border-radius: 50%;
       width: 34px; height: 34px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       transition: border-color 0.18s, background 0.18s;
@@ -1085,14 +1087,14 @@ html::-webkit-scrollbar {
       </a>
     </div>
     <div class="header__main">
-      <div class="header__menu">
+      <button class="header__menu" type="button" aria-label="Buka menu" aria-expanded="false" aria-controls="menuOverlay">
         <div class="header__menu-icon">
           <div class="header__menu-line is-top"></div>
           <div class="header__menu-line is-bottom"></div>
         </div>
         <span class="header__menu-txt">Menu</span>
-      </div>
-      <div class="header__theme">
+      </button>
+      <button class="header__theme" type="button" aria-label="Ganti tema">
         <div class="header__theme-night">
           <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 16 16" fill="none">
             <path d="M14.845 8.36965C14.7735 9.69243 14.3205 10.9662 13.5406 12.037C12.7607 13.1079 11.6874 13.9298 10.4503 14.4036C9.21321 14.8774 7.86538 14.9827 6.56972 14.7068C5.27407 14.431 4.08605 13.7857 3.14929 12.849C2.21253 11.9123 1.56714 10.7244 1.29113 9.42878C1.01511 8.13315 1.12029 6.78531 1.59395 5.54818C2.06762 4.31106 2.88948 3.23761 3.9602 2.45761C5.03092 1.67761 6.30465 1.22444 7.62741 1.1529C7.93599 1.13613 8.09752 1.50337 7.9337 1.7647C7.38581 2.64132 7.15121 3.67774 7.26818 4.70485C7.38515 5.73196 7.84679 6.6891 8.57776 7.42008C9.30873 8.15105 10.2659 8.61269 11.293 8.72966C12.3201 8.84662 13.3565 8.61203 14.2331 8.06413C14.4953 7.90033 14.8617 8.06108 14.845 8.36965Z" stroke="currentColor" stroke-width="1.71429" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1101,7 +1103,7 @@ html::-webkit-scrollbar {
         <div class="header__theme-day">
           <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="currentColor"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
         </div>
-      </div>
+      </button>
       <div class="header__prc">
         <div id="progress" class="header__prc-txt">0%</div>
       </div>
@@ -1357,39 +1359,6 @@ html::-webkit-scrollbar {
       }
     }
     window.addEventListener('resize', positionSearchForMobile);
-
-    // ── LOGO POSITIONING (Mobile = right, Desktop = left) ──
-    function positionLogoForMobile() {
-      const logoLink = document.querySelector('.logo-link');
-      const headerRight = document.querySelector('.header__right');
-      const headerLeft = document.querySelector('.header__left');
-      if (!logoLink) return;
-
-      if (window.innerWidth < 680 && headerRight) {
-        headerRight.appendChild(logoLink);
-      } else if (headerLeft) {
-        headerLeft.appendChild(logoLink);
-      }
-    }
-    window.addEventListener('resize', positionLogoForMobile);
-
-    // ── LOGO THEME SWITCHING ──
-    const LOGO_DARK = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-dark_qfsc2j.png';
-    const LOGO_LIGHT = 'https://res.cloudinary.com/dteeybsew/image/upload/v1778418213/logo-light_jocjef.png';
-
-    function updateLogo() {
-      const logoImg = document.querySelector('.logo-img');
-      if (!logoImg) return;
-      const currentTheme = localStorage.getItem('trah_theme') || 'dark';
-      logoImg.src = currentTheme === 'dark' ? LOGO_DARK : LOGO_LIGHT;
-    }
-    window.addEventListener('resize', updateLogo);
-
-    // Auto-update logo when theme changes ( MutationObserver )
-    const themeObserver = new MutationObserver(() => {
-      updateLogo();
-    });
-    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
 
     // ── INIT ──
     async function init() {
@@ -3408,8 +3377,6 @@ html::-webkit-scrollbar {
     // Show login on first load (check cookie first)
     window.addEventListener('DOMContentLoaded', () => {
       positionSearchForMobile(); // Initial search positioning
-      positionLogoForMobile(); // Initial logo positioning
-      updateLogo(); // Initial logo based on theme
       const auth = getCookie('trah_auth');
       if (auth === 'guest' || auth === 'admin') {
         document.getElementById('loginOverlay').classList.add('hidden');
