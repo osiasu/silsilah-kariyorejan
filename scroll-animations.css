@@ -1,0 +1,393 @@
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLL ANIMATIONS — Design Tokens, Utilities & Section Patterns
+   Silsilah Trah Kariyorejan — Premium Motion Layer
+   ═══════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ── Motion Durations ── */
+  --dur-fast: 0.3s;
+  --dur-base: 0.6s;
+  --dur-slow: 1s;
+  --dur-hero: 1.4s;
+  --dur-parallax: 1.8s;
+
+  /* ── Motion Easing ── */
+  --ease-scroll: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-reveal: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-smooth: cubic-bezier(0.45, 0, 0.55, 1);
+
+  /* ── Motion Distances ── */
+  --reveal-y: 60px;
+  --reveal-y-sm: 30px;
+  --parallax-range: 120px;
+  --parallax-range-sm: 60px;
+
+  /* ── Stagger Delays ── */
+  --stagger-xs: 0.05s;
+  --stagger-sm: 0.1s;
+  --stagger-md: 0.15s;
+  --stagger-lg: 0.25s;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HERO SECTION
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hero {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: clamp(2rem, 8vw, 6rem) clamp(1rem, 4vw, 3rem);
+}
+
+.hero__content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 900px;
+}
+
+.hero__bg {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(15, 13, 10, 0.2) 0%,
+    rgba(15, 13, 10, 0.5) 60%,
+    var(--bg) 100%
+  );
+  pointer-events: none;
+}
+
+[data-theme="light"] .hero__overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(250, 248, 245, 0.2) 0%,
+    rgba(250, 248, 245, 0.5) 60%,
+    var(--bg) 100%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PARALLAX
+   ═══════════════════════════════════════════════════════════════════ */
+
+.parallax-scene {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.parallax-layer {
+  will-change: transform;
+}
+
+.parallax-ornament {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.35;
+  will-change: transform;
+}
+
+.parallax-ornament--gold {
+  background: radial-gradient(circle, var(--gold-dim) 0%, transparent 70%);
+  border-radius: 50%;
+  filter: blur(60px);
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   REVEAL UTILITIES — Initial hidden states (GSAP animates to final)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.gsap-ready [data-reveal] {
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.gsap-ready [data-reveal="up"] {
+  transform: translateY(var(--reveal-y));
+}
+
+.gsap-ready [data-reveal="down"] {
+  transform: translateY(calc(var(--reveal-y) * -1));
+}
+
+.gsap-ready [data-reveal="left"] {
+  transform: translateX(var(--reveal-y));
+}
+
+.gsap-ready [data-reveal="right"] {
+  transform: translateX(calc(var(--reveal-y) * -1));
+}
+
+.gsap-ready [data-reveal="scale"] {
+  transform: scale(0.92);
+}
+
+.gsap-ready [data-reveal="fade"] {
+  transform: none;
+}
+
+[data-reveal].is-revealed {
+  opacity: 1 !important;
+  transform: translate(0, 0) scale(1) !important;
+}
+
+/* ── Clip Reveal (text lines) ── */
+.clip-reveal {
+  overflow: hidden;
+}
+
+.gsap-ready .clip-reveal__inner {
+  display: block;
+  transform: translateY(105%);
+  will-change: transform;
+}
+
+.clip-reveal__inner.is-revealed {
+  transform: translateY(0) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   IMAGE EXPANSION ON SCROLL
+   ═══════════════════════════════════════════════════════════════════ */
+
+.scroll-image {
+  overflow: hidden;
+  border-radius: var(--card-radius, 18px);
+}
+
+.gsap-ready .scroll-image__inner {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+  transform: scale(1.12);
+}
+
+.scroll-image--expand {
+  width: 75%;
+  margin: 0 auto;
+  border-radius: var(--card-radius, 18px);
+  overflow: hidden;
+  will-change: width, border-radius;
+  transition: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SECTION PATTERNS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.section {
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(3rem, 10vw, 8rem) clamp(1rem, 4vw, 3rem);
+  overflow: hidden;
+}
+
+.section--half {
+  min-height: 50dvh;
+}
+
+.section__inner {
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
+
+.section__inner--narrow {
+  width: min(100%, 680px);
+}
+
+.section__divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   HOVER & CURSOR INTERACTIONS
+   ═══════════════════════════════════════════════════════════════════ */
+
+.hover-lift {
+  transition: transform var(--dur-base) var(--ease-scroll),
+              box-shadow var(--dur-base) var(--ease-scroll);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+}
+
+.hover-glow {
+  transition: box-shadow var(--dur-base) var(--ease-scroll);
+}
+
+.hover-glow:hover {
+  box-shadow: 0 0 30px rgba(184, 130, 46, 0.15),
+              0 0 60px rgba(184, 130, 46, 0.05);
+}
+
+/* ── Custom Cursor ── */
+.cursor-dot {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 8px;
+  background: var(--gold-light);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: difference;
+  will-change: transform;
+  transition: width 0.3s var(--ease-scroll),
+              height 0.3s var(--ease-scroll),
+              opacity 0.3s;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.cursor-dot.is-visible {
+  opacity: 1;
+}
+
+.cursor-dot.is-hover {
+  width: 40px;
+  height: 40px;
+  opacity: 0.5;
+}
+
+@media (hover: none) {
+  .cursor-dot { display: none !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   SCROLL INDICATOR
+   ═══════════════════════════════════════════════════════════════════ */
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0.6;
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+.scroll-indicator__line {
+  width: 1px;
+  height: 32px;
+  background: linear-gradient(180deg, var(--gold-light), transparent);
+}
+
+.scroll-indicator__text {
+  font-size: 0.65rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.6; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 0.3; transform: translateX(-50%) translateY(6px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 768px) {
+  :root {
+    --reveal-y: 40px;
+    --reveal-y-sm: 20px;
+    --parallax-range: 60px;
+    --parallax-range-sm: 30px;
+  }
+
+  .hero {
+    min-height: 100svh;
+    padding: 2rem 1rem;
+  }
+
+  .parallax-layer {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .parallax-ornament {
+    display: none;
+  }
+
+  .scroll-image--expand {
+    width: 90%;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   PREFERS REDUCED MOTION
+   ═══════════════════════════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal],
+  .gsap-ready [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .clip-reveal__inner,
+  .gsap-ready .clip-reveal__inner {
+    transform: none !important;
+    opacity: 1 !important;
+  }
+
+  .gsap-ready .scroll-image__inner {
+    transform: none !important;
+  }
+
+  .scroll-image--expand {
+    width: 100% !important;
+    border-radius: 0 !important;
+  }
+
+  .parallax-layer {
+    transform: none !important;
+    will-change: auto;
+  }
+
+  .cursor-dot {
+    display: none !important;
+  }
+
+  .scroll-indicator {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto !important;
+  }
+}
