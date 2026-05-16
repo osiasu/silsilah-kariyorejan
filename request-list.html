@@ -92,6 +92,9 @@
     .req-card-meta span::before{content:'· ';}
     .req-card-meta span:first-child::before{content:'';}
     .req-type-chip{font-size:0.65rem;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:0.1rem 0.45rem;color:var(--text-muted);margin-right:0.35rem;}
+    .req-card[data-status="pending"]{border-left:3px solid rgba(184,130,46,0.42);}
+    .req-card[data-status="in_progress"]{border-left:3px solid rgba(74,127,203,0.42);}
+    .req-card[data-status="completed"]{border-left:3px solid rgba(74,203,74,0.42);}
     .req-card[data-status="rejected"]{opacity:0.72;border-left:3px solid rgba(224,112,112,0.42);}
     .req-card[data-status="rejected"]:hover{opacity:0.9;}
     @keyframes reqCardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
