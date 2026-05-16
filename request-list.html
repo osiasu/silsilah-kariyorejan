@@ -13,7 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="menu.css">
   <style>
-    :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--radius:14px;--header-h:56px;}
+    :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--radius:14px;}
     [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.18);--text:#1a1611;--text-muted:#635a4e;--gold-light:#96691e;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scrollbar-width:none;-ms-overflow-style:none;}
@@ -21,7 +21,7 @@
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
 
     /* HEADER */
-    #header{position:sticky;top:0;z-index:200;background:var(--surface);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;height:var(--header-h);display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
+    #header{position:sticky;top:0;z-index:200;background:transparent;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 1rem;height:var(--header-h);display:flex;align-items:center;justify-content:space-between;gap:0.75rem;}
     #adminBtn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.18s,background 0.18s;}
     #adminBtn:hover{border-color:var(--gold);background:var(--gold-dim);}
     #adminBtn.admin-active{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 8px rgba(184,130,46,0.35);}
@@ -311,7 +311,7 @@
       const el = document.getElementById('pageIntro');
       if (!el) return;
       el.innerHTML = `
-        <div class="page-kicker">📋 Antrian Permintaan Data</div>
+        <div class="page-kicker">Antrian Permintaan Data</div>
         <h1 class="page-title">Antrian Permintaan Data</h1>
         <p class="page-subtitle">Anda masuk sebagai ${isAdmin?'SUPER ADMIN':'TAMU'} — ${isAdmin?'Anda dapat menyetujui permintaan.':'tampilan read-only. Login sebagai Super Admin untuk menyetujui permintaan.'}</p>
       `;
@@ -582,6 +582,14 @@
         // show gate
         setTimeout(() => document.getElementById('gateInput').focus(), 100);
       }
+
+      // ESC key closes overlays
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          document.getElementById('pinOverlay')?.classList.remove('open');
+          document.getElementById('reqDetailOverlay')?.classList.remove('open');
+        }
+      });
     });
   </script>
   <script src="menu.js"></script>

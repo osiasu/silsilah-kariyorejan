@@ -12,24 +12,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="menu.css">
+  <link rel="stylesheet" href="scroll-animations.css">
   <style>
-    :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--header-h:56px;}
-    [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.12);--text:#1a1611;--text-muted:#7a6f62;}
+    :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;}
+    [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.12);--text:#1a1611;--text-muted:#635a4e;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scrollbar-width:none;-ms-overflow-style:none;}
     html::-webkit-scrollbar{display:none;}
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
     #header{position:sticky;top:0;z-index:200;}
-    .page-content{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:calc(100dvh - var(--header-h));padding:clamp(1.25rem,4vw,3rem) 1rem 3rem;text-align:center;}
+    .page-content{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:calc(100dvh - var(--header-h));padding:0 1rem 3rem;text-align:center;}
     .bio-shell{width:min(100%,860px);margin:0 auto;}
+    .bio-hero{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:2rem 0;}
+    .bio-hero__orb{position:absolute;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,var(--gold-dim) 0%,transparent 70%);filter:blur(70px);pointer-events:none;z-index:-1;top:50%;left:50%;transform:translate(-50%,-50%);}
     .bio-eyebrow{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.74rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);margin-bottom:0.85rem;}
-    .bio-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.55rem,5vw,2.6rem);line-height:1.12;color:var(--text);margin-bottom:0.75rem;}
+    .bio-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.55rem,5vw,2.6rem);line-height:1.12;color:var(--text);margin-bottom:0.75rem;overflow:hidden;}
     .decoration{width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 1.6rem;}
-    .bio-images{max-width:800px;width:100%;margin:0 auto;overflow:visible;}
+    .bio-images{max-width:800px;width:100%;margin:2rem auto 0;overflow:visible;}
+    .bio-images .scroll-image{margin-bottom:2rem;}
     .bio-images img{display:block;width:100%;height:auto;border-radius:0;}
     .bio-copy{max-width:620px;margin:clamp(1rem,3vw,1.5rem) auto 0;color:var(--text-muted);font-size:clamp(0.68rem,1.8vw,0.76rem);font-style:italic;line-height:1.6;text-align:center;}
     .bio-copy p+p{margin-top:0.7rem;}
-    @media (max-width:560px){.page-content{padding:1rem 0.75rem 2.5rem}.bio-title{font-size:1.55rem}.bio-copy{text-align:center;line-height:1.6}}
+    @media (max-width:560px){.page-content{padding:0 0.75rem 2.5rem}.bio-hero{min-height:100svh}.bio-hero__orb{width:200px;height:200px}.bio-title{font-size:1.55rem}.bio-copy{text-align:center;line-height:1.6}}
   </style>
 </head>
 <body>
@@ -69,19 +73,64 @@
 
   <div class="page-content">
     <main class="bio-shell" aria-labelledby="bioTitle">
-    <div class="bio-eyebrow">Biografi</div>
-    <div class="decoration"></div>
-    <h1 class="bio-title" id="bioTitle">Kisah dalam Panel Kenangan</h1>
-    <div class="bio-images" aria-label="Panel komik biografi Trah Kariyorejan">
-      <img src="https://res.cloudinary.com/dteeybsew/image/upload/v1778684298/biografi_m29baq.png" alt="Komik panel biografi Trah Kariyorejan bagian pertama" loading="eager">
-      <img src="https://res.cloudinary.com/dteeybsew/image/upload/v1778685931/biografi2_rksiv7.png" alt="Komik panel biografi Trah Kariyorejan bagian kedua" loading="eager">
+
+    <!-- HERO (fullscreen) -->
+    <section class="bio-hero parallax-scene">
+      <div class="bio-hero__orb parallax-layer" data-speed="-0.2"></div>
+      <div class="bio-eyebrow" data-reveal="fade" data-delay="0.1">Biografi</div>
+      <div class="decoration" data-reveal="scale" data-delay="0.3"></div>
+      <h1 class="bio-title" id="bioTitle">
+        <span class="clip-reveal"><span class="clip-reveal__inner">Kisah dalam Panel Kenangan</span></span>
+      </h1>
+      <div class="scroll-indicator">
+        <div class="scroll-indicator__line"></div>
+        <div class="scroll-indicator__text">Scroll</div>
+      </div>
+    </section>
+
+    <!-- IMAGES with scroll expansion -->
+    <div class="bio-images">
+      <div class="scroll-image scroll-image--expand">
+        <img class="scroll-image__inner" src="https://res.cloudinary.com/dteeybsew/image/upload/v1778684298/biografi_m29baq.png" alt="Komik panel biografi Trah Kariyorejan bagian pertama" loading="eager" width="941" height="1672">
+      </div>
+      <div class="scroll-image scroll-image--expand">
+        <img class="scroll-image__inner" src="https://res.cloudinary.com/dteeybsew/image/upload/v1778685931/biografi2_rksiv7.png" alt="Komik panel biografi Trah Kariyorejan bagian kedua" loading="lazy" width="941" height="1672">
+      </div>
     </div>
-    <section class="bio-copy" aria-label="Narasi singkat biografi">
+
+    <!-- CAPTION -->
+    <section class="bio-copy" aria-label="Narasi singkat biografi" data-stagger="0.15">
       <p>Biografi ini merangkum jejak keluarga dalam bentuk panel komik, menghadirkan potongan peristiwa, nilai, dan ingatan yang diwariskan lintas generasi.</p>
       <p>Setiap bagian disusun sebagai ruang baca singkat agar kisah leluhur mudah dinikmati, baik di layar besar maupun perangkat mobile.</p>
     </section>
+
     </main>
   </div>
+
+  <!-- GSAP + ScrollTrigger + Lenis -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lenis@1.1/dist/lenis.min.js"></script>
+  <script src="scroll-animations.js"></script>
+
+  <!-- Page-specific: scroll indicator fade -->
+  <script>
+    (function() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+      if (typeof gsap === 'undefined' || typeof ScrollTrigger === 'undefined') return;
+
+      // Scroll indicator fade out
+      gsap.to('.scroll-indicator', {
+        opacity: 0,
+        scrollTrigger: {
+          trigger: '.bio-hero',
+          start: 'top top',
+          end: '+=150',
+          scrub: true,
+        },
+      });
+    })();
+  </script>
 
   <script src="menu.js"></script>
 </body>

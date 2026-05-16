@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="menu.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
-    :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--header-h:56px;}
+    :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;}
     [data-theme="light"]{--gold:#8a5e1a;--gold-light:#a87228;--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(138,94,26,0.14);--text:#1a1611;--text-muted:#6f6458;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html{scrollbar-width:none;-ms-overflow-style:none;}
@@ -128,7 +128,6 @@
     .chart-tab.active{background:var(--surface);color:var(--gold);box-shadow:0 1px 4px rgba(0,0,0,0.08);font-weight:600;}
     .chart-panel{display:none;}
     .chart-panel.active{display:block;}
-    .chart-wrapper{position:relative;width:100%;height:300px;}
     .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
     .stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;}
     .stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold-light);}
@@ -150,7 +149,7 @@
     .attendance-list{display:flex;flex-direction:column;gap:10px;}
     .attendance-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s;}
     .attendance-item:hover{border-color:var(--gold-dim);}
-    .attendance-header{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;color:inherit;}
+    
     .attendance-avatar{width:42px;height:42px;border-radius:50%;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--gold);flex-shrink:0;}
     .attendance-info{flex:1;min-width:0;}
     .attendance-name{font-size:0.9rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
@@ -176,6 +175,10 @@
 
     /* States */
     .empty-state{background:var(--surface);border:1px dashed var(--border);border-radius:14px;padding:32px 20px;text-align:center;color:var(--text-muted);}
+    .chart-empty-state{display:none;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:32px 20px;text-align:center;color:var(--text-muted);}
+    .chart-empty-state.visible{display:flex;}
+    .chart-empty-state .empty-icon{font-size:2rem;margin-bottom:10px;}
+    .chart-empty-state .empty-title{font-weight:700;color:var(--text);margin-bottom:6px;}
     .empty-icon{font-size:2rem;margin-bottom:10px;}
     .empty-title{font-weight:700;color:var(--text);margin-bottom:6px;}
     .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
@@ -183,6 +186,10 @@
     .skeleton-card{height:160px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;}
     .skeleton-line{height:14px;margin-bottom:10px;}
     .skeleton-line.short{width:60%;}
+    .skeleton-chart{height:100%;width:100%;border-radius:8px;}
+    .skeleton-list-item{display:flex;align-items:center;gap:12px;padding:14px;background:var(--surface);border:1px solid var(--border);border-radius:12px;}
+    .skeleton-list-item .skeleton-avatar{width:42px;height:42px;border-radius:50%;flex-shrink:0;}
+    .skeleton-list-item .skeleton-text{flex:1;display:flex;flex-direction:column;gap:8px;}
     .hidden{display:none!important;}
 
     /* Modal */
@@ -203,6 +210,7 @@
     /* Event Modal (admin) */
     .event-form-group{margin-bottom:14px;}
     .event-form-group label{display:block;font-size:0.75rem;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;}
+    .event-form-group label.required::after{content:' *';color:var(--gold);font-weight:700;}
     .event-form-group input,.event-form-group textarea,.event-form-group select{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
     .event-form-group input:focus,.event-form-group textarea:focus,.event-form-group select:focus{border-color:var(--gold);}
     .event-form-group textarea{resize:vertical;min-height:60px;}
@@ -408,13 +416,25 @@
           <button class="chart-tab" role="tab" aria-selected="false" aria-controls="panel-line" id="tab-line" data-chart="line">Tren</button>
         </div>
         <div class="chart-panel active" id="panel-bar" role="tabpanel" aria-labelledby="tab-bar">
-          <div class="chart-wrapper"><canvas id="barChart" aria-label="Grafik batang persentase kehadiran per acara" role="img"></canvas></div>
+          <div class="chart-wrapper">
+            <div class="chart-empty-state" id="barChartEmpty"><div class="empty-icon">&#x1F4CA;</div><div class="empty-title">Belum ada data kehadiran</div><p>Grafik akan muncul setelah acara berlangsung.</p></div>
+            <div class="skeleton skeleton-chart" id="barChartSkeleton"></div>
+            <canvas id="barChart" aria-label="Grafik batang persentase kehadiran per acara" role="img"></canvas>
+          </div>
         </div>
         <div class="chart-panel" id="panel-donut" role="tabpanel" aria-labelledby="tab-donut">
-          <div class="chart-wrapper donut-3d-wrap"><canvas id="donutChart" aria-label="Grafik donut 10 anggota paling aktif" role="img"></canvas></div>
+          <div class="chart-wrapper donut-3d-wrap">
+            <div class="chart-empty-state" id="donutChartEmpty"><div class="empty-icon">&#x1F369;</div><div class="empty-title">Belum ada data anggota</div><p>Grafik akan muncul setelah ada kehadiran tercatat.</p></div>
+            <div class="skeleton skeleton-chart" id="donutChartSkeleton"></div>
+            <canvas id="donutChart" aria-label="Grafik donut 10 anggota paling aktif" role="img"></canvas>
+          </div>
         </div>
         <div class="chart-panel" id="panel-line" role="tabpanel" aria-labelledby="tab-line">
-          <div class="chart-wrapper"><canvas id="lineChart" aria-label="Grafik garis tren kehadiran" role="img"></canvas></div>
+          <div class="chart-wrapper">
+            <div class="chart-empty-state" id="lineChartEmpty"><div class="empty-icon">&#x1F4C8;</div><div class="empty-title">Data tren belum cukup</div><p>Minimal 2 acara diperlukan untuk menampilkan tren.</p></div>
+            <div class="skeleton skeleton-chart" id="lineChartSkeleton"></div>
+            <canvas id="lineChart" aria-label="Grafik garis tren kehadiran" role="img"></canvas>
+          </div>
         </div>
       </div>
     </section>
@@ -432,6 +452,11 @@
         <input type="search" id="listSearch" placeholder="Cari acara atau nama..." aria-label="Cari kehadiran">
       </div>
       <div class="attendance-list" id="attendanceList" role="list" aria-label="Daftar kehadiran per acara"></div>
+      <div id="listSkeleton" class="attendance-list">
+        <div class="skeleton-list-item"><div class="skeleton skeleton-avatar"></div><div class="skeleton-text"><div class="skeleton skeleton-line" style="width:70%"></div><div class="skeleton skeleton-line short" style="width:40%"></div></div></div>
+        <div class="skeleton-list-item"><div class="skeleton skeleton-avatar"></div><div class="skeleton-text"><div class="skeleton skeleton-line" style="width:60%"></div><div class="skeleton skeleton-line short" style="width:35%"></div></div></div>
+        <div class="skeleton-list-item"><div class="skeleton skeleton-avatar"></div><div class="skeleton-text"><div class="skeleton skeleton-line" style="width:75%"></div><div class="skeleton skeleton-line short" style="width:45%"></div></div></div>
+      </div>
       <div id="loadMoreWrap" class="load-more-wrap hidden">
         <button class="load-more-btn" id="loadMoreBtn">Muat lebih banyak</button>
         <div class="load-more-progress" id="loadMoreProgress"></div>
@@ -469,10 +494,10 @@
       <div class="modal-handle"></div>
       <h3 class="modal-title" id="event-modal-title">Tambah Acara</h3>
       <div id="eventFormBody">
-        <div class="event-form-group"><label for="ef-title">Judul Acara</label><input type="text" id="ef-title" placeholder="Contoh: Arisan Keluarga" maxlength="120"></div>
-        <div class="event-form-group"><label for="ef-date">Tanggal</label><input type="date" id="ef-date"></div>
-        <div class="event-form-group"><label for="ef-time">Waktu</label><input type="time" id="ef-time"></div>
-        <div class="event-form-group"><label for="ef-location">Lokasi</label><input type="text" id="ef-location" placeholder="Contoh: Rumah Pak Karyo" maxlength="160"></div>
+        <div class="event-form-group"><label for="ef-title" class="required">Judul Acara</label><input type="text" id="ef-title" placeholder="Contoh: Arisan Keluarga" maxlength="120" required></div>
+        <div class="event-form-group"><label for="ef-date" class="required">Tanggal</label><input type="date" id="ef-date" required></div>
+        <div class="event-form-group"><label for="ef-time" class="required">Waktu</label><input type="time" id="ef-time" required></div>
+        <div class="event-form-group"><label for="ef-location" class="required">Lokasi</label><input type="text" id="ef-location" placeholder="Contoh: Rumah Pak Karyo" maxlength="160" required></div>
         <div class="event-form-group"><label for="ef-host">Tuan Rumah</label><input type="text" id="ef-host" placeholder="Contoh: Pak Karyo" maxlength="120"></div>
         <div class="event-form-group"><label for="ef-desc">Deskripsi</label><textarea id="ef-desc" placeholder="Keterangan tambahan..." maxlength="500"></textarea></div>
         <div class="event-form-group"><label for="ef-status">Status</label><select id="ef-status"><option value="upcoming">Upcoming</option><option value="ongoing">Ongoing</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div>
@@ -1056,7 +1081,16 @@
     }
 
     // -- CHARTS --
+    function hideChartSkeletons() {
+      var ids = ['barChartSkeleton', 'donutChartSkeleton', 'lineChartSkeleton'];
+      ids.forEach(function(id) { document.getElementById(id).classList.add('hidden'); });
+    }
+    function showChartEmptyState(id, show) {
+      var el = document.getElementById(id);
+      if (show) { el.classList.add('visible'); } else { el.classList.remove('visible'); }
+    }
     function renderCharts() {
+      hideChartSkeletons();
       var activePeople = getActivePeople();
       var totalPeople = activePeople.length;
       var activeAtt = getActiveAttendance();
@@ -1087,6 +1121,16 @@
       var barData = barCounts.map(function(count) {
         return totalPeople > 0 ? Math.round((count / totalPeople) * 100) : 0;
       });
+
+      // Bar chart empty state
+      var barCanvas = document.getElementById('barChart');
+      if (eventsWithAttendance.length === 0) {
+        showChartEmptyState('barChartEmpty', true);
+        barCanvas.style.display = 'none';
+      } else {
+        showChartEmptyState('barChartEmpty', false);
+        barCanvas.style.display = '';
+      }
 
       if (chartInstances.bar) chartInstances.bar.destroy();
       var barCtx = document.getElementById('barChart').getContext('2d');
@@ -1151,6 +1195,16 @@
         '#d4a55a','#5aab8a','#e89060','#5b8fd4','#a0c878'
       ];
 
+      // Donut chart empty state
+      var donutCanvas = document.getElementById('donutChart');
+      if (sorted.length === 0) {
+        showChartEmptyState('donutChartEmpty', true);
+        donutCanvas.style.display = 'none';
+      } else {
+        showChartEmptyState('donutChartEmpty', false);
+        donutCanvas.style.display = '';
+      }
+
       if (chartInstances.donut) chartInstances.donut.destroy();
       var donutCtx = document.getElementById('donutChart').getContext('2d');
       var isLight = document.documentElement.getAttribute('data-theme') === 'light';
@@ -1200,6 +1254,19 @@
         var count = activeAtt.filter(function(a) { return sameEvent(a, e.id) && a.attended; }).length;
         return totalPeople > 0 ? Math.round((count / totalPeople) * 100) : 0;
       });
+
+      // Line chart empty state - need at least 2 data points for a trend
+      var lineCanvas = document.getElementById('lineChart');
+      if (eventsWithAttendance.length < 2) {
+        showChartEmptyState('lineChartEmpty', true);
+        lineCanvas.style.display = 'none';
+        if (chartInstances.line) { chartInstances.line.destroy(); chartInstances.line = null; }
+        return;
+      } else {
+        showChartEmptyState('lineChartEmpty', false);
+        lineCanvas.style.display = '';
+      }
+
       if (chartInstances.line) chartInstances.line.destroy();
       var lineCtx = document.getElementById('lineChart').getContext('2d');
       chartInstances.line = new Chart(lineCtx, {
@@ -1534,12 +1601,26 @@
       initLoadMore();
       initModal();
       initEventModal();
+      // Show skeletons while loading
+      document.getElementById('listSkeleton').classList.remove('hidden');
+      document.getElementById('attendanceList').classList.add('hidden');
       await fetchAll();
+      // Hide skeletons, show content
+      document.getElementById('listSkeleton').classList.add('hidden');
+      document.getElementById('attendanceList').classList.remove('hidden');
       initCombobox();
       renderAll();
       // Lightweight countdown refresh every 60s (only re-renders upcoming section)
       setInterval(refreshCountdownLabels, 60000);
     }
+
+    // ESC key closes overlays
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        document.getElementById('pinOverlay')?.classList.remove('open');
+        closeModal();
+      }
+    });
 
     document.addEventListener('DOMContentLoaded', init);
   })();
