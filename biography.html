@@ -16,15 +16,20 @@
     :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--header-h:56px;}
     [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.12);--text:#1a1611;--text-muted:#7a6f62;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scrollbar-width:none;-ms-overflow-style:none;}
+    html::-webkit-scrollbar{display:none;}
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
-    .page-content{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100dvh - var(--header-h));padding:2rem 1.5rem;text-align:center;}
-    .maintenance-icon{font-size:3.5rem;margin-bottom:1.25rem;animation:pulse 2.5s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-    .maintenance-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:0.6rem;}
-    .maintenance-sub{font-size:0.88rem;color:var(--text-muted);max-width:320px;line-height:1.65;margin-bottom:2rem;}
-    .back-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:0.5rem 1.25rem;color:var(--text-muted);font-size:0.82rem;text-decoration:none;transition:all 0.18s;}
-    .back-link:hover{border-color:var(--gold);color:var(--gold-light);}
-    .decoration{width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 1.5rem;}
+    #header{position:sticky;top:0;z-index:200;}
+    .page-content{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:calc(100dvh - var(--header-h));padding:clamp(1.25rem,4vw,3rem) 1rem 3rem;text-align:center;}
+    .bio-shell{width:min(100%,860px);margin:0 auto;}
+    .bio-eyebrow{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.74rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);margin-bottom:0.85rem;}
+    .bio-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.55rem,5vw,2.6rem);line-height:1.12;color:var(--text);margin-bottom:0.75rem;}
+    .decoration{width:140px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 1.6rem;}
+    .bio-images{max-width:800px;width:100%;margin:0 auto;overflow:visible;}
+    .bio-images img{display:block;width:100%;height:auto;border-radius:0;}
+    .bio-copy{max-width:620px;margin:clamp(1rem,3vw,1.5rem) auto 0;color:var(--text-muted);font-size:clamp(0.68rem,1.8vw,0.76rem);font-style:italic;line-height:1.6;text-align:center;}
+    .bio-copy p+p{margin-top:0.7rem;}
+    @media (max-width:560px){.page-content{padding:1rem 0.75rem 2.5rem}.bio-title{font-size:1.55rem}.bio-copy{text-align:center;line-height:1.6}}
   </style>
 </head>
 <body>
@@ -63,11 +68,19 @@
   </div>
 
   <div class="page-content">
-    <div class="maintenance-icon">📜</div>
+    <main class="bio-shell" aria-labelledby="bioTitle">
+    <div class="bio-eyebrow">Biografi</div>
     <div class="decoration"></div>
-    <div class="maintenance-title">Biografi</div>
-    <div class="maintenance-sub">Halaman ini sedang dalam pengembangan. Biografi tokoh-tokoh utama Trah Kariyorejan akan segera hadir.</div>
-    <a href="index.html" class="back-link">← Kembali ke Pohon Silsilah</a>
+    <h1 class="bio-title" id="bioTitle">Kisah dalam Panel Kenangan</h1>
+    <div class="bio-images" aria-label="Panel komik biografi Trah Kariyorejan">
+      <img src="https://res.cloudinary.com/dteeybsew/image/upload/v1778684298/biografi_m29baq.png" alt="Komik panel biografi Trah Kariyorejan bagian pertama" loading="eager">
+      <img src="https://res.cloudinary.com/dteeybsew/image/upload/v1778685931/biografi2_rksiv7.png" alt="Komik panel biografi Trah Kariyorejan bagian kedua" loading="eager">
+    </div>
+    <section class="bio-copy" aria-label="Narasi singkat biografi">
+      <p>Biografi ini merangkum jejak keluarga dalam bentuk panel komik, menghadirkan potongan peristiwa, nilai, dan ingatan yang diwariskan lintas generasi.</p>
+      <p>Setiap bagian disusun sebagai ruang baca singkat agar kisah leluhur mudah dinikmati, baik di layar besar maupun perangkat mobile.</p>
+    </section>
+    </main>
   </div>
 
   <script src="menu.js"></script>
