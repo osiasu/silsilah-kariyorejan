@@ -14,8 +14,10 @@
   <link rel="stylesheet" href="menu.css">
   <style>
     :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--radius:14px;--header-h:56px;}
-    [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.12);--text:#1a1611;--text-muted:#7a6f62;}
+    [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.18);--text:#1a1611;--text-muted:#635a4e;--gold-light:#96691e;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html{scrollbar-width:none;-ms-overflow-style:none;}
+    html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;}
     body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
 
     /* HEADER */
@@ -24,6 +26,7 @@
     #adminBtn:hover{border-color:var(--gold);background:var(--gold-dim);}
     #adminBtn.admin-active{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 8px rgba(184,130,46,0.35);}
     #adminBanner{display:none;background:var(--gold-dim);border-bottom:1px solid var(--gold);padding:0.3rem 1rem;font-size:0.72rem;color:var(--gold-light);text-align:center;letter-spacing:0.05em;}
+    #adminBanner.visible{display:block;}
 
     /* ACCESS GATE */
     #accessGate{
@@ -34,8 +37,16 @@
     #accessGate.hidden{display:none;}
 
     /* MAIN */
-    #mainContent{display:none;padding:0.75rem;max-width:760px;margin:0 auto;}
+    #mainContent{display:none;padding:16px 16px 48px;max-width:1200px;margin:0 auto;}
     #mainContent.visible{display:block;}
+
+    /* PAGE INTRO */
+    .page-intro{position:relative;background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:22px;padding:18px 20px;overflow:hidden;box-shadow:0 10px 36px rgba(0,0,0,0.12);margin-bottom:1.25rem;}
+    .page-intro::before{content:'';position:absolute;inset:-40% auto auto -10%;width:220px;height:220px;background:radial-gradient(circle,rgba(184,130,46,0.18),transparent 66%);pointer-events:none;}
+    .page-kicker{position:relative;font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+    .page-title{position:relative;font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.45rem,4vw,2.15rem);font-weight:800;line-height:1.12;color:var(--text);}
+    .page-subtitle{position:relative;max-width:none;font-size:0.88rem;line-height:1.55;color:var(--text-muted);margin-top:8px;white-space:nowrap;}
+    @media(max-width:760px){.page-subtitle{white-space:normal;font-size:0.8rem;}}
 
     /* PIN BOX */
     .pin-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem 1.75rem;width:calc(100% - 2rem);max-width:340px;display:flex;flex-direction:column;gap:1rem;box-shadow:0 8px 40px rgba(0,0,0,0.5);}
@@ -56,13 +67,8 @@
     #pinOverlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
     #pinOverlay.open{display:flex;}
 
-    /* PAGE HEADER */
-    .page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.25rem;flex-wrap:wrap;gap:0.75rem;}
-    .page-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.15rem;color:var(--gold-light);}
-    .refresh-btn{background:var(--surface2);border:1px solid var(--border);border-radius:999px;color:var(--text-muted);font-size:0.78rem;padding:0.35rem 0.9rem;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;}
+    .refresh-btn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:999px;color:var(--text-muted);font-size:0.88rem;width:31px;height:31px;padding:0;cursor:pointer;transition:all 0.15s;font-family:'Inter',sans-serif;display:inline-flex;align-items:center;justify-content:center;line-height:1;}
     .refresh-btn:hover{border-color:var(--gold);color:var(--gold-light);}
-    .guest-notice{background:rgba(74,127,203,0.1);border:1px solid rgba(74,127,203,0.25);border-radius:10px;padding:0.6rem 0.9rem;font-size:0.78rem;color:#7aaae0;margin-bottom:1rem;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center;gap:0.5rem;}
-    @media(max-width:480px){.guest-notice{font-size:0.72rem;padding:0.5rem 0.75rem;}}
 
     /* STATUS TABS */
     .status-tabs{display:flex;gap:0.5rem;margin-bottom:1rem;overflow-x:auto;scrollbar-width:none;}
@@ -71,7 +77,7 @@
 
     /* REQUEST CARDS */
     .req-list{display:flex;flex-direction:column;gap:0.6rem;}
-    .req-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.85rem 1rem;cursor:pointer;transition:border-color 0.15s,background 0.15s;}
+    .req-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0.85rem 1rem;cursor:pointer;transition:border-color 0.15s,background 0.15s,opacity 0.2s ease,transform 0.2s ease;animation:reqCardIn 0.24s ease both;}
     .req-card:hover{border-color:var(--gold);background:var(--surface2);}
     .req-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.75rem;margin-bottom:0.45rem;}
     .req-id{font-size:0.72rem;font-weight:700;color:var(--gold-light);letter-spacing:0.04em;}
@@ -79,11 +85,24 @@
     .req-status-badge.pending{background:rgba(184,130,46,0.12);color:var(--gold);border:1px solid rgba(201,150,42,0.3);}
     .req-status-badge.in_progress{background:rgba(74,127,203,0.15);color:#7aaae0;border:1px solid rgba(74,127,203,0.3);}
     .req-status-badge.completed{background:rgba(74,203,74,0.1);color:#70c070;border:1px solid rgba(74,203,74,0.25);}
+    .req-status-badge.rejected{background:rgba(224,112,112,0.12);color:#e07070;border:1px solid rgba(224,112,112,0.3);}
+    [data-theme="light"] .req-status-badge.rejected{background:rgba(180,60,60,0.08);color:#b43c3c;border-color:rgba(180,60,60,0.24);}
     .req-card-name{font-size:0.9rem;font-weight:500;color:var(--text);margin-bottom:0.2rem;}
     .req-card-meta{font-size:0.75rem;color:var(--text-muted);display:flex;flex-wrap:wrap;gap:0.5rem;}
     .req-card-meta span::before{content:'· ';}
     .req-card-meta span:first-child::before{content:'';}
     .req-type-chip{font-size:0.65rem;background:var(--surface3);border:1px solid var(--border);border-radius:6px;padding:0.1rem 0.45rem;color:var(--text-muted);margin-right:0.35rem;}
+    .req-card[data-status="rejected"]{opacity:0.72;border-left:3px solid rgba(224,112,112,0.42);}
+    .req-card[data-status="rejected"]:hover{opacity:0.9;}
+    @keyframes reqCardIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+    .load-more-sentinel{min-height:54px;display:flex;align-items:center;justify-content:center;gap:0.5rem;color:var(--text-muted);font-size:0.74rem;}
+    .load-dot{width:7px;height:7px;border-radius:50%;background:var(--gold);animation:loadDotPulse 0.9s ease-in-out infinite;}
+    .load-dot:nth-child(2){animation-delay:0.12s;}
+    .load-dot:nth-child(3){animation-delay:0.24s;}
+    @keyframes loadDotPulse{0%,80%,100%{opacity:0.35;transform:scale(0.8)}40%{opacity:1;transform:scale(1)}}
+    .load-more-done{text-align:center;color:var(--text-muted);font-size:0.72rem;padding:0.75rem 0 0.25rem;}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+    @media (prefers-reduced-motion:reduce){.req-card,.load-dot{animation:none}.req-card{transition:border-color 0.15s,background 0.15s}}
 
     /* DETAIL OVERLAY */
     #reqDetailOverlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.72);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
@@ -93,12 +112,20 @@
     .detail-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;color:var(--gold-light);}
     .detail-close{background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:28px;height:28px;color:var(--text-muted);font-size:0.85rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.15s;}
     .detail-close:hover{border-color:var(--gold);color:var(--gold-light);}
-    .detail-body{overflow-y:auto;padding:0.75rem;flex:1;}
+    .detail-body{overflow-y:auto;padding:0.75rem;flex:1;scrollbar-width:none;-ms-overflow-style:none;}
+    .detail-body::-webkit-scrollbar{display:none;}
     .detail-footer{padding:0.85rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.65rem;flex-shrink:0;}
     .btn-action{flex:1.5;padding:0.65rem;border-radius:10px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold-light);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;}
     .btn-action:hover{background:rgba(184,130,46,0.25);}
     .btn-approve{flex:2;padding:0.65rem;border-radius:10px;border:none;background:var(--gold);color:#1a1205;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.15s;}
     .btn-approve:hover{opacity:0.88;}
+    .btn-reject{flex:1.3;padding:0.65rem;border-radius:10px;border:1px solid rgba(224,112,112,0.4);background:rgba(224,112,112,0.1);color:#e07070;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s,border-color 0.15s;}
+    .btn-reject:hover{background:rgba(224,112,112,0.2);border-color:rgba(224,112,112,0.6);}
+    .btn-delete{flex:1;padding:0.65rem;border-radius:10px;border:1px solid rgba(224,112,112,0.28);background:transparent;color:#e07070;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s,border-color 0.15s;}
+    .btn-delete:hover{background:rgba(224,112,112,0.12);border-color:rgba(224,112,112,0.48);}
+    [data-theme="light"] .btn-reject,[data-theme="light"] .btn-delete{color:#b43c3c;border-color:rgba(180,60,60,0.32);}
+    [data-theme="light"] .btn-reject{background:rgba(180,60,60,0.06);}
+    [data-theme="light"] .btn-reject:hover,[data-theme="light"] .btn-delete:hover{background:rgba(180,60,60,0.1);}
 
     .preview-section{margin-bottom:1rem;}
     .preview-section-title{font-size:0.65rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--gold);font-weight:600;margin-bottom:0.6rem;padding-bottom:0.3rem;border-bottom:1px solid var(--border);}
@@ -171,18 +198,18 @@
 
   <!-- MAIN CONTENT -->
   <div id="mainContent">
-    <div class="page-header">
-      <div class="page-title">📋 Antrian Permintaan Data</div>
-      <button class="refresh-btn" onclick="loadAndRender()">↻ Refresh</button>
-    </div>
-    <div id="guestNotice" class="guest-notice" style="display:none">
-      👤 Anda masuk sebagai TAMU  — tampilan read-only. Login sebagai Super Admin untuk menyetujui permintaan.
+    <div class="page-intro" id="pageIntro">
+      <div class="page-kicker">📋 Antrian Permintaan Data</div>
+      <h1 class="page-title">Antrian Permintaan Data</h1>
+      <p class="page-subtitle">Anda masuk sebagai TAMU — tampilan read-only. Login sebagai Super Admin untuk menyetujui permintaan.</p>
     </div>
     <div class="status-tabs">
       <button class="status-tab active" onclick="setFilter('all',this)">Semua</button>
       <button class="status-tab" onclick="setFilter('pending',this)">⏳ Pending</button>
       <button class="status-tab" onclick="setFilter('in_progress',this)">▶ In Progress</button>
       <button class="status-tab" onclick="setFilter('completed',this)">✓ Selesai</button>
+      <button class="status-tab" onclick="setFilter('rejected',this)">✕ Ditolak</button>
+      <button class="refresh-btn" onclick="loadAndRender()" aria-label="Refresh daftar permintaan" title="Refresh">↻</button>
     </div>
     <div id="reqList"><div class="spinner"></div></div>
   </div>
@@ -223,6 +250,11 @@
     let _allRequests = [];
     let _currentFilter = 'all';
     let _activePinTab = 'guest'; // 'guest' | 'admin'
+    let _visibleLimit = 10;
+    let _isAutoLoading = false;
+    let _autoLoadBound = false;
+    const PAGE_SIZE = 10;
+    const AUTO_LOAD_OFFSET = 160;
 
     function supaHeaders() {
       return {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`};
@@ -266,10 +298,20 @@
       if (role === 'admin') applyAdminMode();
       else {
         isAdmin = false;
-        document.getElementById('guestNotice').style.display = 'flex';
+        renderPageIntro();
       }
       loadAndRender();
       updatePendingBadge();
+    }
+
+    function renderPageIntro() {
+      const el = document.getElementById('pageIntro');
+      if (!el) return;
+      el.innerHTML = `
+        <div class="page-kicker">📋 Antrian Permintaan Data</div>
+        <h1 class="page-title">Antrian Permintaan Data</h1>
+        <p class="page-subtitle">Anda masuk sebagai ${isAdmin?'SUPER ADMIN':'TAMU'} — ${isAdmin?'Anda dapat menyetujui permintaan.':'tampilan read-only. Login sebagai Super Admin untuk menyetujui permintaan.'}</p>
+      `;
     }
 
     function applyAdminMode() {
@@ -277,7 +319,7 @@
       setCookie('trah_auth', 'admin', 30);
       document.getElementById('adminBtn').classList.add('admin-active');
       document.getElementById('adminBanner').classList.add('visible');
-      document.getElementById('guestNotice').style.display = 'none';
+      renderPageIntro();
     }
 
     // ── ADMIN UPGRADE (from within the page) ──
@@ -308,7 +350,7 @@
       setCookie('trah_auth', 'guest', 30);
       document.getElementById('adminBtn').classList.remove('admin-active');
       document.getElementById('adminBanner').classList.remove('visible');
-      document.getElementById('guestNotice').style.display = 'flex';
+      renderPageIntro();
       loadAndRender(); // re-render to hide action buttons
     }
 
@@ -319,6 +361,8 @@
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?select=*&order=created_at.desc`, {headers:supaHeaders()});
         if (!res.ok) throw new Error(await res.text());
         _allRequests = await res.json();
+        _visibleLimit = PAGE_SIZE;
+        _isAutoLoading = false;
         renderList();
       } catch(e) {
         document.getElementById('reqList').innerHTML = `<div class="empty-state"><div class="empty-icon">⚠️</div><p>Gagal memuat: ${e.message}</p></div>`;
@@ -327,23 +371,31 @@
 
     function setFilter(f, btn) {
       _currentFilter = f;
+      _visibleLimit = PAGE_SIZE;
+      _isAutoLoading = false;
+      window.scrollTo({top:0,behavior:'smooth'});
       document.querySelectorAll('.status-tab').forEach(t=>t.classList.remove('active'));
       btn.classList.add('active');
       renderList();
     }
 
+    function getFilteredRequests() {
+      return _currentFilter === 'all' ? _allRequests : _allRequests.filter(r=>r.status===_currentFilter);
+    }
+
     function renderList() {
-      const filtered = _currentFilter === 'all' ? _allRequests : _allRequests.filter(r=>r.status===_currentFilter);
+      const filtered = getFilteredRequests();
       if (!filtered.length) {
-        document.getElementById('reqList').innerHTML = `<div class="empty-state"><div class="empty-icon">📭</div><p>Tidak ada permintaan${_currentFilter!=='all'?' dengan status ini':''}.</p></div>`;
+        document.getElementById('reqList').innerHTML = `<div class="empty-state" role="status"><div class="empty-icon">📭</div><p>Tidak ada permintaan${_currentFilter!=='all'?' dengan status ini':''}.</p></div>`;
         return;
       }
-      const typeLabel={add_member:'Tambah Anggota',add_spouse:'Tambah Pasangan',update_member:'Perbarui Anggota',update_spouse:'Perbarui Pasangan'};
-      const statusLabel={pending:'Pending',in_progress:'In Progress',completed:'Selesai'};
-      const html = filtered.map(r=>{
+      const typeLabel = {add_member:'Tambah Anggota',add_spouse:'Tambah Pasangan',update_member:'Perbarui Anggota',update_spouse:'Perbarui Pasangan'};
+      const statusLabel = {pending:'Pending',in_progress:'In Progress',completed:'Selesai',rejected:'Ditolak'};
+      const visibleRows = filtered.slice(0,_visibleLimit);
+      const html = visibleRows.map(r=>{
         const name = r.target_name||(r.data&&r.data.nama)||'—';
         const date = new Date(r.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
-        return `<div class="req-card" onclick="openDetail('${r.id}')">
+        return `<div class="req-card" data-status="${r.status||'pending'}" onclick="openDetail('${r.id}')">
           <div class="req-card-top">
             <div class="req-id">#${(r.id||'').slice(-8).toUpperCase()}</div>
             <span class="req-status-badge ${r.status||'pending'}">${statusLabel[r.status]||r.status}</span>
@@ -355,7 +407,42 @@
           </div>
         </div>`;
       }).join('');
-      document.getElementById('reqList').innerHTML = `<div class="req-list">${html}</div>`;
+      const hasMore = _visibleLimit < filtered.length;
+      const footerHtml = hasMore
+        ? `<div class="load-more-sentinel" id="loadMoreSentinel" role="status" aria-live="polite" aria-label="Memuat permintaan berikutnya"><span class="load-dot"></span><span class="load-dot"></span><span class="load-dot"></span><span>Memuat lagi...</span></div>`
+        : filtered.length > PAGE_SIZE
+          ? `<div class="load-more-done">Semua permintaan sudah ditampilkan.</div>`
+          : '';
+      document.getElementById('reqList').innerHTML = `<div class="req-list">${html}${footerHtml}</div><div class="sr-only" aria-live="polite">${visibleRows.length} dari ${filtered.length} permintaan ditampilkan.</div>`;
+      bindAutoLoadMore();
+      requestAnimationFrame(handleAutoLoadScroll);
+    }
+
+    function bindAutoLoadMore() {
+      if (_autoLoadBound) return;
+      _autoLoadBound = true;
+      window.addEventListener('scroll', handleAutoLoadScroll, {passive:true});
+    }
+
+    function handleAutoLoadScroll() {
+      if (_isAutoLoading) return;
+      if (document.getElementById('reqDetailOverlay')?.classList.contains('open')) return;
+      const filtered = getFilteredRequests();
+      if (_visibleLimit >= filtered.length) return;
+      const doc = document.documentElement;
+      const nearBottom = window.scrollY + window.innerHeight >= doc.scrollHeight - AUTO_LOAD_OFFSET;
+      if (nearBottom) autoLoadMore();
+    }
+
+    function autoLoadMore() {
+      const filtered = getFilteredRequests();
+      if (_visibleLimit >= filtered.length) return;
+      _isAutoLoading = true;
+      setTimeout(() => {
+        _visibleLimit = Math.min(_visibleLimit + PAGE_SIZE, filtered.length);
+        _isAutoLoading = false;
+        renderList();
+      }, 350);
     }
 
     // ── DETAIL ──
@@ -363,7 +450,7 @@
       const r = _allRequests.find(x=>x.id===id);
       if (!r) return;
       const typeLabel={add_member:'Tambah Anggota',add_spouse:'Tambah Pasangan',update_member:'Perbarui Anggota',update_spouse:'Perbarui Pasangan'};
-      const statusLabel={pending:'⏳ Pending',in_progress:'▶ In Progress',completed:'✓ Selesai'};
+      const statusLabel = {pending:'⏳ Pending',in_progress:'▶ In Progress',completed:'✓ Selesai',rejected:'✕ Ditolak'};
       const date = new Date(r.created_at).toLocaleDateString('id-ID',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
       const pf=(label,value)=>`<div class="preview-field${!value?' empty':''}"><span class="preview-label">${label}</span><span class="preview-value${!value?' empty':''}">${value||'—'}</span></div>`;
       const d=r.data||{};
@@ -387,8 +474,12 @@
       // Action buttons: only shown to admin
       let footerHtml = `<button class="btn-cancel" style="flex:1" onclick="closeDetail()">Tutup</button>`;
       if (isAdmin) {
+        footerHtml += `<button class="btn-delete" onclick="deleteRequest('${r.id}')">🗑 Hapus</button>`;
         if (r.status==='pending') footerHtml+=`<button class="btn-action" onclick="updateStatus('${r.id}','in_progress')">▶ Proses</button>`;
-        if (r.status!=='completed') footerHtml+=`<button class="btn-approve" onclick="approveRequest('${r.id}')">✓ Setujui & Simpan</button>`;
+        if (r.status!=='completed' && r.status!=='rejected') {
+          footerHtml += `<button class="btn-reject" onclick="rejectRequest('${r.id}')">✕ Tolak</button>`;
+          footerHtml += `<button class="btn-approve" onclick="approveRequest('${r.id}')">✓ Setujui & Simpan</button>`;
+        }
       }
       document.getElementById('detailFooter').innerHTML=footerHtml;
       document.getElementById('reqDetailOverlay').classList.add('open');
@@ -398,7 +489,8 @@
 
     async function updateStatus(id,status){
       try {
-        await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?id=eq.${id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({status})});
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?id=eq.${id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({status})});
+        if (!res.ok) throw new Error(await res.text());
         showToast('Status diperbarui.');
         closeDetail();
         await loadAndRender();
@@ -406,28 +498,60 @@
       } catch(e){showToast('Gagal: '+e.message);}
     }
 
+    async function rejectRequest(id){
+      if (!isAdmin) return;
+      if (!confirm('Tolak permintaan ini? Data tidak akan diproses ke silsilah.')) return;
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?id=eq.${id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({status:'rejected'})});
+        if (!res.ok) throw new Error(await res.text());
+        showToast('Permintaan ditolak.');
+        closeDetail();
+        await loadAndRender();
+        updatePendingBadge();
+      } catch(e){showToast('Gagal menolak: '+e.message);}
+    }
+
+    async function deleteRequest(id){
+      if (!isAdmin) return;
+      if (!confirm('Hapus permintaan ini secara permanen? Tindakan ini tidak dapat dibatalkan.')) return;
+      try {
+        const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?id=eq.${id}`,{method:'DELETE',headers:supaHeaders()});
+        if (!res.ok) throw new Error(await res.text());
+        showToast('Permintaan dihapus.');
+        closeDetail();
+        await loadAndRender();
+        updatePendingBadge();
+      } catch(e){showToast('Gagal menghapus: '+e.message);}
+    }
+
     async function approveRequest(id){
       const r=_allRequests.find(x=>x.id===id);
       if(!r) return;
+      if (r.status === 'rejected') { showToast('Permintaan ditolak tidak dapat diproses.'); return; }
+      if (!confirm('Setujui dan simpan data ini ke silsilah?')) return;
       // Convert empty strings → null so DB check constraints aren't violated
       const nullify = obj => Object.fromEntries(
         Object.entries(obj).map(([k, v]) => [k, (v === '' || v === undefined) ? null : v])
       );
       const d=nullify(r.data||{});
       try {
+        let res;
         if(r.request_type==='add_member'){
           const g=d.generasi?(parseInt((d.generasi||'').split(' - ')[0])||null):null;
-          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}`,{method:'POST',headers:supaHeaders(),body:JSON.stringify({...d,generasi:g})});
+          res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}`,{method:'POST',headers:supaHeaders(),body:JSON.stringify({...d,generasi:g})});
         } else if(r.request_type==='update_member'&&r.target_id){
           const g=d.generasi?(parseInt((d.generasi||'').split(' - ')[0])||null):null;
-          await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${r.target_id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({...d,generasi:g})});
+          res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_MEMBERS}?id=eq.${r.target_id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({...d,generasi:g})});
         } else if(r.request_type==='add_spouse'){
           const gc=(d.generasi||'').split(' - ')[0];
-          await fetch(`${SUPABASE_URL}/rest/v1/spouses`,{method:'POST',headers:supaHeaders(),body:JSON.stringify({...d,generasi:gc||null})});
+          res = await fetch(`${SUPABASE_URL}/rest/v1/spouses`,{method:'POST',headers:supaHeaders(),body:JSON.stringify({...d,generasi:gc||null})});
         } else if(r.request_type==='update_spouse'&&r.target_id){
           const gc=(d.generasi||'').split(' - ')[0];
-          await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${r.target_id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({...d,generasi:gc||null})});
+          res = await fetch(`${SUPABASE_URL}/rest/v1/spouses?id=eq.${r.target_id}`,{method:'PATCH',headers:supaHeaders(),body:JSON.stringify({...d,generasi:gc||null})});
+        } else {
+          throw new Error('Jenis permintaan tidak valid atau target tidak ditemukan.');
         }
+        if (!res.ok) throw new Error(await res.text());
         await updateStatus(id,'completed');
         showToast('✓ Data berhasil disimpan ke silsilah!');
       } catch(e){showToast('Gagal menyetujui: '+e.message);}
@@ -436,7 +560,7 @@
     async function updatePendingBadge(){
       try {
         const res=await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?status=eq.pending&select=id`,{headers:supaHeaders()});
-        if(res.ok){const rows=await res.json();const b=document.getElementById('navPendingBadge');b.textContent=rows.length;b.style.display=rows.length>0?'':'none';}
+        if(res.ok){const rows=await res.json();const b=document.getElementById('navPendingBadge');if(!b)return;b.textContent=rows.length;b.style.display=rows.length>0?'':'none';}
       }catch{}
     }
 

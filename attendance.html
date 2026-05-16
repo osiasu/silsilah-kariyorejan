@@ -12,19 +12,273 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="menu.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--header-h:56px;}
-    [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.12);--text:#1a1611;--text-muted:#7a6f62;}
+    [data-theme="light"]{--gold:#8a5e1a;--gold-light:#a87228;--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(138,94,26,0.14);--text:#1a1611;--text-muted:#6f6458;}
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;}
-    .page-content{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100dvh - var(--header-h));padding:2rem 1.5rem;text-align:center;}
-    .maintenance-icon{font-size:3.5rem;margin-bottom:1.25rem;animation:pulse 2.5s ease-in-out infinite;}
-    @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-    .maintenance-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.5rem;color:var(--gold-light);margin-bottom:0.6rem;}
-    .maintenance-sub{font-size:0.88rem;color:var(--text-muted);max-width:320px;line-height:1.65;margin-bottom:2rem;}
-    .back-link{display:inline-flex;align-items:center;gap:0.5rem;background:var(--surface);border:1px solid var(--border);border-radius:999px;padding:0.5rem 1.25rem;color:var(--text-muted);font-size:0.82rem;text-decoration:none;transition:all 0.18s;}
-    .back-link:hover{border-color:var(--gold);color:var(--gold-light);}
-    .decoration{width:120px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin:0 auto 1.5rem;}
+    html{scrollbar-width:none;-ms-overflow-style:none;}
+    html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100dvh;overflow-x:hidden;overflow-y:auto;}
+
+    /* Page Layout */
+    .attendance-page{max-width:1200px;margin:0 auto;padding:16px 16px 48px;display:flex;flex-direction:column;gap:24px;}
+    .page-intro{position:relative;background:linear-gradient(135deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:22px;padding:18px 20px;overflow:hidden;box-shadow:0 10px 36px rgba(0,0,0,0.12);}
+    .page-intro::before{content:'';position:absolute;inset:-40% auto auto -10%;width:220px;height:220px;background:radial-gradient(circle,rgba(184,130,46,0.18),transparent 66%);pointer-events:none;}
+    .page-kicker{position:relative;font-size:0.72rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold);margin-bottom:6px;}
+    .page-title{position:relative;font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.45rem,4vw,2.15rem);font-weight:800;line-height:1.12;color:var(--text);}
+    .page-subtitle{position:relative;max-width:760px;font-size:0.88rem;line-height:1.55;color:var(--text-muted);margin-top:8px;}
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+    .section-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.25rem;font-weight:700;color:var(--text);}
+    .section-subtitle{font-size:0.875rem;color:var(--text-muted);margin-top:4px;}
+
+    /* Admin */
+    #adminBtn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.18s,background 0.18s;}
+    #adminBtn:hover{border-color:var(--gold);background:var(--gold-dim);}
+    #adminBtn.admin-active{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 8px rgba(184,130,46,0.35);}
+    #adminBanner{display:none;background:var(--gold-dim);border-bottom:1px solid var(--gold);padding:0.3rem 1rem;font-size:0.72rem;color:var(--gold-light);text-align:center;letter-spacing:0.05em;}
+    #adminBanner.visible{display:block;}
+    .admin-only{display:none!important;}
+    body.is-admin .admin-only{display:flex!important;}
+    #pinOverlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
+    #pinOverlay.open{display:flex;}
+    .pin-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem 1.75rem;width:calc(100% - 2rem);max-width:340px;display:flex;flex-direction:column;gap:1rem;box-shadow:0 8px 40px rgba(0,0,0,0.5);}
+    .pin-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:1rem;color:var(--gold-light);text-align:center;}
+    .pin-sub{font-size:0.78rem;color:var(--text-muted);text-align:center;line-height:1.55;}
+    .pin-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'Inter',sans-serif;font-size:1.2rem;letter-spacing:0.3em;text-align:center;padding:0.65rem;outline:none;transition:border-color 0.18s;}
+    .pin-input:focus{border-color:var(--gold);}
+    .pin-error{font-size:0.75rem;color:#e07070;text-align:center;min-height:1rem;}
+    .btn-save{padding:0.65rem;border-radius:10px;border:none;background:var(--gold);color:#1a1205;font-family:'Inter',sans-serif;font-size:0.85rem;font-weight:700;cursor:pointer;transition:opacity 0.15s;width:100%;}
+    .btn-save:hover{opacity:0.88;}
+    .btn-cancel{padding:0.65rem;border-radius:10px;border:1px solid var(--border);background:var(--surface);color:var(--text-muted);font-family:'Inter',sans-serif;font-size:0.85rem;cursor:pointer;transition:border-color 0.15s;width:100%;}
+    .btn-cancel:hover{border-color:var(--gold);color:var(--text);}
+
+    /* Person Picker Combobox */
+    .person-picker{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+    .person-picker label{font-size:0.875rem;color:var(--text-muted);font-weight:500;}
+    .combobox-wrap{position:relative;flex:1;min-width:200px;}
+    .combobox-input{width:100%;padding:10px 36px 10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.875rem;outline:none;transition:border-color 0.2s,box-shadow 0.2s;}
+    .combobox-input:focus{border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim);}
+    .combobox-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text-muted);cursor:pointer;font-size:1rem;line-height:1;display:none;}
+    .combobox-wrap.has-value .combobox-clear{display:block;}
+    .combobox-list{position:absolute;top:calc(100% + 4px);left:0;right:0;max-height:220px;overflow-y:auto;background:var(--surface);border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.3);z-index:100;display:none;scrollbar-width:thin;}
+    .combobox-list.open{display:block;}
+    .combobox-opt{padding:10px 14px;font-size:0.85rem;color:var(--text);cursor:pointer;transition:background 0.12s;}
+    .combobox-opt:hover,.combobox-opt.highlighted{background:var(--gold-dim);color:var(--gold-light);}
+    .combobox-opt .opt-sub{font-size:0.7rem;color:var(--text-muted);}
+    .combobox-group{padding:6px 14px 4px;font-size:0.7rem;font-weight:600;color:var(--gold);text-transform:uppercase;letter-spacing:0.05em;}
+    .combobox-empty{padding:12px 14px;font-size:0.8rem;color:var(--text-muted);text-align:center;}
+
+    /* Hero Event Card */
+    #currentEventContainer{display:flex;flex-direction:column;gap:16px;}
+    .event-hero{position:relative;background:linear-gradient(145deg,var(--surface),var(--surface2));border:1.5px solid var(--gold);border-radius:26px;padding:22px;overflow:hidden;box-shadow:0 10px 32px rgba(184,130,46,0.14);display:flex;flex-direction:column;gap:16px;}
+    .event-action-wrap{display:flex;align-items:center;justify-content:flex-end;min-width:fit-content;}
+    .event-hero::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--gold),var(--gold-light));}
+    .event-topline{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+    .event-badge{display:inline-flex;align-items:center;gap:6px;background:var(--gold-dim);color:var(--gold);font-size:0.7rem;font-weight:600;padding:4px 10px;border-radius:20px;text-transform:uppercase;letter-spacing:0.5px;}
+    .event-badge::before{content:'';width:6px;height:6px;background:var(--gold);border-radius:50%;animation:pulse-dot 2s infinite;}
+    @keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(1.4)}}
+    .event-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.125rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+    .event-meta{display:flex;flex-direction:column;gap:6px;}
+    .event-meta-item{display:flex;align-items:center;gap:8px;font-size:0.85rem;color:var(--text-muted);}
+    .event-meta-item svg{width:16px;height:16px;flex-shrink:0;color:var(--gold);}
+
+    /* Buttons */
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:0.875rem;font-weight:600;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s ease;text-decoration:none;line-height:1;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1a1a;box-shadow:0 2px 12px rgba(184,130,46,0.3);}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(184,130,46,0.4);}
+    .btn-primary:active{transform:translateY(0);}
+    [data-theme="light"] .btn-primary{background:linear-gradient(135deg,#c8861e,#e8a830);color:#1a0f00;box-shadow:0 2px 14px rgba(200,134,30,0.45);}
+    [data-theme="light"] .btn-primary:hover{box-shadow:0 4px 22px rgba(200,134,30,0.6);}
+    .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+    .btn-secondary:hover{border-color:var(--gold-dim);background:var(--surface3);}
+    [data-theme="light"] .btn-secondary:not(:hover){border-color:rgba(138,94,26,0.38);box-shadow:0 0 0 1px rgba(138,94,26,0.10);}
+    .attendance-action[data-action-type="rsvp"]{background:rgba(184,130,46,0.10);color:var(--gold);border:1.5px solid rgba(184,130,46,0.45);}
+    .attendance-action[data-action-type="rsvp"]:hover{background:rgba(184,130,46,0.18);border-color:var(--gold);}
+    .btn-success{background:rgba(34,197,94,0.15);color:#22c55e;border:1px solid rgba(34,197,94,0.3);cursor:default;}
+    .btn-danger{background:rgba(239,68,68,0.12);color:#ef4444;border:1px solid rgba(239,68,68,0.25);}
+    .btn-danger:hover{background:rgba(239,68,68,0.2);}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+    .btn-loading .btn-text{visibility:hidden;}
+    .btn-loading::after{content:'';position:absolute;width:16px;height:16px;border:2px solid transparent;border-top-color:currentColor;border-radius:50%;animation:spin 0.6s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* Upcoming Events Scroll */
+    .events-scroll{overflow-x:auto;scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -16px;padding:8px 16px;}
+    .events-scroll::-webkit-scrollbar{display:none;}
+    .events-track{display:flex;gap:16px;width:max-content;}
+    .event-card{scroll-snap-align:start;flex-shrink:0;width:280px;background:linear-gradient(180deg,var(--surface),var(--surface2));border:1px solid var(--border);border-radius:18px;padding:16px;transition:border-color 0.2s,box-shadow 0.2s,transform 0.2s;}
+    .event-card:hover{transform:translateY(-2px);}
+    .event-card:hover{border-color:var(--gold-dim);box-shadow:0 4px 16px rgba(0,0,0,0.08);}
+    .event-date-row{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px;}
+    .event-date-badge{display:flex;flex-direction:column;align-items:center;width:48px;height:52px;background:var(--gold-dim);border:1px solid rgba(184,130,46,0.18);border-radius:14px;padding:4px;justify-content:center;}
+    .event-date-badge .day{font-size:1.125rem;font-weight:700;color:var(--gold);line-height:1;}
+    .event-date-badge .month{font-size:0.7rem;color:var(--gold);text-transform:uppercase;font-weight:500;}
+    .event-card .event-title{font-size:0.95rem;font-weight:600;color:var(--text);margin-bottom:4px;}
+    .event-card .event-location,.event-card .event-host{display:flex;align-items:center;gap:7px;font-size:0.8rem;color:var(--text-muted);margin-bottom:6px;}
+    .event-card .event-location svg,.event-card .event-host svg{width:14px;height:14px;flex-shrink:0;color:var(--gold);}
+    .event-card .event-host{margin-bottom:12px;}
+    .event-card .btn{width:100%;padding:10px 16px;font-size:0.8rem;}
+
+    /* Charts */
+    .charts-container{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;}
+    .chart-tabs{display:flex;gap:4px;background:var(--surface2);padding:4px;border-radius:10px;margin-bottom:20px;overflow-x:auto;}
+    .chart-tab{padding:8px 14px;font-size:0.8rem;font-weight:500;color:var(--text-muted);background:transparent;border:none;border-radius:8px;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+    .chart-tab:hover{color:var(--text);}
+    .chart-tab.active{background:var(--surface);color:var(--gold);box-shadow:0 1px 4px rgba(0,0,0,0.08);font-weight:600;}
+    .chart-panel{display:none;}
+    .chart-panel.active{display:block;}
+    .chart-wrapper{position:relative;width:100%;height:300px;}
+    .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:20px;}
+    .stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;}
+    .stat-value{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.4rem;font-weight:800;color:var(--gold-light);}
+    .stat-label{font-size:0.75rem;color:var(--text-muted);margin-top:2px;}
+
+    /* Donut wrap — soft ambient glow */
+    .donut-3d-wrap{position:relative;isolation:isolate;}
+    .donut-3d-wrap::after{content:'';position:absolute;inset:18% 14%;background:conic-gradient(from 120deg,rgba(184,130,46,0.16),rgba(212,165,90,0.07),rgba(184,130,46,0.14),rgba(184,130,46,0.16));border-radius:50%;filter:blur(22px);opacity:0.78;pointer-events:none;z-index:-1;animation:donut-aura 8s ease-in-out infinite alternate;}
+    .donut-3d-wrap::before{content:'';position:absolute;inset:7%;border-radius:50%;background:radial-gradient(ellipse at 35% 28%,rgba(255,255,255,0.06),transparent 58%);pointer-events:none;z-index:1;}
+    @keyframes donut-aura{from{transform:scale(0.96) rotate(0deg);opacity:0.58}to{transform:scale(1.04) rotate(8deg);opacity:0.86}}
+    [data-theme="light"] .donut-3d-wrap::after{background:conic-gradient(from 120deg,rgba(184,130,46,0.12),rgba(154,113,55,0.05),rgba(212,165,90,0.10),rgba(184,130,46,0.12));filter:blur(26px);opacity:0.62;}
+    [data-theme="light"] .donut-3d-wrap::before{background:radial-gradient(ellipse at 35% 28%,rgba(255,255,255,0.72),transparent 54%);opacity:0.12;}
+
+    /* Attendance List */
+    .search-bar{position:relative;margin-bottom:16px;}
+    .search-bar input{width:100%;padding:12px 16px 12px 44px;background:var(--surface);border:1px solid var(--border);border-radius:12px;font-size:0.875rem;color:var(--text);transition:border-color 0.2s,box-shadow 0.2s;}
+    .search-bar input:focus{outline:none;border-color:var(--gold);box-shadow:0 0 0 3px var(--gold-dim);}
+    .search-icon{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--text-muted);}
+    .attendance-list{display:flex;flex-direction:column;gap:10px;}
+    .attendance-item{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;transition:border-color 0.2s;}
+    .attendance-item:hover{border-color:var(--gold-dim);}
+    .attendance-header{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;border:none;background:transparent;width:100%;text-align:left;color:inherit;}
+    .attendance-avatar{width:42px;height:42px;border-radius:50%;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:700;color:var(--gold);flex-shrink:0;}
+    .attendance-info{flex:1;min-width:0;}
+    .attendance-name{font-size:0.9rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .attendance-meta{font-size:0.75rem;color:var(--text-muted);margin-top:2px;}
+    .attendance-count{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;background:rgba(34,197,94,0.1);color:#22c55e;font-size:0.75rem;font-weight:600;}
+    .chevron{width:20px;height:20px;color:var(--text-muted);transition:transform 0.3s;}
+    .attendance-item.expanded .chevron{transform:rotate(180deg);}
+    .attendance-detail{max-height:0;overflow:hidden;transition:max-height 0.3s ease;}
+    .attendance-item.expanded .attendance-detail{max-height:1000px;}
+    .attendance-detail-inner{padding:0 14px 14px;border-top:1px solid var(--border);max-height:280px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;}
+    .attendance-detail-inner::-webkit-scrollbar{display:none;}
+    .attendee-list{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-top:14px;}
+    .attendee-row{display:flex;align-items:center;gap:10px;padding:8px;background:var(--surface2);border-radius:8px;}
+    .attendee-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--gold);}
+    .attendee-name{font-size:0.8rem;font-weight:600;color:var(--text);}
+    .attendee-role{font-size:0.7rem;color:var(--text-muted);}
+
+    /* Load more */
+    .load-more-wrap{text-align:center;margin-top:16px;}
+    .load-more-btn{padding:10px 24px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:0.85rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+    .load-more-btn:hover{border-color:var(--gold);background:var(--gold-dim);color:var(--gold-light);}
+    .load-more-progress{font-size:0.75rem;color:var(--text-muted);margin-top:8px;}
+
+    /* States */
+    .empty-state{background:var(--surface);border:1px dashed var(--border);border-radius:14px;padding:32px 20px;text-align:center;color:var(--text-muted);}
+    .empty-icon{font-size:2rem;margin-bottom:10px;}
+    .empty-title{font-weight:700;color:var(--text);margin-bottom:6px;}
+    .skeleton{background:linear-gradient(90deg,var(--surface2) 25%,var(--surface3) 50%,var(--surface2) 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:8px;}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .skeleton-card{height:160px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px;}
+    .skeleton-line{height:14px;margin-bottom:10px;}
+    .skeleton-line.short{width:60%;}
+    .hidden{display:none!important;}
+
+    /* Modal */
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s;}
+    .modal-overlay.active{opacity:1;visibility:visible;}
+    .modal-sheet{background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);}
+    .modal-overlay.active .modal-sheet{transform:translateY(0);}
+    .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+    .modal-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.125rem;font-weight:700;color:var(--text);margin-bottom:8px;}
+    .modal-description{font-size:0.875rem;color:var(--text-muted);line-height:1.6;margin-bottom:20px;}
+    .modal-event-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:20px;}
+    .checkbox-row{display:flex;align-items:center;gap:10px;padding:12px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;margin-bottom:20px;cursor:pointer;}
+    .checkbox-row input{width:18px;height:18px;accent-color:var(--gold);}
+    .checkbox-row span{font-size:0.875rem;color:var(--text);}
+    .modal-actions{display:flex;flex-direction:column;gap:10px;}
+    .modal-actions .btn{width:100%;}
+
+    /* Event Modal (admin) */
+    .event-form-group{margin-bottom:14px;}
+    .event-form-group label{display:block;font-size:0.75rem;font-weight:600;color:var(--text-muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:0.04em;}
+    .event-form-group input,.event-form-group textarea,.event-form-group select{width:100%;padding:10px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.85rem;font-family:'Inter',sans-serif;outline:none;transition:border-color 0.2s;}
+    .event-form-group input:focus,.event-form-group textarea:focus,.event-form-group select:focus{border-color:var(--gold);}
+    .event-form-group textarea{resize:vertical;min-height:60px;}
+
+    /* Toast */
+    .toast-container{position:fixed;top:72px;right:16px;left:16px;z-index:1100;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+    .toast{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.18);pointer-events:auto;animation:toast-in 0.3s ease forwards;}
+    @keyframes toast-in{from{transform:translateY(-20px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .toast.success{border-color:rgba(34,197,94,0.3);}
+    .toast.error{border-color:rgba(239,68,68,0.3);}
+    .toast-icon{font-size:1rem;}
+    .toast-message{font-size:0.85rem;color:var(--text);font-weight:500;}
+
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+
+    /* Attendance header / detail visual distinction */
+    .attendance-header{display:flex;align-items:center;gap:12px;padding:14px;cursor:pointer;border:none;background:var(--surface2);width:100%;text-align:left;color:inherit;border-radius:12px 12px 0 0;transition:background 0.18s;}
+    .attendance-item:not(.expanded) .attendance-header{border-radius:12px;}
+    .attendance-header:hover{background:var(--surface3);}
+    .attendance-item.expanded .attendance-header{background:var(--surface3);border-bottom:2px solid var(--gold);border-radius:12px 12px 0 0;}
+    .attendance-detail-inner{padding:0 14px 14px;border-top:none;background:var(--surface);border-left:3px solid var(--gold-dim);border-radius:0 0 12px 12px;max-height:280px;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;}
+    .attendance-detail-inner::-webkit-scrollbar{display:none;}
+    /* Badge clearer */
+    .attendance-count{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:20px;background:rgba(34,197,94,0.12);color:#22c55e;font-size:0.75rem;font-weight:700;border:1px solid rgba(34,197,94,0.22);white-space:nowrap;}
+
+    /* Event time + description in hero/cards */
+    .event-time{display:inline-flex;align-items:center;gap:5px;font-size:0.78rem;font-weight:600;color:var(--gold);background:var(--gold-dim);border:1px solid rgba(184,130,46,0.14);padding:3px 9px;border-radius:20px;width:fit-content;}
+    .event-time svg{width:12px;height:12px;flex-shrink:0;}
+    .event-desc,.event-description{font-size:0.8rem;color:var(--text-muted);line-height:1.55;margin-top:10px;padding:10px 12px;background:linear-gradient(135deg,rgba(184,130,46,0.09),rgba(184,130,46,0.03));border:1px solid rgba(184,130,46,0.11);border-radius:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+    .event-card .event-time{font-size:0.74rem;padding:2px 8px;margin-left:auto;}
+    .event-card .event-desc,.event-card .event-description{font-size:0.78rem;margin-top:8px;margin-bottom:10px;-webkit-line-clamp:2;}
+    /* Modal event info time/desc */
+    .modal-event-time{display:inline-flex;align-items:center;gap:5px;font-size:0.76rem;font-weight:600;color:var(--gold);background:var(--gold-dim);padding:2px 8px;border-radius:20px;margin-top:6px;margin-bottom:2px;width:fit-content;}
+    .modal-event-desc{font-size:0.78rem;color:var(--text-muted);line-height:1.5;margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+
+    /* Modal event title row: title left + date pill right */
+    .modal-event-title-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+    .modal-event-title-row .event-title{flex:1 1 0;min-width:0;font-size:0.95rem;margin-bottom:0;}
+    .modal-event-date-pill{flex-shrink:0;display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--gold);background:var(--gold-dim);border:1px solid rgba(184,130,46,0.18);padding:3px 10px;border-radius:20px;white-space:nowrap;}
+    [data-theme="light"] .modal-event-date-pill{color:var(--gold);background:rgba(138,94,26,0.10);border-color:rgba(138,94,26,0.18);}
+
+    /* Mobile chart spacing */
+    .chart-wrapper{position:relative;width:100%;height:260px;padding-bottom:4px;}
+    @media (min-width:480px){.chart-wrapper{height:300px;}}
+
+    @media (max-width:767px){
+      .attendee-list{grid-template-columns:1fr;}
+      /* Event cards mobile */
+      .event-card{width:252px;}
+      /* Person picker mobile */
+      .person-picker{flex-direction:column;align-items:stretch;gap:8px;}
+      .combobox-wrap{min-width:0;}
+      /* Hero mobile */
+      .event-hero{padding:16px;border-radius:22px;}
+      .event-topline{align-items:flex-start;}
+      .event-title{font-size:1rem;}
+      /* Stats mobile */
+      .stats-grid{grid-template-columns:repeat(2,1fr);gap:10px;}
+      .stat-value{font-size:1.2rem;}
+      /* Attendance rows mobile */
+      .attendance-name{font-size:0.85rem;}
+      .attendance-meta{font-size:0.7rem;}
+      .attendance-count{font-size:0.68rem;padding:3px 7px;}
+      /* Chart label overflow guard */
+      .chart-wrapper canvas{max-width:100%;}
+    }
+    @media (min-width:768px){
+      .attendance-page{padding:16px 32px 64px;}
+      .event-hero{display:grid;grid-template-columns:1fr auto;align-items:end;gap:24px;}
+      .stats-grid{grid-template-columns:repeat(4,1fr);}
+      .modal-overlay{align-items:center;}
+      .modal-sheet{border-radius:16px;max-width:440px;transform:translateY(20px) scale(0.95);}
+      .modal-overlay.active .modal-sheet{transform:translateY(0) scale(1);}
+      .modal-actions{flex-direction:row-reverse;}
+      .toast-container{left:auto;width:360px;}
+    }
   </style>
 </head>
 <body>
@@ -59,17 +313,1236 @@
     </div>
     <div class="header__right">
       <a class="header__cta" href="index.html">Pohon Silsilah</a>
+      <button id="adminBtn" title="Masuk sebagai Admin">&#x1F510;</button>
     </div>
   </div>
 
-  <div class="page-content">
-    <div class="maintenance-icon">📅</div>
-    <div class="decoration"></div>
-    <div class="maintenance-title">Kehadiran Keluarga</div>
-    <div class="maintenance-sub">Halaman ini sedang dalam pengembangan. Fitur pencatatan kehadiran acara keluarga akan segera tersedia.</div>
-    <a href="index.html" class="back-link">← Kembali ke Pohon Silsilah</a>
+  <div id="adminBanner">&#x1F510; Mode Admin Aktif — <span style="cursor:pointer;text-decoration:underline" id="adminLogoutLink">Keluar</span></div>
+
+  <!-- Admin PIN Overlay -->
+  <div id="pinOverlay">
+    <div class="pin-box">
+      <div class="pin-logo">&#x1F510; Admin Kehadiran</div>
+      <div class="pin-sub">Masukkan PIN Admin untuk mengelola acara</div>
+      <input type="password" class="pin-input" id="pinInput" placeholder="&#x2022;&#x2022;&#x2022;&#x2022;" maxlength="8">
+      <div class="pin-error" id="pinError"></div>
+      <button class="btn-save" id="pinConfirmBtn">Masuk</button>
+      <button class="btn-cancel" id="pinCancelBtn">Batal</button>
+    </div>
   </div>
 
+  <main class="attendance-page" role="main" aria-label="Halaman Presensi Kehadiran">
+
+    <section class="page-intro" aria-labelledby="attendance-page-title">
+      <div class="page-kicker">Presensi Keluarga</div>
+      <h1 id="attendance-page-title" class="page-title">Kehadiran & RSVP Acara</h1>
+      <p class="page-subtitle">Pilih nama, cek acara aktif, lalu pantau statistik kehadiran keluarga dalam satu halaman ringkas.</p>
+    </section>
+
+    <!-- Person Picker -->
+    <div class="person-picker" id="personPicker">
+      <label for="comboboxInput">Pilih nama Anda:</label>
+      <div class="combobox-wrap" id="comboboxWrap">
+        <input type="text" class="combobox-input" id="comboboxInput" placeholder="Ketik nama..." autocomplete="off" role="combobox" aria-expanded="false" aria-controls="comboboxList" aria-autocomplete="list">
+        <button class="combobox-clear" id="comboboxClear" aria-label="Hapus pilihan">&times;</button>
+        <div class="combobox-list" id="comboboxList" role="listbox"></div>
+      </div>
+    </div>
+
+    <!-- Admin: Event Management -->
+    <section class="admin-only" id="adminEventsSection" style="flex-direction:column;gap:12px;">
+      <div class="section-header">
+        <div>
+          <h2 class="section-title">Kelola Acara</h2>
+          <p class="section-subtitle">Tambah, edit, atau hapus acara keluarga</p>
+        </div>
+        <button class="btn btn-primary" id="addEventBtn" style="padding:8px 16px;font-size:0.8rem;">+ Tambah Acara</button>
+      </div>
+      <div id="adminEventsList" style="display:flex;flex-direction:column;gap:8px;"></div>
+    </section>
+
+    <!-- Current Event (Today) -->
+    <section id="currentEventSection" class="hidden" aria-labelledby="current-event-heading">
+      <h2 id="current-event-heading" class="sr-only">Acara Hari Ini</h2>
+      <div id="currentEventContainer"></div>
+    </section>
+
+    <!-- Upcoming Events -->
+    <section id="upcomingSection" aria-labelledby="upcoming-heading">
+      <div class="section-header">
+        <div>
+          <h2 id="upcoming-heading" class="section-title">Acara Mendatang</h2>
+          <p class="section-subtitle">RSVP untuk acara keluarga berikutnya</p>
+        </div>
+      </div>
+      <div id="upcomingContainer">
+        <div class="events-scroll"><div class="events-track" id="upcomingTrack"></div></div>
+      </div>
+      <div id="upcomingEmpty" class="empty-state hidden">
+        <div class="empty-icon">&#x1F4ED;</div>
+        <div class="empty-title">Belum ada acara terjadwal</div>
+        <p>Hubungi admin keluarga untuk membuat acara baru.</p>
+      </div>
+      <div id="upcomingSkeleton" class="events-scroll">
+        <div class="events-track">
+          <div class="skeleton-card skeleton" style="width:280px;flex-shrink:0"></div>
+          <div class="skeleton-card skeleton" style="width:280px;flex-shrink:0"></div>
+          <div class="skeleton-card skeleton" style="width:280px;flex-shrink:0"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Charts -->
+    <section id="chartsSection" aria-labelledby="charts-heading">
+      <div class="section-header">
+        <div>
+          <h2 id="charts-heading" class="section-title">Statistik Kehadiran</h2>
+          <p class="section-subtitle">Analisis kehadiran acara keluarga</p>
+        </div>
+      </div>
+      <div id="statsGrid" class="stats-grid"></div>
+      <div class="charts-container">
+        <div class="chart-tabs" role="tablist" aria-label="Pilih grafik">
+          <button class="chart-tab active" role="tab" aria-selected="true" aria-controls="panel-bar" id="tab-bar" data-chart="bar">Keseluruhan</button>
+          <button class="chart-tab" role="tab" aria-selected="false" aria-controls="panel-donut" id="tab-donut" data-chart="donut">Top 10</button>
+          <button class="chart-tab" role="tab" aria-selected="false" aria-controls="panel-line" id="tab-line" data-chart="line">Tren</button>
+        </div>
+        <div class="chart-panel active" id="panel-bar" role="tabpanel" aria-labelledby="tab-bar">
+          <div class="chart-wrapper"><canvas id="barChart" aria-label="Grafik batang persentase kehadiran per acara" role="img"></canvas></div>
+        </div>
+        <div class="chart-panel" id="panel-donut" role="tabpanel" aria-labelledby="tab-donut">
+          <div class="chart-wrapper donut-3d-wrap"><canvas id="donutChart" aria-label="Grafik donut 10 anggota paling aktif" role="img"></canvas></div>
+        </div>
+        <div class="chart-panel" id="panel-line" role="tabpanel" aria-labelledby="tab-line">
+          <div class="chart-wrapper"><canvas id="lineChart" aria-label="Grafik garis tren kehadiran" role="img"></canvas></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Attendance List -->
+    <section id="listSection" aria-labelledby="list-heading">
+      <div class="section-header">
+        <div>
+          <h2 id="list-heading" class="section-title">Daftar Kehadiran</h2>
+          <p class="section-subtitle">Riwayat kehadiran per acara</p>
+        </div>
+      </div>
+      <div class="search-bar">
+        <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <input type="search" id="listSearch" placeholder="Cari acara atau nama..." aria-label="Cari kehadiran">
+      </div>
+      <div class="attendance-list" id="attendanceList" role="list" aria-label="Daftar kehadiran per acara"></div>
+      <div id="loadMoreWrap" class="load-more-wrap hidden">
+        <button class="load-more-btn" id="loadMoreBtn">Muat lebih banyak</button>
+        <div class="load-more-progress" id="loadMoreProgress"></div>
+      </div>
+      <div id="listEmpty" class="empty-state hidden">
+        <div class="empty-icon">&#x1F4CB;</div>
+        <div class="empty-title">Belum ada catatan kehadiran</div>
+        <p>Data kehadiran akan muncul setelah acara berlangsung.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- RSVP/Absen Modal -->
+  <div class="modal-overlay" id="modalOverlay" aria-hidden="true">
+    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-handle"></div>
+      <h3 class="modal-title" id="modal-title">Konfirmasi Kehadiran</h3>
+      <p class="modal-description" id="modal-desc"></p>
+      <div class="modal-event-card" id="modal-event-info"></div>
+      <label class="checkbox-row" id="spouseCheckRow" style="display:none">
+        <input type="checkbox" id="spouseCheck">
+        <span>Pasangan juga hadir</span>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-primary" id="modalConfirmBtn">Konfirmasi</button>
+        <button class="btn btn-secondary" id="modalCancelBtn">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Event Modal (Admin) -->
+  <div class="modal-overlay" id="eventModalOverlay" aria-hidden="true">
+    <div class="modal-sheet" role="dialog" aria-modal="true" aria-labelledby="event-modal-title" style="max-width:500px;">
+      <div class="modal-handle"></div>
+      <h3 class="modal-title" id="event-modal-title">Tambah Acara</h3>
+      <div id="eventFormBody">
+        <div class="event-form-group"><label for="ef-title">Judul Acara</label><input type="text" id="ef-title" placeholder="Contoh: Arisan Keluarga" maxlength="120"></div>
+        <div class="event-form-group"><label for="ef-date">Tanggal</label><input type="date" id="ef-date"></div>
+        <div class="event-form-group"><label for="ef-time">Waktu</label><input type="time" id="ef-time"></div>
+        <div class="event-form-group"><label for="ef-location">Lokasi</label><input type="text" id="ef-location" placeholder="Contoh: Rumah Pak Karyo" maxlength="160"></div>
+        <div class="event-form-group"><label for="ef-host">Tuan Rumah</label><input type="text" id="ef-host" placeholder="Contoh: Pak Karyo" maxlength="120"></div>
+        <div class="event-form-group"><label for="ef-desc">Deskripsi</label><textarea id="ef-desc" placeholder="Keterangan tambahan..." maxlength="500"></textarea></div>
+        <div class="event-form-group"><label for="ef-status">Status</label><select id="ef-status"><option value="upcoming">Upcoming</option><option value="ongoing">Ongoing</option><option value="completed">Completed</option><option value="cancelled">Cancelled</option></select></div>
+      </div>
+      <div class="modal-actions" style="margin-top:16px;">
+        <button class="btn btn-primary" id="eventSaveBtn">Simpan</button>
+        <button class="btn btn-secondary" id="eventCancelBtn">Batal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
   <script src="menu.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    // -- CONFIG --
+    const SUPABASE_URL = 'https://lckowkndmwiadwifilsv.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxja293a25kbXdpYWR3aWZpbHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA0MTgsImV4cCI6MjA5MjkwNjQxOH0.VrnY0DfgP_AW1UUJAI2sgNhZ8i8ok22nyWHpj4iQ-YQ';
+    const TABLE_EVENTS = 'events';
+    const TABLE_ATTENDANCE = 'attendance';
+    const TABLE_MEMBERS = 'members';
+    const TABLE_SPOUSES = 'spouses';
+    const ADMIN_PIN = '7215';
+    const PAGE_SIZE = 10;
+
+    // -- STATE --
+    let events = [];
+    let attendance = [];
+    let members = [];
+    let spouses = [];
+    let selectedPerson = safeParsePerson();
+    let chartInstances = { bar: null, donut: null, line: null };
+    let modalContext = null;
+    let isAdmin = false;
+    let editingEventId = null;
+    let listVisibleCount = PAGE_SIZE;
+    let listSearchQuery = '';
+
+    // -- HELPERS --
+    function supaHeaders() {
+      return { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+    }
+    // Use local date to avoid UTC-offset misclassification (e.g. UTC midnight = yesterday local)
+    function today() {
+      var d = new Date();
+      var y = d.getFullYear();
+      var m = String(d.getMonth() + 1).padStart(2, '0');
+      var day = String(d.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + day;
+    }
+    // Status normalisation — DB may store mixed case; always compare lowercase
+    function normalizeStatus(status) { return String(status || '').toLowerCase().trim(); }
+    function isCancelled(status) { return normalizeStatus(status) === 'cancelled'; }
+    function isUpcoming(status) { return normalizeStatus(status) === 'upcoming'; }
+    function isOngoing(status) { return normalizeStatus(status) === 'ongoing'; }
+    function isCompleted(status) { return normalizeStatus(status) === 'completed'; }
+    function isConfirmed(status) { return normalizeStatus(status) === 'confirmed'; }
+    function formatDate(dateStr) {
+      if (!dateStr) return '-';
+      var d = new Date(dateStr + 'T00:00:00');
+      return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    function formatDateWithWeekday(dateStr) {
+      if (!dateStr) return '-';
+      var d = new Date(dateStr + 'T00:00:00');
+      var days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jum\'at','Sabtu'];
+      return days[d.getDay()] + ', ' + d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+    function formatTimeWIB(timeStr) {
+      if (!timeStr) return '';
+      var s = String(timeStr);
+      var m = s.match(/(?:^|T)(\d{2}):(\d{2})/);
+      return (m ? m[1] + ':' + m[2] : s.slice(0, 5)) + ' WIB';
+    }
+    function formatDateShort(dateStr) {
+      if (!dateStr) return { day: '-', month: '-' };
+      var d = new Date(dateStr + 'T00:00:00');
+      return { day: d.getDate(), month: d.toLocaleDateString('id-ID', { month: 'short' }) };
+    }
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function getInitials(name) {
+      if (!name) return '?';
+      return name.split(' ').slice(0, 2).map(function(w){ return w[0]; }).join('').toUpperCase();
+    }
+    function showToast(message, type) {
+      type = type || 'success';
+      var container = document.getElementById('toastContainer');
+      var icons = { success: '\u2713', error: '\u2715', info: '\u2139' };
+      var toast = document.createElement('div');
+      toast.className = 'toast ' + type;
+      toast.innerHTML = '<span class="toast-icon">' + (icons[type] || '') + '</span><span class="toast-message">' + escapeHtml(message) + '</span>';
+      container.appendChild(toast);
+      setTimeout(function() { toast.style.opacity = '0'; toast.style.transform = 'translateY(-10px)'; setTimeout(function() { toast.remove(); }, 300); }, 4000);
+    }
+    function safeParsePerson() {
+      try { return JSON.parse(localStorage.getItem('attendance_person') || 'null'); }
+      catch (e) { localStorage.removeItem('attendance_person'); return null; }
+    }
+    function clampText(value, max) {
+      value = (value || '').trim();
+      return value.length > max ? value.slice(0, max) : value;
+    }
+    function encodeFilterValue(value) { return encodeURIComponent(String(value)); }
+    function sameId(a, b) { return String(a) === String(b); }
+    function samePerson(a, personId, personType) { return sameId(a.person_id, personId) && a.person_type === personType; }
+    function sameEvent(a, eventId) { return sameId(a.event_id, eventId); }
+    function findPersonAttendance(eventId, personId, personType) {
+      return attendance.filter(function(a) { return sameEvent(a, eventId) && samePerson(a, personId, personType); });
+    }
+    function statusIsCancelled(status) { return isCancelled(status); }
+
+    // -- COOKIES --
+    function setCookie(name,val,days){var d=new Date();d.setTime(d.getTime()+days*86400000);document.cookie=name+'='+encodeURIComponent(val)+';expires='+d.toUTCString()+';path=/;SameSite=Lax';}
+    function getCookie(name){var m=document.cookie.match(new RegExp('(?:^|; )'+name+'=([^;]*)'));return m?decodeURIComponent(m[1]):null;}
+
+    // -- ACTIVE PEOPLE (exclude wafat/alm) --
+    function getActiveMembers() {
+      return members.filter(function(m) {
+        var s = (m.status || '').toLowerCase();
+        return s !== 'wafat' && s !== 'alm' && s !== 'almarhum' && s !== 'almarhumah';
+      });
+    }
+    function getActiveSpouses() {
+      return spouses.filter(function(s) {
+        var st = (s.status || '').toLowerCase();
+        return st !== 'wafat' && st !== 'alm' && st !== 'almarhum' && st !== 'almarhumah';
+      });
+    }
+    function getActivePeople() {
+      return getActiveMembers().concat(getActiveSpouses());
+    }
+    function isPersonActive(personId, personType) {
+      var list = personType === 'member' ? members : spouses;
+      var p = list.find(function(x){ return sameId(x.id, personId); });
+      if (!p) return false;
+      var s = (p.status || '').toLowerCase();
+      return s !== 'wafat' && s !== 'alm' && s !== 'almarhum' && s !== 'almarhumah';
+    }
+    function getActiveAttendance() {
+      return attendance.filter(function(a) {
+        return isPersonActive(a.person_id, a.person_type);
+      });
+    }
+
+    // -- ADMIN --
+    function checkAdminCookie() {
+      var c = getCookie('trah_attendance_admin') || getCookie('trah_auth');
+      if (c === 'admin') { applyAdminMode(); }
+    }
+    function applyAdminMode() {
+      isAdmin = true;
+      document.body.classList.add('is-admin');
+      document.getElementById('adminBtn').classList.add('admin-active');
+      document.getElementById('adminBanner').classList.add('visible');
+      setCookie('trah_attendance_admin', 'admin', 30);
+    }
+    function logoutAdmin() {
+      isAdmin = false;
+      document.body.classList.remove('is-admin');
+      document.getElementById('adminBtn').classList.remove('admin-active');
+      document.getElementById('adminBanner').classList.remove('visible');
+      setCookie('trah_attendance_admin', '', -1);
+      renderAdminEvents();
+    }
+    function initAdmin() {
+      document.getElementById('adminBtn').addEventListener('click', function() {
+        if (isAdmin) { logoutAdmin(); return; }
+        document.getElementById('pinOverlay').classList.add('open');
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinError').textContent = '';
+        setTimeout(function(){ document.getElementById('pinInput').focus(); }, 100);
+      });
+      document.getElementById('pinConfirmBtn').addEventListener('click', confirmPin);
+      document.getElementById('pinInput').addEventListener('keydown', function(e){ if(e.key==='Enter') confirmPin(); });
+      document.getElementById('pinCancelBtn').addEventListener('click', function(){ document.getElementById('pinOverlay').classList.remove('open'); });
+      document.getElementById('adminLogoutLink').addEventListener('click', logoutAdmin);
+      checkAdminCookie();
+    }
+    function confirmPin() {
+      var val = document.getElementById('pinInput').value;
+      if (val === ADMIN_PIN) {
+        document.getElementById('pinOverlay').classList.remove('open');
+        applyAdminMode();
+        renderAdminEvents();
+      } else {
+        document.getElementById('pinError').textContent = 'PIN salah.';
+        document.getElementById('pinInput').value = '';
+        document.getElementById('pinInput').focus();
+      }
+    }
+
+    // -- ADMIN EVENT CRUD --
+    function renderAdminEvents() {
+      var container = document.getElementById('adminEventsList');
+      if (!isAdmin) { container.innerHTML = ''; return; }
+      if (events.length === 0) { container.innerHTML = '<div style="color:var(--text-muted);font-size:0.85rem;">Belum ada acara.</div>'; return; }
+      container.innerHTML = events.map(function(ev) {
+        return '<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:10px;">'
+          + '<div style="flex:1;min-width:0;"><div style="font-size:0.85rem;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">' + escapeHtml(ev.title || 'Acara') + '</div>'
+          + '<div style="font-size:0.72rem;color:var(--text-muted);">' + formatDate(ev.event_date) + ' &middot; ' + escapeHtml(ev.status || '') + '</div></div>'
+          + '<button class="btn btn-secondary admin-edit-event" data-event-id="' + escapeHtml(ev.id) + '" style="padding:6px 12px;font-size:0.75rem;">Edit</button>'
+          + '<button class="btn btn-danger admin-delete-event" data-event-id="' + escapeHtml(ev.id) + '" style="padding:6px 12px;font-size:0.75rem;">Hapus</button>'
+          + '</div>';
+      }).join('');
+    }
+
+    function openEventModal(ev) {
+      editingEventId = ev ? ev.id : null;
+      document.getElementById('event-modal-title').textContent = ev ? 'Edit Acara' : 'Tambah Acara';
+      document.getElementById('ef-title').value = ev ? (ev.title || '') : '';
+      document.getElementById('ef-date').value = ev ? (ev.event_date || '') : '';
+      document.getElementById('ef-time').value = ev ? (ev.event_time || '') : '';
+      document.getElementById('ef-location').value = ev ? (ev.location || '') : '';
+      document.getElementById('ef-host').value = ev ? (ev.host || '') : '';
+      document.getElementById('ef-desc').value = ev ? (ev.description || '') : '';
+      document.getElementById('ef-status').value = normalizeStatus(ev ? (ev.status || 'upcoming') : 'upcoming');
+      var overlay = document.getElementById('eventModalOverlay');
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+    }
+    function closeEventModal() {
+      var overlay = document.getElementById('eventModalOverlay');
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      editingEventId = null;
+    }
+
+    async function saveEvent() {
+      var title = clampText(document.getElementById('ef-title').value, 120);
+      var eventDate = document.getElementById('ef-date').value;
+      if (!title || !eventDate) { showToast('Judul dan tanggal wajib diisi.', 'error'); return; }
+      var statusVal = normalizeStatus(document.getElementById('ef-status').value);
+      var todayStr = today();
+      // Validation matrix: Upcoming > today, Ongoing === today, Completed <= today, Cancelled any
+      if (statusVal === 'upcoming' && eventDate <= todayStr) {
+        showToast('Acara Upcoming harus bertanggal setelah hari ini.', 'error'); return;
+      }
+      if (statusVal === 'ongoing' && eventDate !== todayStr) {
+        showToast('Acara Ongoing harus bertanggal hari ini (' + todayStr + ').', 'error'); return;
+      }
+      if (statusVal === 'completed' && eventDate > todayStr) {
+        showToast('Acara Completed tidak boleh memakai tanggal masa depan.', 'error'); return;
+      }
+      var body = {
+        title: title,
+        event_date: eventDate,
+        event_time: document.getElementById('ef-time').value || null,
+        location: clampText(document.getElementById('ef-location').value, 160) || null,
+        host: clampText(document.getElementById('ef-host').value, 120) || null,
+        description: clampText(document.getElementById('ef-desc').value, 500) || null,
+        status: statusVal
+      };
+      try {
+        if (editingEventId) {
+          var res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_EVENTS + '?id=eq.' + encodeFilterValue(editingEventId), { method: 'PATCH', headers: Object.assign({}, supaHeaders(), {'Prefer':'return=representation'}), body: JSON.stringify(body) });
+          if (!res.ok) throw new Error(await res.text());
+          var updated = await res.json();
+          events = events.map(function(e){ return e.id === editingEventId ? (updated[0] || Object.assign(e, body)) : e; });
+        } else {
+          var res2 = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_EVENTS, { method: 'POST', headers: Object.assign({}, supaHeaders(), {'Prefer':'return=representation'}), body: JSON.stringify(body) });
+          if (!res2.ok) throw new Error(await res2.text());
+          var inserted = await res2.json();
+          events.push(inserted[0] || body);
+        }
+        showToast(editingEventId ? 'Acara berhasil diperbarui.' : 'Acara berhasil ditambahkan.');
+        closeEventModal();
+        renderAll();
+      } catch(e) {
+        showToast('Gagal menyimpan: ' + e.message, 'error');
+      }
+    }
+
+    window._editEvent = function(id) {
+      if (!isAdmin) return;
+      var ev = events.find(function(e){ return e.id === id; });
+      if (ev) openEventModal(ev);
+    };
+    window._deleteEvent = async function(id) {
+      if (!isAdmin) return;
+      if (!confirm('Yakin ingin menghapus acara ini? Tindakan ini tidak dapat dibatalkan.')) return;
+      try {
+        await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_ATTENDANCE + '?event_id=eq.' + encodeFilterValue(id), { method: 'DELETE', headers: supaHeaders() });
+        var res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_EVENTS + '?id=eq.' + encodeFilterValue(id), { method: 'DELETE', headers: Object.assign({}, supaHeaders(), { 'Prefer': 'return=representation' }) });
+        if (!res.ok) throw new Error(await res.text());
+        var deleted = await res.json().catch(function(){ return []; });
+        if (!Array.isArray(deleted) || deleted.length === 0) throw new Error('Event tidak terhapus di database. Cek RLS/policy Supabase.');
+        events = events.filter(function(e){ return !sameId(e.id, id); });
+        attendance = attendance.filter(function(a){ return !sameEvent(a, id); });
+        showToast('Acara berhasil dihapus.');
+        renderAll();
+      } catch(e) { showToast('Gagal menghapus: ' + e.message, 'error'); }
+    };
+
+    function initEventModal() {
+      document.getElementById('addEventBtn').addEventListener('click', function(){ openEventModal(null); });
+      document.getElementById('eventSaveBtn').addEventListener('click', saveEvent);
+      document.getElementById('eventCancelBtn').addEventListener('click', closeEventModal);
+      document.getElementById('eventModalOverlay').addEventListener('click', function(e){ if(e.target===this) closeEventModal(); });
+      document.getElementById('adminEventsList').addEventListener('click', function(e) {
+        var editBtn = e.target.closest('.admin-edit-event');
+        var deleteBtn = e.target.closest('.admin-delete-event');
+        if (editBtn) window._editEvent(editBtn.dataset.eventId);
+        if (deleteBtn) window._deleteEvent(deleteBtn.dataset.eventId);
+      });
+    }
+
+    // -- DATA FETCHING --
+    async function fetchAll() {
+      try {
+        var [evRes, atRes, mRes, sRes] = await Promise.all([
+          fetch(SUPABASE_URL + '/rest/v1/' + TABLE_EVENTS + '?select=*&order=event_date.asc', { headers: supaHeaders() }),
+          fetch(SUPABASE_URL + '/rest/v1/' + TABLE_ATTENDANCE + '?select=*&order=created_at.desc', { headers: supaHeaders() }),
+          fetch(SUPABASE_URL + '/rest/v1/' + TABLE_MEMBERS + '?select=id,nama,no_induk,generasi,status&deleted_at=is.null&order=nama.asc', { headers: supaHeaders() }),
+          fetch(SUPABASE_URL + '/rest/v1/' + TABLE_SPOUSES + '?select=id,nama,member_id,generasi,status&deleted_at=is.null&order=nama.asc', { headers: supaHeaders() }),
+        ]);
+        if (evRes.ok) events = await evRes.json();
+        if (atRes.ok) attendance = await atRes.json();
+        if (mRes.ok) members = await mRes.json();
+        if (sRes.ok) spouses = await sRes.json();
+        localStorage.setItem('attendance_cache', JSON.stringify({ events: events, attendance: attendance, members: members, spouses: spouses, ts: Date.now() }));
+      } catch (e) {
+        console.warn('Fetch failed, using cache:', e);
+        var cache = null;
+        try { cache = JSON.parse(localStorage.getItem('attendance_cache') || 'null'); }
+        catch (cacheError) { localStorage.removeItem('attendance_cache'); }
+        if (cache) {
+          events = cache.events || [];
+          attendance = cache.attendance || [];
+          members = cache.members || [];
+          spouses = cache.spouses || [];
+          showToast('Tidak dapat terhubung. Menampilkan data terakhir.', 'info');
+        } else {
+          showToast('Gagal memuat data. Periksa koneksi internet.', 'error');
+        }
+      }
+      // Validate selected person is still active
+      if (selectedPerson && !isPersonActive(selectedPerson.id, selectedPerson.type)) {
+        selectedPerson = null;
+        localStorage.removeItem('attendance_person');
+        showToast('Orang yang dipilih sudah tidak aktif. Silakan pilih ulang.', 'info');
+      }
+    }
+
+    // -- PERSON PICKER (Combobox) --
+    function getPickerOptions() {
+      var opts = [];
+      getActiveMembers().forEach(function(m) {
+        opts.push({ id: 'member_' + m.id, name: m.nama || 'Tanpa Nama', sub: 'Anggota', type: 'member', pid: m.id });
+      });
+      getActiveSpouses().forEach(function(s) {
+        opts.push({ id: 'spouse_' + s.id, name: s.nama || 'Tanpa Nama', sub: 'Pasangan', type: 'spouse', pid: s.id });
+      });
+      return opts;
+    }
+
+    var comboHighlight = -1;
+    function initCombobox() {
+      var input = document.getElementById('comboboxInput');
+      var list = document.getElementById('comboboxList');
+      var wrap = document.getElementById('comboboxWrap');
+      var clearBtn = document.getElementById('comboboxClear');
+
+      if (selectedPerson) {
+        input.value = selectedPerson.name || '';
+        wrap.classList.add('has-value');
+      }
+
+      function renderOptions(filter) {
+        var opts = getPickerOptions();
+        var q = (filter || '').toLowerCase();
+        var filtered = q ? opts.filter(function(o){ return o.name.toLowerCase().indexOf(q) !== -1; }) : opts;
+        if (filtered.length === 0) {
+          list.innerHTML = '<div class="combobox-empty">Tidak ditemukan</div>';
+        } else {
+          var memberOpts = filtered.filter(function(o){ return o.type === 'member'; });
+          var spouseOpts = filtered.filter(function(o){ return o.type === 'spouse'; });
+          var html = '';
+          if (memberOpts.length) {
+            html += '<div class="combobox-group">Anggota</div>';
+            html += memberOpts.map(function(o, i){ return '<div class="combobox-opt" data-id="' + o.id + '" data-idx="' + i + '" role="option">' + escapeHtml(o.name) + '<div class="opt-sub">' + escapeHtml(o.sub) + '</div></div>'; }).join('');
+          }
+          if (spouseOpts.length) {
+            html += '<div class="combobox-group">Pasangan</div>';
+            html += spouseOpts.map(function(o, i){ return '<div class="combobox-opt" data-id="' + o.id + '" data-idx="' + (memberOpts.length + i) + '" role="option">' + escapeHtml(o.name) + '<div class="opt-sub">' + escapeHtml(o.sub) + '</div></div>'; }).join('');
+          }
+          list.innerHTML = html;
+        }
+        comboHighlight = -1;
+      }
+
+      function openList() {
+        renderOptions(input.value);
+        list.classList.add('open');
+        input.setAttribute('aria-expanded', 'true');
+      }
+      function closeList() {
+        list.classList.remove('open');
+        input.setAttribute('aria-expanded', 'false');
+        comboHighlight = -1;
+      }
+      function selectOption(id) {
+        var opts = getPickerOptions();
+        var opt = opts.find(function(o){ return o.id === id; });
+        if (!opt) return;
+        selectedPerson = { id: opt.pid, type: opt.type, name: opt.name };
+        localStorage.setItem('attendance_person', JSON.stringify(selectedPerson));
+        input.value = opt.name;
+        wrap.classList.add('has-value');
+        closeList();
+        renderCurrentEvent();
+        renderUpcoming();
+      }
+
+      input.addEventListener('focus', openList);
+      input.addEventListener('input', function() {
+        openList();
+        if (!input.value) {
+          wrap.classList.remove('has-value');
+          selectedPerson = null;
+          localStorage.removeItem('attendance_person');
+          renderCurrentEvent();
+          renderUpcoming();
+        }
+      });
+      input.addEventListener('keydown', function(e) {
+        var items = list.querySelectorAll('.combobox-opt');
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          comboHighlight = Math.min(comboHighlight + 1, items.length - 1);
+          updateHighlight(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          comboHighlight = Math.max(comboHighlight - 1, 0);
+          updateHighlight(items);
+        } else if (e.key === 'Enter') {
+          e.preventDefault();
+          if (comboHighlight >= 0 && items[comboHighlight]) {
+            selectOption(items[comboHighlight].dataset.id);
+          }
+        } else if (e.key === 'Escape') {
+          closeList();
+          input.blur();
+        }
+      });
+
+      function updateHighlight(items) {
+        items.forEach(function(el, i) {
+          el.classList.toggle('highlighted', i === comboHighlight);
+          if (i === comboHighlight) el.scrollIntoView({ block: 'nearest' });
+        });
+      }
+
+      list.addEventListener('click', function(e) {
+        var opt = e.target.closest('.combobox-opt');
+        if (opt) selectOption(opt.dataset.id);
+      });
+
+      clearBtn.addEventListener('click', function() {
+        input.value = '';
+        wrap.classList.remove('has-value');
+        selectedPerson = null;
+        localStorage.removeItem('attendance_person');
+        renderCurrentEvent();
+        renderUpcoming();
+        input.focus();
+      });
+
+      document.addEventListener('click', function(e) {
+        if (!wrap.contains(e.target)) closeList();
+      });
+    }
+
+    // -- CURRENT EVENT --
+    function renderCurrentEvent() {
+      var section = document.getElementById('currentEventSection');
+      var container = document.getElementById('currentEventContainer');
+      var todayStr = today();
+      // Current event: date === today AND status ongoing, exclude cancelled
+      var todayEvents = events.filter(function(e) {
+        return e.event_date === todayStr && isOngoing(e.status);
+      });
+
+      if (todayEvents.length === 0) { section.classList.add('hidden'); return; }
+      section.classList.remove('hidden');
+
+      container.innerHTML = todayEvents.map(function(ev) {
+        var myRows = selectedPerson ? findPersonAttendance(ev.id, selectedPerson.id, selectedPerson.type) : [];
+        var alreadyAttended = myRows.some(function(a) { return !!a.attended; });
+        var btnHtml = alreadyAttended
+          ? '<button class="btn btn-success" disabled><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Sudah Absen</button>'
+          : '<button class="btn btn-primary attendance-action" data-event-id="' + escapeHtml(ev.id) + '" data-action-type="absen">Absen Sekarang!</button>';
+
+        var timeStr = ev.event_time ? formatTimeWIB(ev.event_time) : '';
+        var descStr = (ev.description || '').trim();
+        var timeBadge = timeStr
+          ? '<div class="event-time"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' + escapeHtml(timeStr) + '</div>'
+          : '';
+        return '<div class="event-hero"><div><div class="event-topline"><div class="event-badge">Sedang Berlangsung</div></div>'
+          + '<div class="event-title">' + escapeHtml(ev.title || 'Acara') + '</div>'
+          + '<div class="event-meta">'
+          + '<div class="event-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' + formatDateWithWeekday(ev.event_date) + (timeStr ? ' (' + escapeHtml(timeStr) + ')' : '') + '</div>'
+          + '<div class="event-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>' + escapeHtml(ev.location || '-') + '</div>'
+          + '<div class="event-meta-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>' + escapeHtml(ev.host || '-') + '</div>'
+          + '</div>'
+          + (descStr ? '<div class="event-desc">' + escapeHtml(descStr) + '</div>' : '')
+          + '</div><div class="event-action-wrap">' + btnHtml + '</div></div>';
+      }).join('');
+    }
+
+    // -- UPCOMING EVENTS --
+    // Countdown helper: returns label text for upcoming event date relative to today
+    function getCountdownLabel(eventDate, eventTime) {
+      var todayStr = today();
+      if (eventDate === todayStr) {
+        return eventTime ? formatTimeWIB(eventTime) : 'Hari ini';
+      }
+      var todayD = new Date(todayStr + 'T00:00:00');
+      var eventD = new Date(eventDate + 'T00:00:00');
+      var diffDays = Math.round((eventD - todayD) / 86400000);
+      if (diffDays === 1) return 'Besok';
+      if (diffDays > 1) return diffDays + ' hari lagi';
+      return '';
+    }
+
+    function renderUpcoming() {
+      var track = document.getElementById('upcomingTrack');
+      var upcomingContainer = document.getElementById('upcomingContainer');
+      var empty = document.getElementById('upcomingEmpty');
+      var skeleton = document.getElementById('upcomingSkeleton');
+      skeleton.classList.add('hidden');
+
+      var todayStr = today();
+      // Include today's upcoming events (>= today) but exclude ongoing ones to avoid duplication
+      var upcoming = events.filter(function(e) {
+        return e.event_date >= todayStr && isUpcoming(e.status);
+      });
+
+      if (upcoming.length === 0) { track.innerHTML = ''; upcomingContainer.classList.add('hidden'); empty.classList.remove('hidden'); return; }
+      upcomingContainer.classList.remove('hidden');
+      empty.classList.add('hidden');
+
+      track.innerHTML = upcoming.map(function(ev) {
+        var ds = formatDateShort(ev.event_date);
+        var descStr = (ev.description || '').trim();
+        var myRows = selectedPerson ? findPersonAttendance(ev.id, selectedPerson.id, selectedPerson.type) : [];
+        var hasRsvp = myRows.some(function(a) { return isConfirmed(a.rsvp_status); });
+        var btnHtml = hasRsvp
+          ? '<button class="btn btn-success" disabled><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M20 6L9 17l-5-5"/></svg> Sudah RSVP</button>'
+          : '<button class="btn btn-secondary attendance-action" data-event-id="' + escapeHtml(ev.id) + '" data-action-type="rsvp">RSVP</button>';
+
+        // Countdown badge instead of raw time
+        var countdownText = getCountdownLabel(ev.event_date, ev.event_time);
+        var countdownBadge = countdownText
+          ? '<div class="event-time countdown-label" aria-label="' + escapeHtml(countdownText) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' + escapeHtml(countdownText) + '</div>'
+          : '';
+
+        return '<div class="event-card">'
+          + '<div class="event-date-row"><div class="event-date-badge"><span class="day">' + ds.day + '</span><span class="month">' + ds.month + '</span></div>'
+          + countdownBadge + '</div>'
+          + '<div class="event-title">' + escapeHtml(ev.title || 'Acara') + '</div>'
+          + '<div class="event-location"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>' + escapeHtml(ev.location || '-') + '</div>'
+          + '<div class="event-host"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Host: ' + escapeHtml(ev.host || '-') + '</div>'
+          + (descStr ? '<div class="event-desc">' + escapeHtml(descStr) + '</div>' : '')
+          + '<div class="event-action-wrap">' + btnHtml + '</div></div>';
+      }).join('');
+    }
+
+    // Lightweight refresh for countdown labels only (no full renderAll)
+    function refreshCountdownLabels() {
+      var labels = document.querySelectorAll('.countdown-label');
+      if (labels.length === 0) return;
+      // Re-render upcoming section only (lightweight)
+      renderUpcoming();
+    }
+
+    // -- CHARTS --
+    function renderCharts() {
+      var activePeople = getActivePeople();
+      var totalPeople = activePeople.length;
+      var activeAtt = getActiveAttendance();
+      var todayStr = today();
+      // Riwayat/charts: past date OR completed OR ongoing (with attendance rows), exclude cancelled
+      var eventsWithAttendance = events.filter(function(e) {
+        if (isCancelled(e.status)) return false;
+        if (e.event_date < todayStr) return true;
+        if (isCompleted(e.status)) return true;
+        if (isOngoing(e.status) && e.event_date === todayStr) return true;
+        return false;
+      });
+
+      // Stats grid
+      var totalAttended = activeAtt.filter(function(a) { return a.attended; }).length;
+      var avgRate = eventsWithAttendance.length > 0 && totalPeople > 0 ? Math.round((totalAttended / (eventsWithAttendance.length * totalPeople)) * 100) : 0;
+      var statsGrid = document.getElementById('statsGrid');
+      statsGrid.innerHTML = '<div class="stat-card"><div class="stat-value">' + events.length + '</div><div class="stat-label">Total Acara</div></div>'
+        + '<div class="stat-card"><div class="stat-value">' + totalPeople + '</div><div class="stat-label">Anggota Aktif</div></div>'
+        + '<div class="stat-card"><div class="stat-value">' + totalAttended + '</div><div class="stat-label">Total Kehadiran</div></div>'
+        + '<div class="stat-card"><div class="stat-value">' + (isNaN(avgRate) ? 0 : avgRate) + '%</div><div class="stat-label">Rata-rata Hadir</div></div>';
+
+      // Bar Chart - attendance % per event
+      var barLabels = eventsWithAttendance.map(function(e) { return e.title || 'Acara'; });
+      var barCounts = eventsWithAttendance.map(function(e) {
+        return activeAtt.filter(function(a) { return sameEvent(a, e.id) && a.attended; }).length;
+      });
+      var barData = barCounts.map(function(count) {
+        return totalPeople > 0 ? Math.round((count / totalPeople) * 100) : 0;
+      });
+
+      if (chartInstances.bar) chartInstances.bar.destroy();
+      var barCtx = document.getElementById('barChart').getContext('2d');
+      chartInstances.bar = new Chart(barCtx, {
+        type: 'bar',
+        data: { labels: barLabels, datasets: [{ label: 'Kehadiran (%)', data: barData, backgroundColor: 'rgba(184,130,46,0.6)', borderColor: '#b8822e', borderWidth: 1, borderRadius: 6 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          clip: false,
+          layout: { padding: { left: 4, right: 4 } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: function(ctx) { return ctx[0].label; },
+                label: function(ctx) {
+                  var idx = ctx.dataIndex;
+                  var count = barCounts[idx] || 0;
+                  return 'Kehadiran ' + ctx.raw + '% (' + count + ' orang)';
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true, max: 100,
+              afterFit: function(scale){ scale.width = 42; },
+              ticks: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim(),
+                padding: 4
+              },
+              grid: { color: 'rgba(184,130,46,0.08)' }
+            },
+            x: {
+              ticks: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim(),
+                maxRotation: 40,
+                minRotation: 0,
+                maxTicksLimit: 8,
+                callback: function(val, idx) {
+                  var label = this.getLabelForValue(val);
+                  return label && label.length > 12 ? label.slice(0, 11) + '\u2026' : label;
+                }
+              },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+
+      // Donut Chart - top 10 most active (doughnut with 3D effect)
+      var personCounts = {};
+      activeAtt.filter(function(a) { return a.attended; }).forEach(function(a) {
+        var key = a.person_name || 'Unknown';
+        personCounts[key] = (personCounts[key] || 0) + 1;
+      });
+      var sorted = Object.entries(personCounts).sort(function(a, b) { return b[1] - a[1]; }).slice(0, 10);
+      var donutLabels = sorted.map(function(s) { return s[0]; });
+      var donutData = sorted.map(function(s) { return s[1]; });
+      var donutColors = [
+        '#c9953c','#7eb8a4','#e07070','#6fa3d4','#b07cc6',
+        '#d4a55a','#5aab8a','#e89060','#5b8fd4','#a0c878'
+      ];
+
+      if (chartInstances.donut) chartInstances.donut.destroy();
+      var donutCtx = document.getElementById('donutChart').getContext('2d');
+      var isLight = document.documentElement.getAttribute('data-theme') === 'light';
+      chartInstances.donut = new Chart(donutCtx, {
+        type: 'doughnut',
+        data: { labels: donutLabels, datasets: [{ data: donutData, backgroundColor: donutColors, borderColor: isLight ? getComputedStyle(document.documentElement).getPropertyValue('--surface').trim() : 'transparent', borderWidth: isLight ? 2 : 0, hoverOffset: 8 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          cutout: '61%',
+          animation: { animateRotate: true, animateScale: false, duration: 900, easing: 'easeInOutSine' },
+          layout: { padding: { bottom: 8 } },
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim(),
+                padding: 10,
+                font: { size: 10 },
+                boxWidth: 10,
+                pointStyle: 'circle',
+                usePointStyle: true
+              }
+            }
+          }
+        }
+      });
+
+      // Line Chart - call dedicated render function
+      renderLineChart();
+    }
+
+    // Render only the line chart (used for tab-switch re-creation)
+    function renderLineChart() {
+      var activePeople = getActivePeople();
+      var totalPeople = activePeople.length;
+      var activeAtt = getActiveAttendance();
+      var todayStr = today();
+      var eventsWithAttendance = events.filter(function(e) {
+        if (isCancelled(e.status)) return false;
+        if (e.event_date < todayStr) return true;
+        if (isCompleted(e.status)) return true;
+        if (isOngoing(e.status) && e.event_date === todayStr) return true;
+        return false;
+      });
+      var lineLabels = eventsWithAttendance.map(function(e) { return e.title || 'Acara'; });
+      var lineData = eventsWithAttendance.map(function(e) {
+        var count = activeAtt.filter(function(a) { return sameEvent(a, e.id) && a.attended; }).length;
+        return totalPeople > 0 ? Math.round((count / totalPeople) * 100) : 0;
+      });
+      if (chartInstances.line) chartInstances.line.destroy();
+      var lineCtx = document.getElementById('lineChart').getContext('2d');
+      chartInstances.line = new Chart(lineCtx, {
+        type: 'line',
+        data: { labels: lineLabels, datasets: [{ label: 'Tingkat Kehadiran (%)', data: lineData, borderColor: '#b8822e', backgroundColor: 'rgba(184,130,46,0.1)', fill: true, tension: 0.4, pointBackgroundColor: '#d4a55a', pointBorderColor: '#b8822e', pointRadius: 3, pointHoverRadius: 5 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          clip: false,
+          layout: { padding: { left: 4, right: 4 } },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: function(ctx) { return ctx[0].label; },
+                label: function(ctx) { return 'Tingkat kehadiran ' + ctx.raw + '%'; }
+              }
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true, max: 100,
+              afterFit: function(scale){ scale.width = 42; },
+              ticks: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim(),
+                padding: 4
+              },
+              grid: { color: 'rgba(184,130,46,0.08)' }
+            },
+            x: {
+              ticks: {
+                color: getComputedStyle(document.documentElement).getPropertyValue('--text-muted').trim(),
+                maxRotation: 40,
+                minRotation: 0,
+                maxTicksLimit: 6,
+                callback: function(val, idx) {
+                  var label = this.getLabelForValue(val);
+                  return label && label.length > 10 ? label.slice(0, 9) + '\u2026' : label;
+                }
+              },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+    }
+
+    // Chart tab switching
+    function initChartTabs() {
+      var tabs = document.querySelectorAll('.chart-tab');
+      tabs.forEach(function(tab) {
+        tab.addEventListener('click', function() {
+          tabs.forEach(function(t) { t.classList.remove('active'); t.setAttribute('aria-selected', 'false'); });
+          tab.classList.add('active');
+          tab.setAttribute('aria-selected', 'true');
+          document.querySelectorAll('.chart-panel').forEach(function(p) { p.classList.remove('active'); });
+          var panel = document.getElementById('panel-' + tab.dataset.chart);
+          panel.classList.add('active');
+          var chartKey = tab.dataset.chart;
+          // Line chart: destroy and recreate to fix mobile grid/position shift
+          if (chartKey === 'line') {
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() {
+                renderLineChart();
+              });
+            });
+          } else if (chartInstances[chartKey]) {
+            requestAnimationFrame(function() {
+              requestAnimationFrame(function() {
+                chartInstances[chartKey].resize();
+              });
+            });
+          }
+        });
+        tab.addEventListener('keydown', function(e) {
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.preventDefault();
+            var idx = Array.from(tabs).indexOf(tab);
+            var next = e.key === 'ArrowRight' ? (idx + 1) % tabs.length : (idx - 1 + tabs.length) % tabs.length;
+            tabs[next].click();
+            tabs[next].focus();
+          }
+        });
+      });
+    }
+
+    // -- ATTENDANCE LIST with load more and search --
+    function getFilteredPastEvents() {
+      var activeAtt = getActiveAttendance();
+      var todayStr = today();
+      // Riwayat list: past date OR completed OR ongoing-today (so absen shows immediately), exclude cancelled
+      var pastEvents = events.filter(function(e) {
+        if (isCancelled(e.status)) return false;
+        if (e.event_date < todayStr) return true;
+        if (isCompleted(e.status)) return true;
+        if (isOngoing(e.status) && e.event_date === todayStr) return true;
+        return false;
+      }).sort(function(a, b) { return b.event_date.localeCompare(a.event_date); });
+      var q = listSearchQuery.toLowerCase().trim();
+      if (!q) return pastEvents;
+
+      // Search by person name: show events where matching active person attended
+      // Also match event title/location
+      return pastEvents.filter(function(ev) {
+        var titleMatch = (ev.title || '').toLowerCase().indexOf(q) !== -1;
+        var locMatch = (ev.location || '').toLowerCase().indexOf(q) !== -1;
+        if (titleMatch || locMatch) return true;
+        // Check if any active attendee name matches
+        var evAttendees = activeAtt.filter(function(a) { return sameEvent(a, ev.id) && a.attended; });
+        return evAttendees.some(function(a) { return (a.person_name || '').toLowerCase().indexOf(q) !== -1; });
+      });
+    }
+
+    function renderAttendanceList() {
+      var list = document.getElementById('attendanceList');
+      var empty = document.getElementById('listEmpty');
+      var loadWrap = document.getElementById('loadMoreWrap');
+      var activePeople = getActivePeople();
+      var totalPeople = activePeople.length;
+      var activeAtt = getActiveAttendance();
+
+      var filteredEvents = getFilteredPastEvents();
+
+      if (filteredEvents.length === 0) {
+        list.innerHTML = '';
+        loadWrap.classList.add('hidden');
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      // Build attendance lookup
+      var attendanceByEvent = {};
+      activeAtt.forEach(function(a) {
+        var key = String(a.event_id);
+        if (!attendanceByEvent[key]) attendanceByEvent[key] = [];
+        attendanceByEvent[key].push(a);
+      });
+
+      var visibleEvents = filteredEvents.slice(0, listVisibleCount);
+
+      list.innerHTML = visibleEvents.map(function(ev) {
+        var eventAttendees = (attendanceByEvent[String(ev.id)] || []).filter(function(a) { return a.attended; });
+        var pct = totalPeople > 0 ? Math.round((eventAttendees.length / totalPeople) * 100) : 0;
+
+        var attendeeRows = eventAttendees.map(function(a) {
+          return '<div class="attendee-row"><div class="attendee-avatar">' + getInitials(a.person_name) + '</div><div><div class="attendee-name">' + escapeHtml(a.person_name || '-') + '</div><div class="attendee-role">' + (a.person_type === 'spouse' ? 'Pasangan' : 'Anggota') + '</div></div></div>';
+        }).join('');
+
+        return '<div class="attendance-item" role="listitem">'
+          + '<button class="attendance-header" onclick="var el=this.parentElement;el.classList.toggle(&#39;expanded&#39;);this.setAttribute(&#39;aria-expanded&#39;,el.classList.contains(&#39;expanded&#39;))" aria-expanded="false">'
+          + '<div class="attendance-avatar">' + getInitials(ev.title) + '</div>'
+          + '<div class="attendance-info"><div class="attendance-name">' + escapeHtml(ev.title || 'Acara') + '</div><div class="attendance-meta">' + formatDate(ev.event_date) + ' \u00b7 ' + escapeHtml(ev.location || '-') + '</div></div>'
+          + '<div class="attendance-count">' + eventAttendees.length + '/' + totalPeople + ' (' + pct + '%)</div>'
+          + '<svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>'
+          + '</button>'
+          + '<div class="attendance-detail"><div class="attendance-detail-inner"><div class="attendee-list">' + (attendeeRows || '<p style="color:var(--text-muted);font-size:0.8rem;">Belum ada yang hadir</p>') + '</div></div></div>'
+          + '</div>';
+      }).join('');
+
+      // Load more button
+      if (filteredEvents.length > listVisibleCount) {
+        loadWrap.classList.remove('hidden');
+        document.getElementById('loadMoreProgress').textContent = 'Menampilkan ' + visibleEvents.length + ' dari ' + filteredEvents.length + ' acara';
+      } else {
+        loadWrap.classList.add('hidden');
+      }
+    }
+
+    function initSearch() {
+      var searchInput = document.getElementById('listSearch');
+      searchInput.addEventListener('input', function() {
+        listSearchQuery = this.value;
+        listVisibleCount = PAGE_SIZE;
+        renderAttendanceList();
+      });
+    }
+
+    function initLoadMore() {
+      document.getElementById('loadMoreBtn').addEventListener('click', function() {
+        listVisibleCount += PAGE_SIZE;
+        renderAttendanceList();
+      });
+    }
+
+    // -- MODAL --
+    window._openModal = function(eventId, type) {
+      if (!selectedPerson) { showToast('Pilih nama Anda terlebih dahulu.', 'error'); document.getElementById('comboboxInput').focus(); return; }
+      var ev = events.find(function(e) { return e.id === eventId; });
+      if (!ev) return;
+      var existingRows = findPersonAttendance(eventId, selectedPerson.id, selectedPerson.type);
+      if (type === 'absen' && existingRows.some(function(a){ return !!a.attended; })) { showToast('Anda sudah absen untuk acara ini.', 'info'); renderCurrentEvent(); return; }
+      if (type === 'rsvp' && existingRows.some(function(a){ return isConfirmed(a.rsvp_status); })) { showToast('Anda sudah RSVP untuk acara ini.', 'info'); renderUpcoming(); return; }
+      modalContext = { eventId: eventId, type: type };
+
+      document.getElementById('modal-title').textContent = type === 'absen' ? 'Konfirmasi Absensi' : 'Konfirmasi RSVP';
+      document.getElementById('modal-desc').textContent = type === 'absen' ? 'Pastikan Anda hadir di lokasi acara sebelum mengisi absensi.' : 'Konfirmasi rencana kehadiran Anda untuk acara ini.';
+      var timeStr = ev.event_time ? formatTimeWIB(ev.event_time) : '';
+      var descStr = (ev.description || '').trim();
+      var countdownText = getCountdownLabel(ev.event_date, ev.event_time);
+      var countdownPill = countdownText
+        ? '<span class="modal-event-date-pill"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>' + escapeHtml(countdownText) + '</span>'
+        : '';
+      var dateTimeMeta = ev.event_date
+        ? '<div class="event-meta-item" style="margin-top:6px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>' + escapeHtml(formatDateWithWeekday(ev.event_date) + (timeStr ? ' (' + timeStr + ')' : '')) + '</div>'
+        : '';
+      document.getElementById('modal-event-info').innerHTML =
+        '<div class="modal-event-title-row"><div class="event-title">' + escapeHtml(ev.title || 'Acara') + '</div>' + (type === 'rsvp' ? countdownPill : '') + '</div>'
+        + dateTimeMeta
+        + '<div class="event-meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>' + escapeHtml(ev.location || '-') + '</div>'
+        + '<div class="event-meta-item"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>Host: ' + escapeHtml(ev.host || '-') + '</div>'
+        + (descStr ? '<div class="modal-event-desc">' + escapeHtml(descStr) + '</div>' : '');
+
+      var spouseRow = document.getElementById('spouseCheckRow');
+      var spouseCheck = document.getElementById('spouseCheck');
+      spouseCheck.checked = false;
+      if (selectedPerson.type === 'member') {
+        var hasSpouse = getActiveSpouses().some(function(s) { return sameId(s.member_id, selectedPerson.id); });
+        spouseRow.style.display = hasSpouse ? 'flex' : 'none';
+      } else {
+        spouseRow.style.display = 'none';
+      }
+
+      var confirmBtn = document.getElementById('modalConfirmBtn');
+      confirmBtn.textContent = type === 'absen' ? 'Ya, Saya Hadir' : 'Ya, Saya Akan Hadir';
+      confirmBtn.disabled = false;
+
+      var overlay = document.getElementById('modalOverlay');
+      overlay.classList.add('active');
+      overlay.setAttribute('aria-hidden', 'false');
+      setTimeout(function() { confirmBtn.focus(); }, 100);
+    };
+
+    function closeModal() {
+      var overlay = document.getElementById('modalOverlay');
+      overlay.classList.remove('active');
+      overlay.setAttribute('aria-hidden', 'true');
+      modalContext = null;
+    }
+
+    async function submitAttendance() {
+      if (!modalContext || !selectedPerson) return;
+      var btn = document.getElementById('modalConfirmBtn');
+      if (btn.disabled) return;
+      btn.disabled = true;
+      btn.textContent = 'Menyimpan...';
+
+      try {
+        var existingRows = findPersonAttendance(modalContext.eventId, selectedPerson.id, selectedPerson.type);
+        if (modalContext.type === 'absen' && existingRows.some(function(a){ return !!a.attended; })) { showToast('Anda sudah absen untuk acara ini.', 'info'); closeModal(); renderAll(); return; }
+        if (modalContext.type === 'rsvp' && existingRows.some(function(a){ return isConfirmed(a.rsvp_status); })) { showToast('Anda sudah RSVP untuk acara ini.', 'info'); closeModal(); renderAll(); return; }
+        var body = {
+          event_id: modalContext.eventId,
+          person_id: selectedPerson.id,
+          person_type: selectedPerson.type,
+          person_name: selectedPerson.name,
+          rsvp_status: 'confirmed',
+          attended: modalContext.type === 'absen'
+        };
+
+        await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_ATTENDANCE + '?event_id=eq.' + encodeFilterValue(body.event_id) + '&person_id=eq.' + encodeFilterValue(body.person_id) + '&person_type=eq.' + encodeFilterValue(body.person_type), { method: 'DELETE', headers: supaHeaders() });
+
+        var res = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_ATTENDANCE, { method: 'POST', headers: Object.assign({}, supaHeaders(), { 'Prefer': 'return=representation' }), body: JSON.stringify(body) });
+        if (!res.ok) throw new Error(await res.text());
+        var inserted = await res.json();
+        attendance = attendance.filter(function(a) { return !(sameEvent(a, body.event_id) && samePerson(a, body.person_id, body.person_type)); });
+        attendance.push(inserted[0] || body);
+
+        // Optional spouse attendance
+        if (document.getElementById('spouseCheck').checked && selectedPerson.type === 'member') {
+          var spouse = getActiveSpouses().find(function(s) { return sameId(s.member_id, selectedPerson.id); });
+          if (spouse) {
+            var spouseBody = {
+              event_id: modalContext.eventId,
+              person_id: spouse.id,
+              person_type: 'spouse',
+              person_name: spouse.nama,
+              rsvp_status: 'confirmed',
+              attended: modalContext.type === 'absen'
+            };
+            await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_ATTENDANCE + '?event_id=eq.' + encodeFilterValue(spouseBody.event_id) + '&person_id=eq.' + encodeFilterValue(spouseBody.person_id) + '&person_type=eq.spouse', { method: 'DELETE', headers: supaHeaders() });
+            var spouseRes = await fetch(SUPABASE_URL + '/rest/v1/' + TABLE_ATTENDANCE, { method: 'POST', headers: Object.assign({}, supaHeaders(), { 'Prefer': 'return=representation' }), body: JSON.stringify(spouseBody) });
+            if (spouseRes.ok) {
+              var sIns = await spouseRes.json();
+              attendance = attendance.filter(function(a) { return !(sameEvent(a, spouseBody.event_id) && samePerson(a, spouseBody.person_id, 'spouse')); });
+              attendance.push(sIns[0] || spouseBody);
+            }
+          }
+        }
+
+        showToast(modalContext.type === 'absen' ? 'Kehadiran berhasil dicatat.' : 'RSVP berhasil disimpan.', 'success');
+        closeModal();
+        await fetchAll();
+        renderAll();
+      } catch (e) {
+        console.error(e);
+        showToast('Gagal menyimpan: ' + e.message, 'error');
+        btn.disabled = false;
+        btn.textContent = modalContext.type === 'absen' ? 'Ya, Saya Hadir' : 'Ya, Saya Akan Hadir';
+      }
+    }
+
+    function initModal() {
+      document.getElementById('modalCancelBtn').addEventListener('click', closeModal);
+      document.getElementById('modalConfirmBtn').addEventListener('click', submitAttendance);
+      document.getElementById('modalOverlay').addEventListener('click', function(e) { if (e.target === this) closeModal(); });
+      document.addEventListener('click', function(e) {
+        var btn = e.target.closest('.attendance-action');
+        if (!btn) return;
+        window._openModal(btn.dataset.eventId, btn.dataset.actionType);
+      });
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          closeModal();
+          closeEventModal();
+        }
+      });
+    }
+
+    // -- RENDER ALL --
+    function renderAll() {
+      renderCurrentEvent();
+      renderUpcoming();
+      renderAttendanceList();
+      renderAdminEvents();
+      if (window.Chart) renderCharts();
+    }
+
+    async function init() {
+      initAdmin();
+      initChartTabs();
+      initSearch();
+      initLoadMore();
+      initModal();
+      initEventModal();
+      await fetchAll();
+      initCombobox();
+      renderAll();
+      // Lightweight countdown refresh every 60s (only re-renders upcoming section)
+      setInterval(refreshCountdownLabels, 60000);
+    }
+
+    document.addEventListener('DOMContentLoaded', init);
+  })();
+  </script>
 </body>
 </html>
