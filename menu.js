@@ -60,6 +60,15 @@
   function applyTheme(theme) {
     document.documentElement.setAttribute('data-theme', theme);
     updateLogo();
+    
+    // Update aria-label for theme button
+    const themeBtn = document.querySelector('.header__theme');
+    if (themeBtn) {
+      const label = theme === 'dark' ? 'Ganti ke tema terang' : 'Ganti ke tema gelap';
+      themeBtn.setAttribute('aria-label', label);
+      themeBtn.removeAttribute('aria-pressed');
+    }
+    
     // Sync all theme icons (header + menu panel)
     document.querySelectorAll('.header__theme-night, .menu-theme-night').forEach(el => {
       el.style.display = theme === 'dark' ? 'flex' : 'none';
@@ -76,8 +85,15 @@
   }
 
   function updateProgress() {
-    const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const pct = scrollHeight <= 0 ? 0 : Math.min(100, Math.round((window.scrollY / scrollHeight) * 100));
+    const doc = document.documentElement;
+    const maxScroll = Math.max(0, doc.scrollHeight - doc.clientHeight);
+    const progressEls = document.querySelectorAll('.header__prc, .menu-progress-pill');
+    
+    // Always show progress bar
+    progressEls.forEach(el => { el.style.display = 'flex'; });
+
+    const rawPct = maxScroll > 0 ? (window.scrollY / maxScroll) * 100 : 0;
+    const pct = Number.isFinite(rawPct) ? Math.min(100, Math.max(0, Math.round(rawPct))) : 0;
     const txt = pct + '%';
     document.querySelectorAll('.header__prc-txt, .menu-progress-pill').forEach(el => {
       el.textContent = txt;
