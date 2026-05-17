@@ -247,39 +247,7 @@
               0 0 60px rgba(184, 130, 46, 0.05);
 }
 
-/* ── Custom Cursor ── */
-.cursor-dot {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 8px;
-  height: 8px;
-  background: var(--gold-light);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  mix-blend-mode: difference;
-  will-change: transform;
-  transition: width 0.3s var(--ease-scroll),
-              height 0.3s var(--ease-scroll),
-              opacity 0.3s;
-  transform: translate(-50%, -50%);
-  opacity: 0;
-}
-
-.cursor-dot.is-visible {
-  opacity: 1;
-}
-
-.cursor-dot.is-hover {
-  width: 40px;
-  height: 40px;
-  opacity: 0.5;
-}
-
-@media (hover: none) {
-  .cursor-dot { display: none !important; }
-}
+/* Cursor now handled by standalone cursor.css/cursor.js */
 
 /* ═══════════════════════════════════════════════════════════════════
    SCROLL INDICATOR
@@ -377,10 +345,6 @@
   .parallax-layer {
     transform: none !important;
     will-change: auto;
-  }
-
-  .cursor-dot {
-    display: none !important;
   }
 
   .scroll-indicator {

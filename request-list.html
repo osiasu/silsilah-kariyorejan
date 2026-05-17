@@ -12,6 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="menu.css">
+  <link rel="stylesheet" href="cursor.css">
   <style>
     :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;--radius:14px;}
     [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.18);--text:#1a1611;--text-muted:#635a4e;--gold-light:#96691e;}
@@ -120,6 +121,13 @@
     .detail-footer{padding:0.85rem 1.25rem;border-top:1px solid var(--border);display:flex;gap:0.65rem;flex-shrink:0;}
     .btn-action{flex:1.5;padding:0.65rem;border-radius:10px;border:1px solid var(--gold);background:var(--gold-dim);color:var(--gold-light);font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s;}
     .btn-action:hover{background:rgba(184,130,46,0.25);}
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:0.875rem;font-weight:600;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s ease;text-decoration:none;line-height:1;}
+    .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
+    .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1a1a;box-shadow:0 2px 12px rgba(184,130,46,0.3);}
+    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(184,130,46,0.4);}
+    .btn-primary:active{transform:translateY(0);}
+    [data-theme="light"] .btn-primary{background:linear-gradient(135deg,#c8861e,#e8a830);color:#1a0f00;box-shadow:0 2px 14px rgba(200,134,30,0.45);}
+    [data-theme="light"] .btn-primary:hover{box-shadow:0 4px 22px rgba(200,134,30,0.6);}
     .btn-approve{flex:2;padding:0.65rem;border-radius:10px;border:none;background:var(--gold);color:#1a1205;font-size:0.85rem;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity 0.15s;}
     .btn-approve:hover{opacity:0.88;}
     .btn-reject{flex:1.3;padding:0.65rem;border-radius:10px;border:1px solid rgba(224,112,112,0.4);background:rgba(224,112,112,0.1);color:#e07070;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;transition:background 0.15s,border-color 0.15s;}
@@ -194,7 +202,7 @@
       </div>
       <input type="password" class="pin-input" id="gateInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmGate()">
       <div class="pin-error" id="gateError"></div>
-      <button class="btn-save" onclick="confirmGate()">Masuk</button>
+      <button class="btn btn-primary" onclick="confirmGate()">Masuk</button>
       <a href="index.html" style="font-size:0.78rem;color:var(--text-muted);text-align:center;text-decoration:none;">← Kembali ke Silsilah</a>
     </div>
   </div>
@@ -224,7 +232,7 @@
       <div class="pin-sub">Masukkan PIN Super Admin untuk mengaktifkan mode approval</div>
       <input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmAdminPin()">
       <div class="pin-error" id="pinError"></div>
-      <button class="btn-save" onclick="confirmAdminPin()">Masuk sebagai Admin</button>
+      <button class="btn btn-primary" onclick="confirmAdminPin()">Masuk sebagai Admin</button>
       <button class="btn-cancel" onclick="closePinOverlay()">Batal</button>
     </div>
   </div>
@@ -481,7 +489,7 @@
         if (r.status==='pending') footerHtml+=`<button class="btn-action" onclick="updateStatus('${r.id}','in_progress')">▶ Proses</button>`;
         if (r.status!=='completed' && r.status!=='rejected') {
           footerHtml += `<button class="btn-reject" onclick="rejectRequest('${r.id}')">✕ Tolak</button>`;
-          footerHtml += `<button class="btn-approve" onclick="approveRequest('${r.id}')">✓ Setujui & Simpan</button>`;
+          footerHtml += `<button class="btn btn-primary" onclick="approveRequest('${r.id}')">✓ Setujui & Simpan</button>`;
         }
       }
       document.getElementById('detailFooter').innerHTML=footerHtml;
@@ -593,5 +601,6 @@
     });
   </script>
   <script src="menu.js"></script>
+  <script src="cursor.js"></script>
 </body>
 </html>
