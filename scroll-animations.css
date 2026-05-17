@@ -150,6 +150,7 @@
 /* ── Clip Reveal (text lines) ── */
 .clip-reveal {
   overflow: hidden;
+  padding-bottom: 0.25em;
 }
 
 .gsap-ready .clip-reveal__inner {

@@ -26,8 +26,10 @@
     #adminBtn{flex-shrink:0;background:var(--surface2);border:1px solid var(--border);border-radius:50%;width:34px;height:34px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:border-color 0.18s,background 0.18s;}
     #adminBtn:hover{border-color:var(--gold);background:var(--gold-dim);}
     #adminBtn.admin-active{border-color:var(--gold);background:var(--gold-dim);box-shadow:0 0 8px rgba(184,130,46,0.35);}
-    #adminBanner{display:none;background:var(--gold-dim);border-bottom:1px solid var(--gold);padding:0.3rem 1rem;font-size:0.72rem;color:var(--gold-light);text-align:center;letter-spacing:0.05em;}
+    #adminBanner{display:none;background:var(--gold-dim);border-bottom:1px solid var(--gold);padding:.3rem 1rem;font-size:.72rem;color:var(--gold-light);text-align:center;letter-spacing:.05em;}
     #adminBanner.visible{display:block;}
+    #adminBanner .ghost-btn{padding:.68rem .95rem;color:var(--text-muted);border:1px solid var(--border);border-radius:999px;background:var(--surface);font-family:'Inter',sans-serif;font-size:.72rem;line-height:1;font-weight:400;cursor:pointer;transition:transform .18s ease,border-color .18s ease,color .18s ease,background .18s ease;}
+    #adminBanner .ghost-btn:hover{transform:translateY(-1px);border-color:var(--gold);color:var(--gold-light);}
 
     /* ACCESS GATE */
     #accessGate{
@@ -189,7 +191,7 @@
     </div>
   </div>
 
-  <div id="adminBanner">🔐 Mode Super Admin Aktif — <span style="cursor:pointer;text-decoration:underline" onclick="logoutAdmin()">Keluar ke Mode Tamu</span></div>
+  <div id="adminBanner">🔐 Mode Super Admin aktif — <button id="adminLogoutBtn" class="ghost-btn" type="button">Keluar</button></div>
 
   <!-- menu.js injects the fullscreen overlay menu -->
   <div id="accessGate">
@@ -592,6 +594,7 @@
       }
 
       // ESC key closes overlays
+      document.getElementById('adminLogoutBtn')?.addEventListener('click', logoutAdmin);
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
           document.getElementById('pinOverlay')?.classList.remove('open');
