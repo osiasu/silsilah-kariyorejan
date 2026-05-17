@@ -209,6 +209,9 @@
   // ── Stagger Groups ──
   function initStaggerGroups() {
     document.querySelectorAll('[data-stagger]').forEach(function (group) {
+      // Skip sections handled by bio-magnet.js (has its own per-char reveal)
+      if (group.hasAttribute('data-magnet-split')) return;
+
       var children = group.children;
       var staggerVal = parseFloat(group.getAttribute('data-stagger')) || 0.1;
 
@@ -253,7 +256,7 @@
     initParallax();
     initImageReveals();
     initImageExpansion();
-    initCursor();
+    // Cursor now handled by standalone cursor.js
     initStaggerGroups();
     initClipReveals();
 

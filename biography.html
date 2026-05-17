@@ -13,6 +13,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="menu.css">
   <link rel="stylesheet" href="scroll-animations.css">
+  <link rel="stylesheet" href="cursor.css">
   <style>
     :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,0.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--surface3:#2d2720;--border:rgba(184,130,46,0.15);--text:#f0ebe2;--text-muted:#8a7d6e;}
     [data-theme="light"]{--bg:#faf8f5;--surface:#ffffff;--surface2:#f0ede6;--surface3:#e8e4da;--border:rgba(184,130,46,0.12);--text:#1a1611;--text-muted:#635a4e;}
@@ -23,7 +24,7 @@
     #header{position:sticky;top:0;z-index:200;}
     .page-content{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;min-height:calc(100dvh - var(--header-h));padding:0 1rem 3rem;text-align:center;}
     .bio-shell{width:min(100%,860px);margin:0 auto;}
-    .bio-hero{min-height:100dvh;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:2rem 0;}
+    .bio-hero{min-height:max(100dvh,400px);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;padding:2rem 0 calc(2rem + 144px);}
     .bio-hero__orb{position:absolute;width:350px;height:350px;border-radius:50%;background:radial-gradient(circle,var(--gold-dim) 0%,transparent 70%);filter:blur(70px);pointer-events:none;z-index:-1;top:50%;left:50%;transform:translate(-50%,-50%);}
     .bio-eyebrow{font-family:'Plus Jakarta Sans',sans-serif;font-size:0.74rem;font-weight:800;letter-spacing:0.18em;text-transform:uppercase;color:var(--gold-light);margin-bottom:0.85rem;}
     .bio-title{font-family:'Plus Jakarta Sans',sans-serif;font-size:clamp(1.55rem,5vw,2.6rem);line-height:1.12;color:var(--text);margin-bottom:0.75rem;overflow:hidden;}
@@ -33,7 +34,32 @@
     .bio-images img{display:block;width:100%;height:auto;border-radius:0;}
     .bio-copy{max-width:620px;margin:clamp(1rem,3vw,1.5rem) auto 0;color:var(--text-muted);font-size:clamp(0.68rem,1.8vw,0.76rem);font-style:italic;line-height:1.6;text-align:center;}
     .bio-copy p+p{margin-top:0.7rem;}
-    @media (max-width:560px){.page-content{padding:0 0.75rem 2.5rem}.bio-hero{min-height:100svh}.bio-hero__orb{width:200px;height:200px}.bio-title{font-size:1.55rem}.bio-copy{text-align:center;line-height:1.6}}
+
+    /* ── Bio Magnet: Design Tokens ── */
+    :root{--magnet-radius:80;--magnet-displacement:12;--magnet-duration:0.4s;--magnet-easing:cubic-bezier(0.23,1,0.32,1);--reveal-distance:18px;--reveal-duration:0.6s;--reveal-easing:cubic-bezier(0.16,1,0.3,1);}
+
+    /* ── Bio Magnet: Character Base ── */
+    .bio-copy [data-char]{display:inline-block;position:relative;transform:translate3d(0,0,0);transition:transform var(--magnet-duration) var(--magnet-easing);white-space:pre;line-height:1.6;}
+    .bio-copy [data-char][data-whitespace]{width:0.25em;pointer-events:none;}
+    .bio-copy [data-word]{display:inline-block;white-space:nowrap;line-height:1.6;}
+
+    /* ── Bio Magnet: States ── */
+    .bio-copy.is-revealing [data-char]{opacity:0;transform:translate3d(0,var(--reveal-distance),0);transition:none;}
+    .bio-copy.is-revealed [data-char]{opacity:1;transform:translate3d(0,0,0);transition:transform var(--magnet-duration) var(--magnet-easing);}
+    .bio-copy.is-magnetic [data-char]{cursor:default;transition:transform 0.15s var(--magnet-easing);}
+    .bio-copy.is-magnetic:not(.is-hovering) [data-char]{transform:translate3d(0,0,0);transition:transform var(--magnet-duration) var(--magnet-easing);}
+    .bio-copy.is-hovering [data-char]{transition:none;}
+
+    /* ── Bio Magnet: Dark theme glow on reveal ── */
+    [data-theme="dark"] .bio-copy.is-revealed [data-char]{text-shadow:0 0 8px rgba(184,130,46,0);transition:transform var(--magnet-duration) var(--magnet-easing),text-shadow 1.2s ease-out;}
+
+    /* ── Bio Magnet: Reduced Motion ── */
+    @media(prefers-reduced-motion:reduce){.bio-copy [data-char]{transition:none!important;transform:none!important;will-change:auto;display:inline;position:static;white-space:normal;}.bio-copy [data-word]{display:inline;white-space:normal;}}
+
+    /* ── Bio Magnet: Touch/Mobile disable ── */
+    @media(pointer:coarse){.bio-copy [data-char]{display:inline;position:static;will-change:auto;transform:none!important;transition:none!important;white-space:normal;}.bio-copy [data-word]{display:inline;white-space:normal;}}
+
+    @media (max-width:560px){.page-content{padding:0 0.75rem 2.5rem}.bio-hero{min-height:max(100svh,400px);padding-bottom:calc(2rem + 132px)}.bio-hero__orb{width:200px;height:200px}.bio-title{font-size:1.55rem}.bio-copy{text-align:center;line-height:1.6}}
   </style>
 </head>
 <body>
@@ -82,7 +108,7 @@
       <h1 class="bio-title" id="bioTitle">
         <span class="clip-reveal"><span class="clip-reveal__inner">Kisah dalam Panel Kenangan</span></span>
       </h1>
-      <div class="scroll-indicator">
+      <div class="scroll-indicator" aria-hidden="true">
         <div class="scroll-indicator__line"></div>
         <div class="scroll-indicator__text">Scroll</div>
       </div>
@@ -99,7 +125,7 @@
     </div>
 
     <!-- CAPTION -->
-    <section class="bio-copy" aria-label="Narasi singkat biografi" data-stagger="0.15">
+    <section class="bio-copy" aria-label="Narasi singkat biografi" data-stagger="0.15" data-magnet-split>
       <p>Biografi ini merangkum jejak keluarga dalam bentuk panel komik, menghadirkan potongan peristiwa, nilai, dan ingatan yang diwariskan lintas generasi.</p>
       <p>Setiap bagian disusun sebagai ruang baca singkat agar kisah leluhur mudah dinikmati, baik di layar besar maupun perangkat mobile.</p>
     </section>
@@ -132,6 +158,13 @@
     })();
   </script>
 
+  <!-- Anime.js for stagger animations -->
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.2/lib/anime.min.js"></script>
+
+  <!-- Bio Magnet: Text Splitter + Character Magnet Effect (desktop only) -->
+  <script src="bio-magnet.js"></script>
+
   <script src="menu.js"></script>
+  <script src="cursor.js"></script>
 </body>
 </html>
