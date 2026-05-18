@@ -14,10 +14,15 @@
   canvas.className = 'cursor-canvas';
   document.body.appendChild(canvas);
   var ctx = canvas.getContext('2d');
+  var dpr = Math.min(window.devicePixelRatio || 1, 2);
 
   function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(window.innerWidth * dpr);
+    canvas.height = Math.round(window.innerHeight * dpr);
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
   resize();
   window.addEventListener('resize', resize);
@@ -66,7 +71,7 @@
   function Particle(x, y) {
     this.x = x;
     this.y = y;
-    this.size = Math.random() * 3 + 1.5;
+    this.size = Math.random() * 2 + 1.25;
     this.life = 1.0;
     this.decay = Math.random() * 0.02 + 0.02;
     this.vx = (Math.random() - 0.5) * 1;
@@ -76,8 +81,8 @@
   // ── Animation loop ──
   function tick() {
     // Smooth follow
-    dotX += (mouseX - dotX) * 0.15;
-    dotY += (mouseY - dotY) * 0.15;
+    dotX += (mouseX - dotX) * 0.35;
+    dotY += (mouseY - dotY) * 0.35;
     dot.style.transform = 'translate(' + dotX + 'px, ' + dotY + 'px) translate(-50%, -50%)';
 
     // Spawn particles
@@ -88,7 +93,7 @@
     }
 
     // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
 
     // Get trail color (adapts to theme)
     var color = getTrailColor();
