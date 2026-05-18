@@ -66,6 +66,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 0.75rem;
+  view-transition-name: app-header;
 }
 
 .header__left {
@@ -551,6 +552,88 @@ body.menu-open {
   overflow: hidden;
 }
 
+/* ── PAGE TRANSITIONS ── */
+@view-transition {
+  navigation: auto;
+}
+
+html,
+::view-transition {
+  background: var(--bg);
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.32s;
+  animation-timing-function: var(--ease-out-expo);
+}
+
+::view-transition-old(root) {
+  animation-name: page-view-out;
+}
+
+::view-transition-new(root) {
+  animation-name: page-view-in;
+}
+
+::view-transition-old(app-header),
+::view-transition-new(app-header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+body.page-leaving {
+  pointer-events: none;
+}
+
+body.page-leaving > *:not(#header):not(.cursor-dot):not(.cursor-canvas) {
+  animation: page-fade-out 0.22s var(--ease-premium) forwards;
+}
+
+@keyframes page-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes page-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes page-view-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+@keyframes page-view-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.985);
+    filter: blur(6px);
+  }
+}
+
 
 /* ── ACCESSIBILITY: CONSISTENT FOCUS RINGS ── */
 .tab-btn:focus-visible,
@@ -603,5 +686,12 @@ button:focus-visible,
 
   .menu-link {
     transform: none !important;
+  }
+
+  body,
+  body.page-leaving,
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
   }
 }

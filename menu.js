@@ -17,6 +17,7 @@
     initTheme();
     initMenu();
     initScrollProgress();
+    initPageTransitions();
   });
 
   function initHeaderBehavior() {
@@ -232,6 +233,62 @@
     });
   }
 
+  /* ── PAGE TRANSITIONS ── */
+  function initPageTransitions() {
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    document.addEventListener('click', function (e) {
+      const link = e.target.closest('a[href]');
+      if (!link || !shouldTransitionLink(link, e)) return;
+
+      e.preventDefault();
+      closeMenuInstant();
+      document.body.classList.add('page-leaving');
+
+      setTimeout(() => {
+        window.location.href = link.href;
+      }, 220);
+    });
+
+    window.addEventListener('pageshow', function () {
+      document.body.classList.remove('page-leaving');
+    });
+  }
+
+  function shouldTransitionLink(link, event) {
+    const url = new URL(link.href, window.location.href);
+    const isModifiedClick = event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0;
+
+    if (isModifiedClick) return false;
+    if (link.target && link.target !== '_self') return false;
+    if (link.hasAttribute('download')) return false;
+    if (url.origin !== window.location.origin) return false;
+    if (url.pathname === window.location.pathname && url.hash) return false;
+    if (!url.pathname.endsWith('.html') && url.pathname !== '/' && url.pathname !== '') return false;
+
+    return url.href !== window.location.href;
+  }
+
+  function closeMenuInstant() {
+    if (!isMenuOpen) return;
+
+    isMenuOpen = false;
+    clearStaggerTimers();
+
+    document.querySelector('.header__menu')?.classList.remove('open');
+    document.querySelector('.header__menu')?.setAttribute('aria-expanded', 'false');
+    document.querySelector('.menu-close-btn')?.classList.remove('open');
+    document.getElementById('menuOverlay')?.classList.remove('open');
+    document.body.classList.remove('menu-open');
+    document.documentElement.classList.remove('hide-scrollbar');
+
+    const menuTxt = document.querySelector('.header__menu-txt');
+    if (menuTxt) menuTxt.textContent = 'Menu';
+
+    document.querySelectorAll('.menu-link').forEach(link => link.classList.remove('is-visible'));
+  }
+
   /* ── BUILD MENU HTML ── */
   function createMenuHTML() {
     const moonSVG = `<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 16 16" fill="none"><path d="M14.845 8.36965C14.7735 9.69243 14.3205 10.9662 13.5406 12.037C12.7607 13.1079 11.6874 13.9298 10.4503 14.4036C9.21321 14.8774 7.86538 14.9827 6.56972 14.7068C5.27407 14.431 4.08605 13.7857 3.14929 12.849C2.21253 11.9123 1.56714 10.7244 1.29113 9.42878C1.01511 8.13315 1.12029 6.78531 1.59395 5.54818C2.06762 4.31106 2.88948 3.23761 3.9602 2.45761C5.03092 1.67761 6.30465 1.22444 7.62741 1.1529C7.93599 1.13613 8.09752 1.50337 7.9337 1.7647C7.38581 2.64132 7.15121 3.67774 7.26818 4.70485C7.38515 5.73196 7.84679 6.6891 8.57776 7.42008C9.30873 8.15105 10.2659 8.61269 11.293 8.72966C12.3201 8.84662 13.3565 8.61203 14.2331 8.06413C14.4953 7.90033 14.8617 8.06108 14.845 8.36965Z" stroke="currentColor" stroke-width="1.71429" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
@@ -283,7 +340,7 @@
             <div class="menu-section-title">Other</div>
             <a href="request-list.html" class="menu-link"><span class="menu-icon">${listSVG}</span>Antrian Permintaan</a>
             <a href="attendance.html"   class="menu-link"><span class="menu-icon">${calendarSVG}</span>Kehadiran Keluarga</a>
-            <a href="misc.html"         class="menu-link"><span class="menu-icon">${settingsSVG}</span>Lainnya</a>
+            <a href="misc.html"         class="menu-link"><span class="menu-icon">${settingsSVG}</span>Newsletter</a>
           </div>
         </div>
 
