@@ -7,8 +7,8 @@
   <script>(function(){var t=localStorage.getItem('trah_theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();</script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="menu.css">
-  <link rel="stylesheet" href="cursor.css">
+  <link rel="stylesheet" href="css/menu.css">
+  <link rel="stylesheet" href="css/cursor.css">
   <style>
     :root{--gold:#b8822e;--gold-light:#d4a55a;--gold-dim:rgba(184,130,46,.12);--bg:#0f0d0a;--surface:#1a1611;--surface2:#221d15;--border:rgba(184,130,46,.15);--text:#f0ebe2;--text-muted:#8a7d6e;--danger:#d96b5f;--ease:cubic-bezier(.76,0,.24,1)}
     [data-theme="light"]{--bg:#faf8f5;--surface:#fff;--surface2:#f0ede6;--border:rgba(184,130,46,.12);--text:#1a1611;--text-muted:#635a4e}
@@ -77,8 +77,8 @@
   </div>
   <div id="pinOverlay"><div class="pin-box"><div class="pin-logo">🔐 Super Admin Newsfeed</div><div class="pin-sub">Masukkan PIN Super Admin untuk mengelola berita.</div><input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="8"><div class="pin-error" id="pinError"></div><button class="primary-btn" id="pinConfirmBtn" type="button">Masuk</button><button class="ghost-btn" id="pinCancelBtn" type="button">Batal</button></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <script src="menu.js"></script>
-  <script src="cursor.js"></script>
+  <script src="js/menu.js"></script>
+  <script src="js/cursor.js"></script>
   <script>
     const STORAGE_KEY='trah_misc_news_cache';
     const SUPABASE_URL='https://lckowkndmwiadwifilsv.supabase.co';
