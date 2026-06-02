@@ -102,6 +102,19 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 - **Credentials**: live Supabase (not placeholders). Uses both `ADMIN_PIN` and `GUEST_PIN`
 - **Danger**: `load-more-sentinel` always burns visible even when no more data (conditional render only checks `> PAGE_SIZE` for "done" message but not 0 remaining); `getFilteredRequests()` called multiple times per render cycle (can optimize)
 
+## Session 2026-06-02d — Code clean-up attendance + request-list
+
+### attendance.html
+- **Meta tags**: split inline `<meta />` onto separate lines (project standard)
+- **CSS dedup**: removed duplicate `.attendance-count` and `.attendance-detail-inner` (second override was canonical)
+- **Chart ticks**: removed duplicate `crossAlign: 'far'` in bar chart y-axis config (line 1170-1171)
+
+### request-list.html
+- **Meta tags**: split inline `<meta />` onto separate lines (project standard)
+- **IIFE + strict mode**: wrapped entire script block in IIFE with `'use strict'`; exposed 14 functions (`switchPinTab`, `confirmGate`, `setFilter`, `loadAndRender`, `toggleAdminUpgrade`, `confirmAdminPin`, `closePinOverlay`, `openDetail`, `closeDetail`, `deleteRequest`, `updateStatus`, `rejectRequest`, `approveRequest`, `logoutAdmin`) via `window.*` for inline onclick handlers. Matches project convention (other pages use IIFE pattern).
+- **Filter cache**: `getFilteredRequests()` now uses `_filteredCache` (invalidated in `loadAndRender()` and `setFilter()`), eliminating redundant array filtering when `handleAutoLoadScroll` + `autoLoadMore` fire in the same paint cycle (was up to 3x per frame).
+- **Sentinel done message**: changed `filtered.length > PAGE_SIZE` → `_visibleLimit >= PAGE_SIZE` so "Semua permintaan sudah ditampilkan." appears when exactly PAGE_SIZE items are shown (was missing for 10 items exactly).
+
 ## Rules
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
 - **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
