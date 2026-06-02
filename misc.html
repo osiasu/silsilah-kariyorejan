@@ -77,14 +77,15 @@
   </div>
   <div id="pinOverlay"><div class="pin-box"><div class="pin-logo">🔐 Super Admin Newsfeed</div><div class="pin-sub">Masukkan PIN Super Admin untuk mengelola berita.</div><input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="8"><div class="pin-error" id="pinError"></div><button class="primary-btn" id="pinConfirmBtn" type="button">Masuk</button><button class="ghost-btn" id="pinCancelBtn" type="button">Batal</button></div></div>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="js/config.local.js"></script>
   <script src="js/menu.js"></script>
   <script src="js/cursor.js"></script>
   <script>
     const STORAGE_KEY='trah_misc_news_cache';
-    const SUPABASE_URL='https://lckowkndmwiadwifilsv.supabase.co';
-    const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxja293a25kbXdpYWR3aWZpbHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA0MTgsImV4cCI6MjA5MjkwNjQxOH0.VrnY0DfgP_AW1UUJAI2sgNhZ8i8ok22nyWHpj4iQ-YQ';
+    const SUPABASE_URL = typeof LOCAL_SUPABASE_URL !== 'undefined' ? LOCAL_SUPABASE_URL : '__SUPABASE_URL__';
+    const SUPABASE_KEY = typeof LOCAL_SUPABASE_KEY !== 'undefined' ? LOCAL_SUPABASE_KEY : '__SUPABASE_KEY__';
     const TABLE_NEWS='misc_news';
-    const ADMIN_PIN='7215';
+    const ADMIN_PIN = typeof LOCAL_ADMIN_PIN !== 'undefined' ? LOCAL_ADMIN_PIN : '__ADMIN_PIN__';
     const els={pinnedList:document.getElementById('pinnedList'),newsList:document.getElementById('newsList'),empty:document.getElementById('emptyState'),total:document.getElementById('totalCount'),pinned:document.getElementById('pinnedCount'),result:document.getElementById('resultCount'),search:document.getElementById('searchNews'),modal:document.getElementById('newsModal'),detail:document.getElementById('detailModal'),form:document.getElementById('newsForm'),id:document.getElementById('newsId'),title:document.getElementById('newsTitle'),content:document.getElementById('newsContent'),category:document.getElementById('newsCategory'),pin:document.getElementById('newsPinned'),modalTitle:document.getElementById('modalTitle'),toast:document.getElementById('toast')};
     let state={filter:'all',query:''}, rows=[], isAdmin=false;
     function supaHeaders(extra){return Object.assign({'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY},extra||{})}

@@ -1,0 +1,8 @@
+// ── Local Supabase Config ──
+// Copy this file to config.local.js and fill in your real values.
+// config.local.js is gitignored — never committed.
+
+var LOCAL_SUPABASE_URL = 'https://your-project.supabase.co';
+var LOCAL_SUPABASE_KEY = 'eyJhbGciOi...your-anon-key...';
+var LOCAL_ADMIN_PIN = '0000';
+var LOCAL_GUEST_PIN = '0000';

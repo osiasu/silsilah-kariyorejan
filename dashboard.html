@@ -19,51 +19,222 @@
       --gold: #b8822e; --gold-light: #d4a55a; --gold-dim: rgba(184,130,46,0.12);
       --bg: #0f0d0a; --surface: #1a1611; --surface2: #221d15; --surface3: #2d2720;
       --border: rgba(184,130,46,0.15); --text: #f0ebe2; --text-muted: #8a7d6e;
-      --radius: 14px; --tab-h: 0px;
+      --radius: 14px;
     }
-
-    /* Light Theme (Fourmula.ai style) */
     [data-theme="light"] {
-      --bg: #faf8f5;
-      --surface: #ffffff;
-      --surface2: #f0ede6;
-      --surface3: #e8e4da;
-      --border: rgba(184,130,46,0.12);
-      --text: #1a1611;
-      --text-muted: #635a4e;
+      --bg: #faf8f5; --surface: #ffffff; --surface2: #f0ede6; --surface3: #e8e4da;
+      --border: rgba(184,130,46,0.12); --text: #1a1611; --text-muted: #635a4e;
     }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100dvh; overflow-x: hidden; }
-
-    /* Hide scrollbar but keep scrolling */
-    html { scrollbar-width: none; -ms-overflow-style: none; }
-    html::-webkit-scrollbar { display: none; }
-
-    /* PAGE CONTENT (page-specific only) */
-    .page-content { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:calc(100dvh - var(--header-h)); padding:2rem 1.5rem; text-align:center; }
-    .maintenance-icon { font-size:3.5rem; margin-bottom:1.25rem; opacity:0.85; animation: pulse 2.5s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.06)} }
-    .maintenance-title { font-family:'Plus Jakarta Sans',sans-serif; font-size:1.5rem; color:var(--gold-light); margin-bottom:0.6rem; }
-    .maintenance-sub { font-size:0.88rem; color:var(--text-muted); max-width:320px; line-height:1.65; margin-bottom:2rem; }
-    .back-link { display:inline-flex; align-items:center; gap:0.5rem; background:var(--surface); border:1px solid var(--border); border-radius:999px; padding:0.5rem 1.25rem; color:var(--text-muted); font-size:0.82rem; text-decoration:none; transition:all 0.18s; }
-    .back-link:hover { border-color:var(--gold); color:var(--gold-light); }
-    .decoration { width:120px; height:1px; background:linear-gradient(90deg,transparent,var(--gold),transparent); margin:0 auto 1.5rem; }
-
-    /* Dashboard */
-    .dashboard-frame {
-      border-radius: 20px;
-      border: 1px solid var(--border);
-      background: var(--surface);
-      box-shadow: 0 8px 32px rgba(184,130,46,0.12);
-      overflow: hidden;
-      max-width: 800px;
-      width: 100%;
+    html { scroll-behavior: smooth; scrollbar-width: none; -ms-overflow-style: none; }
+    html::-webkit-scrollbar, body::-webkit-scrollbar { display: none; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100dvh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    .dashboard-frame img {
+
+    /* ── DASHBOARD LAYOUT ── */
+    .dashboard-page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* ── HERO ── */
+    .dashboard-hero {
+      text-align: center;
+      position: relative;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dashboard-hero::after {
+      content: '';
       display: block;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 28px auto 0;
+    }
+    .hero-kicker {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold-light);
+      margin-bottom: 10px;
+    }
+    .hero-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.12;
+      color: var(--text);
+      margin-bottom: 14px;
+    }
+    .hero-sub {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.7;
+      max-width: 520px;
+      margin: 0 auto 24px;
+    }
+    .dashboard-cover {
+      max-width: 280px;
       width: 100%;
       height: auto;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+      display: block;
+      margin: 0 auto;
+    }
+
+    /* ── STATS ── */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .stat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 16px;
+      text-align: center;
+      transition: border-color 0.18s, transform 0.18s;
+    }
+    .stat-card:hover {
+      border-color: var(--gold-dim);
+      transform: translateY(-2px);
+    }
+    .stat-icon {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .stat-value {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--gold-light);
+      line-height: 1.1;
+    }
+    .stat-value.loading {
+      opacity: 0.4;
+      animation: pulse-stat 1.2s ease-in-out infinite;
+    }
+    @keyframes pulse-stat {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 0.7; }
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── NAV CARDS ── */
+    .nav-section-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 16px;
+      text-align: center;
+    }
+    .nav-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .nav-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 10px;
+      transition: border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+    }
+    .nav-card:hover {
+      border-color: var(--gold);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 24px rgba(184,130,46,0.12);
+    }
+    .nav-card:active {
+      transform: translateY(-1px);
+    }
+    .nav-card-icon {
+      width: 36px;
+      height: 36px;
+      color: var(--gold);
+      flex-shrink: 0;
+    }
+    .nav-card-title {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .nav-card-desc {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+    }
+    .nav-card-arrow {
+      color: var(--gold-light);
+      font-size: 1.1rem;
+      margin-top: auto;
+      transition: transform 0.2s;
+    }
+    .nav-card:hover .nav-card-arrow {
+      transform: translateX(4px);
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 720px) {
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .nav-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .dashboard-page {
+        padding: 18px 14px 36px;
+        gap: 24px;
+      }
+    }
+    @media (max-width: 440px) {
+      .nav-grid {
+        grid-template-columns: 1fr;
+      }
+      .stat-card {
+        padding: 14px 12px;
+      }
+      .stat-value {
+        font-size: 1.3rem;
+      }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation: none !important;
+        transition-duration: 0.01ms !important;
+      }
     }
   </style>
 </head>
@@ -102,12 +273,157 @@
     </div>
   </div>
 
-  <div class="page-content">
-    <div class="dashboard-frame">
-      <img src="https://res.cloudinary.com/dteeybsew/image/upload/v1778486880/cover_cu19xt.png" alt="Dashboard Preview">
-    </div>
-  </div>
+  <main class="dashboard-page">
 
+    <!-- HERO -->
+    <section class="dashboard-hero">
+      <div class="hero-kicker">Silsilah Trah Kariyo Rejo</div>
+      <h1 class="hero-title">Selamat Datang</h1>
+      <p class="hero-sub">
+        Portal keluarga besar Trah Kariyo Rejo. Jelajahi silsilah, biografi, dan kehangatan keluarga yang terus terjalin lintas generasi.
+      </p>
+      <img class="dashboard-cover" src="https://res.cloudinary.com/dteeybsew/image/upload/v1778486880/cover_cu19xt.png" alt="Silsilah Trah Kariyorejan">
+    </section>
+
+    <!-- STATS -->
+    <section class="stats-grid" id="statsGrid" aria-label="Statistik keluarga">
+      <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#x1F465;</span>
+        <div class="stat-value loading" id="statTotal">—</div>
+        <div class="stat-label">Total Anggota</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#x1F331;</span>
+        <div class="stat-value loading" id="statGenerasi">—</div>
+        <div class="stat-label">Generasi</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#x1F9B3;</span>
+        <div class="stat-value loading" id="statLaki">—</div>
+        <div class="stat-label">Laki-laki</div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-icon" aria-hidden="true">&#x1F9B0;</span>
+        <div class="stat-value loading" id="statPerempuan">—</div>
+        <div class="stat-label">Perempuan</div>
+      </div>
+    </section>
+
+    <!-- NAV CARDS -->
+    <section>
+      <h2 class="nav-section-title">Jelajahi</h2>
+      <div class="nav-grid">
+        <a href="index.html" class="nav-card">
+          <svg class="nav-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v18"/><path d="M3 12h18"/><path d="M3 12a9 9 0 0 0 9 9"/><path d="M3 12a9 9 0 0 1 9-9"/><path d="M12 21a9 9 0 0 0 9-9"/><path d="M12 21a9 9 0 0 1-9-9"/></svg>
+          <div class="nav-card-title">Pohon Silsilah</div>
+          <div class="nav-card-desc">Jelajahi pohon keluarga interaktif dengan tampilan zoomable</div>
+          <div class="nav-card-arrow">&rarr;</div>
+        </a>
+        <a href="introduction.html" class="nav-card">
+          <svg class="nav-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+          <div class="nav-card-title">Pengenalan</div>
+          <div class="nav-card-desc">Kata pengantar dan panduan membaca nomor silsilah</div>
+          <div class="nav-card-arrow">&rarr;</div>
+        </a>
+        <a href="biography.html" class="nav-card">
+          <svg class="nav-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          <div class="nav-card-title">Biografi</div>
+          <div class="nav-card-desc">Kisah dan riwayat hidup anggota keluarga</div>
+          <div class="nav-card-arrow">&rarr;</div>
+        </a>
+        <a href="attendance.html" class="nav-card">
+          <svg class="nav-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>
+          <div class="nav-card-title">Kehadiran</div>
+          <div class="nav-card-desc">Pantau kehadiran dan RSVP acara keluarga</div>
+          <div class="nav-card-arrow">&rarr;</div>
+        </a>
+        <a href="request-list.html" class="nav-card">
+          <svg class="nav-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" x2="8" y1="13" y2="13"/><line x1="16" x2="8" y1="17" y2="17"/></svg>
+          <div class="nav-card-title">Antrian Permintaan</div>
+          <div class="nav-card-desc">Ajukan atau kelola permintaan data silsilah</div>
+          <div class="nav-card-arrow">&rarr;</div>
+        </a>
+        <a href="misc.html" class="nav-card">
+          <svg class="nav-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
+          <div class="nav-card-title">Lainnya</div>
+          <div class="nav-card-desc">Informasi tambahan dan tautan berguna</div>
+          <div class="nav-card-arrow">&rarr;</div>
+        </a>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/config.local.js"></script>
+  <script>
+  (function() {
+    'use strict';
+
+    var SUPABASE_URL = typeof LOCAL_SUPABASE_URL !== 'undefined' ? LOCAL_SUPABASE_URL : '__SUPABASE_URL__';
+    var SUPABASE_KEY = typeof LOCAL_SUPABASE_KEY !== 'undefined' ? LOCAL_SUPABASE_KEY : '__SUPABASE_KEY__';
+
+    function supaHeaders() {
+      return { 'Content-Type': 'application/json', 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+    }
+
+    function $(id) { return document.getElementById(id); }
+
+    function fetchStats() {
+      var totalP = fetch(SUPABASE_URL + '/rest/v1/members?select=id', { headers: supaHeaders() })
+        .then(function(r) { if (!r.ok) throw new Error('Gagal ambil data'); return r.json(); })
+        .then(function(rows) { return rows.length; });
+
+      var genP = fetch(SUPABASE_URL + '/rest/v1/members?select=generasi&order=generasi.desc&limit=1', { headers: supaHeaders() })
+        .then(function(r) { if (!r.ok) throw new Error('Gagal ambil generasi'); return r.json(); })
+        .then(function(rows) { return rows.length ? rows[0].generasi : 0; });
+
+      var genderP = fetch(SUPABASE_URL + '/rest/v1/members?select=gender', { headers: supaHeaders() })
+        .then(function(r) { if (!r.ok) throw new Error('Gagal ambil gender'); return r.json(); })
+        .then(function(rows) {
+          var l = 0, p = 0;
+          rows.forEach(function(r) {
+            if (r.gender === 'L') l++;
+            else if (r.gender === 'P') p++;
+          });
+          return { laki: l, perempuan: p };
+        });
+
+      return Promise.all([totalP, genP, genderP]);
+    }
+
+    function renderStats(total, generasi, gender) {
+      var el = $('statTotal');
+      if (el) { el.textContent = total || 0; el.classList.remove('loading'); }
+
+      el = $('statGenerasi');
+      if (el) { el.textContent = generasi || 0; el.classList.remove('loading'); }
+
+      el = $('statLaki');
+      if (el) { el.textContent = gender.laki || 0; el.classList.remove('loading'); }
+
+      el = $('statPerempuan');
+      if (el) { el.textContent = gender.perempuan || 0; el.classList.remove('loading'); }
+    }
+
+    function showStatsError() {
+      ['statTotal','statGenerasi','statLaki','statPerempuan'].forEach(function(id) {
+        var el = $(id);
+        if (el) { el.textContent = '—'; el.classList.remove('loading'); }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      fetchStats()
+        .then(function(results) {
+          renderStats(results[0], results[1], results[2]);
+        })
+        .catch(function() {
+          showStatsError();
+        });
+    });
+
+  })();
+  </script>
   <script src="js/menu.js"></script>
   <script src="js/cursor.js"></script>
 </body>
