@@ -142,10 +142,50 @@ Static genealogy site (family tree). Indonesian language. Pages: `tree.html` (ma
 - **Updated** `js/data.js`: comment references
 - **Updated** `deploy.yml`: added `__DEFAULT_PAGE__` sed replacement
 
+## Session 2026-06-02g — misc.html Markdown + Cloudinary image upload + YouTube embed
+**Follow-up:** added preview button + fixed card render (images/videos viewable in card + detail)
+
+- **Preview button**: `#previewBtn` in modal form, opens detail modal with rendered content before save
+- **Card render fix**: changed `<p class="news-body">${esc(n.content)}</p>` → `<div class="news-body">${renderDetailHTML(n.content)}</div>` so images/videos render inline in cards; removed `renderCardPreview()`
+- **CSS**: `.news-card .news-body` uses `max-height:7em` + hides iframes, images capped at 80px
+- **YouTube embed fix**: replaced placeholder approach (which caused `<p>` wrapping invalid HTML → stripped) with direct iframe replacement **before** `marked.parse()`. YouTube URLs now properly render as playable iframes in detail modal. Removed `youtubePlaceholders`/`replaceYouTubeIframes` helpers.
+- **🔥 CRITICAL BUG**: `renderDetailHTML()` checked `t.startsWith('<')` **before** `t.startsWith('<!-- md -->')`. Since `<!-- md -->` starts with `<`, markdown content was returned as raw text and never processed. Fixed by swapping check order.
+
+### misc.html (original session)
+- **Markdown toggle**: checkbox `#useMarkdown` in news form, stores content with `<!-- md -->` prefix
+- **Dependencies**: `marked.js` + `DOMPurify` from CDN (loaded before config.local.js)
+- **Cloudinary upload**: preset `trah_news_unsigned`, cloud `dteeybsew`, paste/drop image → upload → insert `![gambar](url)` at cursor
+- **YouTube embed**: auto-detect `youtube.com/watch?v=` / `youtu.be/` URLs (incl. extra params like `&list=`), replaces with responsive iframe at render time (before marked.parse to avoid invalid nesting)
+- **Rendering**: `renderDetailHTML()` renders markdown via marked → DOMPurify → innerHTML; card uses same fn (images show capped at 80px, iframes hidden in cards)
+- **Legacy compatibility**: plain text content unchanged; HTML content (starts with `<`) rendered directly
+- **Safety**: DOMPurify sanitizes with `ADD_TAGS:['iframe']`, `ADD_ATTR:['allow','allowfullscreen','frameborder']`; try-catch fallback to escaped plain text
+- **New CSS**: `.markdown-toggle-row`, `.check-row-toggle`, `.markdown-hint`, enhanced `.detail-body` (img/iframe/a/ul/ol/blockquote), `.news-card .news-body` (max-height, img/iframe styling)
+
+## Session 2026-06-02h — misc.html YouTube embed: DOM API approach + thumbnail in cards
+
+### Problem
+YouTube embed Error 153 persisted through regex+iframe-in-markdown pipeline. `marked.parse()` + `DOMPurify.sanitize()` chain mangled iframe config (CSS margin, attributes stripped, etc.).
+
+### Fix: bypass DOMPurify for iframes
+- **`renderDetailHTML()`**: stripped YouTube URL→iframe conversion. YouTube URLs become `<a>` links via marked autolink, pass through DOMPurify clean.
+- **`embedYouTubeLinks(el)`**: new function. Post-processes DOM after `innerHTML` — finds `<a>` with YouTube `href`, replaces with `<div class="youtube-embed"><iframe></iframe></div>` via `document.createElement()`. Bypasses DOMPurify entirely for iframe creation.
+- **`openDetail()` + preview handler**: call `embedYouTubeLinks(detailBody)` after setting innerHTML.
+- **Cards**: no longer contain hidden iframes (was `display:none`). YouTube URL shows as clickable link.
+
+### Fix: YouTube thumbnail in cards
+- **`renderDetailHTML()`**: replaces YouTube URLs with `<a class="yt-card-thumb"><img src=".../mqdefault.jpg"></a>` **before** `marked.parse()`.
+- **CSS**: `.yt-card-thumb` — flex container, 8px radius, image capped 120px with object-fit, ▶ play button overlay (centered, semi-transparent), hover scale + opacity.
+- **Detail modal**: `embedYouTubeLinks()` catches `<a class="yt-card-thumb">` and replaces it with embed iframe (same as plain links).
+- **Thumbnail URL**: `https://img.youtube.com/vi/VIDEO_ID/mqdefault.jpg` (320×180, always exists).
+
+### Fix: YouTube embed not centered in detail modal
+- **Root cause**: `.detail-body iframe { margin: .8rem 0 }` applied to absolutely-positioned embed iframe, shifting it down.
+- **Fix**: added `.youtube-embed iframe { margin: 0 !important }` to override.
+
 ## Rules
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
 - **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
 
 ### Git
-- Active branch: `release/20260602-credential-safety`
+- Active branch: `main`
 - Remote: `https://github.com/osiasu/silsilah-kariyorejan.git`
