@@ -298,12 +298,12 @@
         <div class="stat-label">Generasi</div>
       </div>
       <div class="stat-card">
-        <span class="stat-icon" aria-hidden="true">&#x1F9B3;</span>
+        <span class="stat-icon" aria-hidden="true">&#x1F468;</span>
         <div class="stat-value loading" id="statLaki">—</div>
         <div class="stat-label">Laki-laki</div>
       </div>
       <div class="stat-card">
-        <span class="stat-icon" aria-hidden="true">&#x1F9B0;</span>
+        <span class="stat-icon" aria-hidden="true">&#x1F469;</span>
         <div class="stat-value loading" id="statPerempuan">—</div>
         <div class="stat-label">Perempuan</div>
       </div>
@@ -369,15 +369,19 @@
     function $(id) { return document.getElementById(id); }
 
     function fetchStats() {
-      var totalP = fetch(SUPABASE_URL + '/rest/v1/members?select=id', { headers: supaHeaders() })
+      var totalMembers = fetch(SUPABASE_URL + '/rest/v1/members?select=id&deleted_at=is.null', { headers: supaHeaders() })
         .then(function(r) { if (!r.ok) throw new Error('Gagal ambil data'); return r.json(); })
+        .then(function(rows) { return rows.length; });
+
+      var totalSpouses = fetch(SUPABASE_URL + '/rest/v1/spouses?select=id&deleted_at=is.null', { headers: supaHeaders() })
+        .then(function(r) { if (!r.ok) throw new Error('Gagal ambil data pasangan'); return r.json(); })
         .then(function(rows) { return rows.length; });
 
       var genP = fetch(SUPABASE_URL + '/rest/v1/members?select=generasi&deleted_at=is.null&order=generasi.desc.nullslast&limit=1', { headers: supaHeaders() })
         .then(function(r) { if (!r.ok) throw new Error('Gagal ambil generasi'); return r.json(); })
         .then(function(rows) { return rows.length ? rows[0].generasi : 0; });
 
-      var genderP = fetch(SUPABASE_URL + '/rest/v1/members?select=gender', { headers: supaHeaders() })
+      var genderMembers = fetch(SUPABASE_URL + '/rest/v1/members?select=gender&deleted_at=is.null', { headers: supaHeaders() })
         .then(function(r) { if (!r.ok) throw new Error('Gagal ambil gender'); return r.json(); })
         .then(function(rows) {
           var l = 0, p = 0;
@@ -388,7 +392,18 @@
           return { laki: l, perempuan: p };
         });
 
-      return Promise.all([totalP, genP, genderP]);
+      var genderSpouses = fetch(SUPABASE_URL + '/rest/v1/spouses?select=gender&deleted_at=is.null', { headers: supaHeaders() })
+        .then(function(r) { if (!r.ok) throw new Error('Gagal ambil gender pasangan'); return r.json(); })
+        .then(function(rows) {
+          var l = 0, p = 0;
+          rows.forEach(function(r) {
+            if (r.gender === 'L') l++;
+            else if (r.gender === 'P') p++;
+          });
+          return { laki: l, perempuan: p };
+        });
+
+      return Promise.all([totalMembers, totalSpouses, genP, genderMembers, genderSpouses]);
     }
 
     function renderStats(total, generasi, gender) {
@@ -415,7 +430,10 @@
     document.addEventListener('DOMContentLoaded', function() {
       fetchStats()
         .then(function(results) {
-          renderStats(results[0], results[1], results[2]);
+          var total = results[0] + results[1];
+          var generasi = results[2];
+          var gender = { laki: results[3].laki + results[4].laki, perempuan: results[3].perempuan + results[4].perempuan };
+          renderStats(total, generasi, gender);
         })
         .catch(function() {
           showStatsError();
