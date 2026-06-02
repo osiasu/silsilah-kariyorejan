@@ -72,6 +72,7 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 
 ## Rules
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
+- **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
 
 ### Git
 - Active branch: `release/20260602-credential-safety`
