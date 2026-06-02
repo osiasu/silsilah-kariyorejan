@@ -34,3 +34,45 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 ## Useful
 - Dev test: open any `.html` directly in browser (file:// works, CORS handled by `data.js`).
 - Before editing, check `js/menu.js` for shared behavior touched by all pages.
+
+## Session 2026-06-02 — Dashboard + Introduction polish
+
+### dashboard.html
+- **Built out** from placeholder (cover image only) → full homepage
+- Sections: hero welcome, cover image (280px), 4 stat cards (Supabase live), 6 nav cards
+- Stats fetched from Supabase `members` table: total, generasi, gender breakdown
+- Cards follow same gold/surface theme, hover lift effects, responsive grid
+- IIFE pattern, zero inline handlers
+
+### introduction.html
+- Added `transition` + hover effect on `.intro-card` (border glow + shadow lift)
+- Extracted inline `<p style="...">` → `.closing-salam` CSS class
+- Added missing `-ms-overflow-style: none` on `<html>` (IE consistency)
+- `padding: 1rem 1rem` → `padding: 1rem` shorthand
+- Mobile breakpoint `640px` → `680px` (project standard)
+- Removed extra blank line
+
+### Supabase credentials (committed live, not placeholders)
+- All pages use real creds directly: `https://lckowkndmwiadwifilsv.supabase.co`
+- Key in: `attendance.html`, `request-list.html`, `dashboard.html`
+- Tables: `members`, `events`, `attendance`, `spouses`, `data_requests`
+
+## Session 2026-06-02b — Biography + Misc cleanup
+
+### biography.html
+- Separated `<meta>` tags (were on same line with `/>`)
+- Mobile breakpoint `560px` → `680px` (project standard)
+- Adjusted mobile `.bio-title` from `1.55rem` → `1.35rem`; mobile `.bio-copy` now uses `clamp` sizing instead of redundant `text-align/line-height`
+- Removed extra blank line after `<body>`
+
+### misc.html
+- Expanded theme script from one-liner to multi-line IIFE (matches other pages)
+- Mobile breakpoint `820px` → `680px` (project standard)
+- No functional changes
+
+## Rules
+- **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
+
+### Git
+- Active branch: `release/20260602-credential-safety`
+- Remote: `https://github.com/osiasu/silsilah-kariyorejan.git`
