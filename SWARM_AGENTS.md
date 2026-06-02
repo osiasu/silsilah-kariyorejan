@@ -36,7 +36,7 @@ File: `.opencode/opencode.json`
 
 ## Project Shape Observed
 
-- Main files include `index.html`, `menu.css`, and `menu.js`
+- Main files include `tree.html` (family tree, formerly `index.html`), `index.html` (configurable redirector), `menu.css`, and `menu.js`
 - Additional pages include `introduction.html`, `dashboard.html`, `request-list.html`, `misc.html`, `attendance.html`, and `biography.html`
 - Shared navigation/theme behavior is centralized mostly in `menu.js` and `menu.css`
 - Pages currently use inline styles and inline scripts heavily
@@ -75,7 +75,7 @@ Sample:
 @orchestrator Build feature: Add searchable family member cards
 
 Goal:
-Users can search family members by name, branch, or generation from index.html.
+Users can search family members by name, branch, or generation from tree.html.
 
 Constraints:
 - Static HTML/CSS/JS only.
@@ -85,7 +85,7 @@ Constraints:
 - No external search library.
 
 Swarm plan:
-1. @researcher inspect index.html, menu.js, menu.css for current search/UI patterns.
+1. @researcher inspect tree.html, menu.js, menu.css for current search/UI patterns.
 2. @uiux-senior define search UX and empty/loading states.
 3. @fe-designer design card/search/filter visual states.
 4. @fe-engineer implement JS search/filter logic.
@@ -124,10 +124,10 @@ Best for:
 
 Sample:
 ```
-@orchestrator Refactor: Extract shared styles and scripts from index.html
+@orchestrator Refactor: Extract shared styles and scripts from tree.html
 
 Goal:
-Move reusable CSS/JS patterns from index.html into shared files while preserving the exact visual behavior.
+Move reusable CSS/JS patterns from tree.html into shared files while preserving the exact visual behavior.
 
 Constraints:
 - Do not change content.
@@ -136,7 +136,7 @@ Constraints:
 - Keep all pages loading correctly.
 
 Swarm plan:
-1. @researcher identify shared style/script blocks in index.html and other HTML pages.
+1. @researcher identify shared style/script blocks in tree.html and other HTML pages.
 2. @fe-designer classify styles into tokens, layout, components, page-specific styles.
 3. @fe-engineer classify JS into shared behavior vs page-specific behavior.
 4. @coder extract only low-risk shared code first.
