@@ -515,19 +515,20 @@
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
+  <script src="js/config.local.js"></script>
   <script src="js/menu.js"></script>
   <script>
   (function() {
     'use strict';
 
     // -- CONFIG --
-    const SUPABASE_URL = 'https://lckowkndmwiadwifilsv.supabase.co';
-    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxja293a25kbXdpYWR3aWZpbHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA0MTgsImV4cCI6MjA5MjkwNjQxOH0.VrnY0DfgP_AW1UUJAI2sgNhZ8i8ok22nyWHpj4iQ-YQ';
+    const SUPABASE_URL = typeof LOCAL_SUPABASE_URL !== 'undefined' ? LOCAL_SUPABASE_URL : '__SUPABASE_URL__';
+    const SUPABASE_KEY = typeof LOCAL_SUPABASE_KEY !== 'undefined' ? LOCAL_SUPABASE_KEY : '__SUPABASE_KEY__';
     const TABLE_EVENTS = 'events';
     const TABLE_ATTENDANCE = 'attendance';
     const TABLE_MEMBERS = 'members';
     const TABLE_SPOUSES = 'spouses';
-    const ADMIN_PIN = '7215';
+    const ADMIN_PIN = typeof LOCAL_ADMIN_PIN !== 'undefined' ? LOCAL_ADMIN_PIN : '__ADMIN_PIN__';
     const PAGE_SIZE = 10;
 
     // -- STATE --
