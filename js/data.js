@@ -1,11 +1,11 @@
 // data.js — Salin isi data.csv Anda ke dalam template literal di bawah ini.
-// File ini digunakan agar index.html bisa dibuka langsung via file:// tanpa CORS error.
+// File ini digunakan agar tree.html bisa dibuka langsung via file:// tanpa CORS error.
 //
 // Cara pakai:
 //   1. Buka data.csv dengan teks editor
 //   2. Salin seluruh isinya, gantikan teks "(isi data.csv Anda di sini)"
 //   3. Simpan file ini
-//   4. Pastikan di index.html ada baris ini SEBELUM tag <script> utama:
+//   4. Pastikan di tree.html ada baris ini SEBELUM tag <script> utama:
 //        <script src="data.js"></script>
 //
 // Contoh isi:

@@ -1,11 +1,11 @@
 # Silsilah Trah Kariyorejan — Agent Memory
 
 ## Project
-Static genealogy site (family tree). Indonesian language. Pages: `index.html` (main tree), `dashboard.html`, `introduction.html`, `biography.html`, `attendance.html`, `request-list.html`, `misc.html`.
+Static genealogy site (family tree). Indonesian language. Pages: `tree.html` (main tree), `index.html` (configurable redirector → `dashboard.html`), `introduction.html`, `biography.html`, `attendance.html`, `request-list.html`, `misc.html`.
 
 ## Must-know
 - **No build system** — pure HTML/CSS/JS. No npm, package.json, bundler.
-- **Deploy**: GitHub Actions → `sed` replaces placeholders `__SUPABASE_URL__`, `__SUPABASE_KEY__`, `__ADMIN_PIN__`, `__GUEST_PIN__` in all `*.html`. **Never commit real credentials**.
+- **Deploy**: GitHub Actions → `sed` replaces placeholders `__SUPABASE_URL__`, `__SUPABASE_KEY__`, `__ADMIN_PIN__`, `__GUEST_PIN__`, `__DEFAULT_PAGE__` in all `*.html`. **Never commit real credentials**.
 - **Data**: Static CSV fallback in `js/data.js` (`window.CSV_DATA`). Supabase backend for live CRUD.
 - **Theme**: `localStorage` key = `trah_theme`. CSS vars under `:root` / `[data-theme="light"]`. Logo swaps in `menu.js:30-34`.
 - **Events**: Inline `onclick`/`oninput` in HTML, not delegated. Search in HTML for handlers.
@@ -17,7 +17,7 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 - **`.opencode/`** is gitignored. OpenCode local config lives there.
 
 ## Danger zones
-- `index.html` is ~150KB with massive inline `<style>`. Don't reformat or move things without testing.
+- `tree.html` (formerly `index.html`) is ~150KB with massive inline `<style>`. Don't reformat or move things without testing.
 - `bio-magnet.js` has its own cursor code duplication (disabled — uses `cursor.js` instead).
 - `scroll-animations.js` has another cursor init (commented out). Don't re-enable without removing the standalone one.
 - Logo position switches DOM parent on resize < 680px (`menu.js:36-47`). Don't hardcode logo location.
@@ -26,7 +26,7 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 ## Patterns
 - CSS: BEM-lite. JS: IIFE wrappers, `'use strict'`. No modules/imports.
 - Progress bar reads scroll, shows `0%`–`100%`. Pill in header + menu panel.
-- Filter chips in `index.html` use `data-gen` attribute. Tree view has zoom controls.
+- Filter chips in `tree.html` use `data-gen` attribute. Tree view has zoom controls.
 - Sheet UI pattern: overlay + centered modal with sheet-header/sheet-body.
 - Admin mode: PIN overlay (8-digit), banner, FAB for add, edit/delete buttons in detail sheet.
 - Request system: type selection → form → preview → submit to Supabase.
@@ -130,6 +130,17 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 - **Removed**: duplicate `@keyframes spin` (second identical instance)
 - **Removed**: unused `const searchFeedback` from `handleSearch()` (declared but never read)
 - Verified by tester subagent — all 5 cleanups safe, no regressions.
+
+## Session 2026-06-02f — Default page: index.html → tree.html + redirector
+
+### index.html rename + redirector
+- **Renamed** `index.html` (family tree, ~3587 lines) → `tree.html`
+- **Created** new `index.html` as thin JS redirector (uses `window.location.replace`) with `__DEFAULT_PAGE__` placeholder
+- **Configurable** via GitHub Variable `DEFAULT_PAGE` (default: `dashboard.html`) — change anytime in Settings → Secrets & variables → Variables
+- **Updated** 8 `href="index.html"` → `href="tree.html"` across `dashboard.html`, `request-list.html`, `attendance.html`, `misc.html`, `biography.html`, `introduction.html`
+- **Updated** `js/menu.js`: menu link (line 334), root fallback (line 230) to `dashboard.html`
+- **Updated** `js/data.js`: comment references
+- **Updated** `deploy.yml`: added `__DEFAULT_PAGE__` sed replacement
 
 ## Rules
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.

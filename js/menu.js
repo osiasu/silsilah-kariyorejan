@@ -227,7 +227,7 @@
   }
 
   function setActiveMenuLink() {
-    const page = window.location.pathname.split('/').pop() || 'index.html';
+    const page = window.location.pathname.split('/').pop() || 'dashboard.html';
     document.querySelectorAll('.menu-link').forEach(link => {
       if (link.getAttribute('href') === page) link.classList.add('active');
     });
@@ -331,7 +331,7 @@
             <a href="dashboard.html"    class="menu-link">Beranda</a>
             <a href="introduction.html" class="menu-link">Pengenalan</a>
             <a href="biography.html"    class="menu-link">Biografi</a>
-            <a href="index.html"        class="menu-link">Pohon Silsilah</a>
+            <a href="tree.html"         class="menu-link">Pohon Silsilah</a>
           </div>
 
           <div class="menu-divider"></div>
