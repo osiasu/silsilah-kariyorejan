@@ -74,6 +74,38 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
 - **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
 
+## Session 2026-06-02c — Attendance + Request-list audit
+
+### attendance.html
+- ~1645 lines. IIFE, `'use strict'`. Inline `onclick` on attendance-header toggle + event delegation for `.attendance-action`
+- **Person picker**: custom combobox (keyboard nav, member/spouse groups, localStorage `attendance_person`)
+- **Current event**: date===today + status ongoing, hero card with absen button, countdown badge
+- **Upcoming events**: horizontal scroll snap, RSVP buttons, countdown labels refresh every 60s
+- **Charts**: Chart.js CDN (bar/donut/line). Donut has `::before`/`::after` 3D glow. Tab switching destroys & recreates line chart to fix mobile resize
+- **Attendance list**: paginated (10), expand/collapse per event with attendee grid, search by title/location/attendee name
+- **Admin**: PIN overlay (8-digit), cookie `trah_attendance_admin` (30d), CRUD events via modal, delete cascades attendance rows
+- **Offline**: localStorage cache `attendance_cache` fallback on fetch failure
+- **Mobile breakpoint**: `767px` (not 680px — intentional deviation)
+- **Danger**: duplicate `crossAlign: 'far'` on bar chart y-axis ticks (line 1170-1171); duplicate `mouseenter`/`mouseleave` mapping in `deleteEvent`
+- **Credentials**: live Supabase (not placeholders)
+
+### request-list.html
+- ~610 lines. Globals + inline `onclick` (no IIFE). PIN gate before content renders
+- **Access gate**: two tabs (guest/admin), accepts either PIN, cookie `trah_auth` (30d)
+- **Status filter tabs**: all/pending/in_progress/completed/rejected + refresh button
+- **Auto-load more**: scroll-based (160px offset, 350ms debounce), sentinel dots
+- **Detail modal**: preview grid with dynamic field rendering, action buttons conditional on `isAdmin`
+- **Admin actions**: approve (writes to `members`/`spouses` table + sets completed), reject, delete, in_progress
+- **Request types**: `add_member`, `add_spouse`, `update_member`, `update_spouse` — each maps to different Supabase POST/PATCH
+- **Data flow**: `nullify` helper converts empty strings → null to avoid DB constraint violations
+- **Pending badge**: `updatePendingBadge()` fetches pending count, updates `#navPendingBadge`
+- **Credentials**: live Supabase (not placeholders). Uses both `ADMIN_PIN` and `GUEST_PIN`
+- **Danger**: `load-more-sentinel` always burns visible even when no more data (conditional render only checks `> PAGE_SIZE` for "done" message but not 0 remaining); `getFilteredRequests()` called multiple times per render cycle (can optimize)
+
+## Rules
+- **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
+- **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
+
 ### Git
 - Active branch: `release/20260602-credential-safety`
 - Remote: `https://github.com/osiasu/silsilah-kariyorejan.git`

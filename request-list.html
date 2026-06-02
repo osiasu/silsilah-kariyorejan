@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Antrian Permintaan — Silsilah Trah Kariyorejan</title>
   <script>
     (function() {
@@ -253,6 +254,9 @@
 
   <script src="js/config.local.js"></script>
   <script>
+  (function() {
+    'use strict';
+
     const SUPABASE_URL  = typeof LOCAL_SUPABASE_URL !== 'undefined' ? LOCAL_SUPABASE_URL : '__SUPABASE_URL__';
     const SUPABASE_KEY  = typeof LOCAL_SUPABASE_KEY !== 'undefined' ? LOCAL_SUPABASE_KEY : '__SUPABASE_KEY__';
     const ADMIN_PIN  = typeof LOCAL_ADMIN_PIN !== 'undefined' ? LOCAL_ADMIN_PIN : '__ADMIN_PIN__';
@@ -263,10 +267,11 @@
     let isAdmin = false;
     let _allRequests = [];
     let _currentFilter = 'all';
-    let _activePinTab = 'guest'; // 'guest' | 'admin'
+    let _activePinTab = 'guest';
     let _visibleLimit = 10;
     let _isAutoLoading = false;
     let _autoLoadBound = false;
+    let _filteredCache = null;
     const PAGE_SIZE = 10;
     const AUTO_LOAD_OFFSET = 160;
 
@@ -274,14 +279,9 @@
       return {'Content-Type':'application/json','apikey':SUPABASE_KEY,'Authorization':`Bearer ${SUPABASE_KEY}`};
     }
 
-    // ── COOKIES ──
     function setCookie(name,val,days){const d=new Date();d.setTime(d.getTime()+days*86400000);document.cookie=`${name}=${encodeURIComponent(val)};expires=${d.toUTCString()};path=/;SameSite=Lax`;}
     function getCookie(name){const m=document.cookie.match(new RegExp('(?:^|; )'+name+'=([^;]*)'));return m?decodeURIComponent(m[1]):null;}
 
-    // ── SIDEBAR ──
-
-
-    // ── PIN TAB ──
     function switchPinTab(tab) {
       _activePinTab = tab;
       document.getElementById('tabGuest').classList.toggle('active', tab === 'guest');
@@ -291,7 +291,6 @@
       document.getElementById('gateInput').focus();
     }
 
-    // ── GATE AUTH ──
     function confirmGate() {
       const val = document.getElementById('gateInput').value;
       const expectedPin = _activePinTab === 'admin' ? ADMIN_PIN : GUEST_PIN;
@@ -336,7 +335,6 @@
       renderPageIntro();
     }
 
-    // ── ADMIN UPGRADE (from within the page) ──
     function toggleAdminUpgrade() {
       if (isAdmin) { logoutAdmin(); return; }
       document.getElementById('pinOverlay').classList.add('open');
@@ -349,7 +347,7 @@
       if (val === ADMIN_PIN) {
         document.getElementById('pinOverlay').classList.remove('open');
         applyAdminMode();
-        loadAndRender(); // re-render to show action buttons
+        loadAndRender();
       } else {
         document.getElementById('pinError').textContent = 'PIN salah.';
         document.getElementById('pinInput').value = '';
@@ -365,16 +363,16 @@
       document.getElementById('adminBtn').classList.remove('admin-active');
       document.getElementById('adminBanner').classList.remove('visible');
       renderPageIntro();
-      loadAndRender(); // re-render to hide action buttons
+      loadAndRender();
     }
 
-    // ── LOAD & RENDER ──
     async function loadAndRender() {
       document.getElementById('reqList').innerHTML = '<div class="spinner"></div>';
       try {
         const res = await fetch(`${SUPABASE_URL}/rest/v1/${TABLE_REQUESTS}?select=*&order=created_at.desc`, {headers:supaHeaders()});
         if (!res.ok) throw new Error(await res.text());
         _allRequests = await res.json();
+        _filteredCache = null;
         _visibleLimit = PAGE_SIZE;
         _isAutoLoading = false;
         renderList();
@@ -385,6 +383,7 @@
 
     function setFilter(f, btn) {
       _currentFilter = f;
+      _filteredCache = null;
       _visibleLimit = PAGE_SIZE;
       _isAutoLoading = false;
       window.scrollTo({top:0,behavior:'smooth'});
@@ -394,7 +393,10 @@
     }
 
     function getFilteredRequests() {
-      return _currentFilter === 'all' ? _allRequests : _allRequests.filter(r=>r.status===_currentFilter);
+      if (_filteredCache === null) {
+        _filteredCache = _currentFilter === 'all' ? _allRequests : _allRequests.filter(r=>r.status===_currentFilter);
+      }
+      return _filteredCache;
     }
 
     function renderList() {
@@ -424,7 +426,7 @@
       const hasMore = _visibleLimit < filtered.length;
       const footerHtml = hasMore
         ? `<div class="load-more-sentinel" id="loadMoreSentinel" role="status" aria-live="polite" aria-label="Memuat permintaan berikutnya"><span class="load-dot"></span><span class="load-dot"></span><span class="load-dot"></span><span>Memuat lagi...</span></div>`
-        : filtered.length > PAGE_SIZE
+        : _visibleLimit >= PAGE_SIZE
           ? `<div class="load-more-done">Semua permintaan sudah ditampilkan.</div>`
           : '';
       document.getElementById('reqList').innerHTML = `<div class="req-list">${html}${footerHtml}</div><div class="sr-only" aria-live="polite">${visibleRows.length} dari ${filtered.length} permintaan ditampilkan.</div>`;
@@ -459,7 +461,6 @@
       }, 350);
     }
 
-    // ── DETAIL ──
     function openDetail(id) {
       const r = _allRequests.find(x=>x.id===id);
       if (!r) return;
@@ -485,7 +486,6 @@
           <div class="preview-grid">${dataHtml||pf('','Tidak ada data')}</div>
         </div>`;
 
-      // Action buttons: only shown to admin
       let footerHtml = `<button class="btn-cancel" style="flex:1" onclick="closeDetail()">Tutup</button>`;
       if (isAdmin) {
         footerHtml += `<button class="btn-delete" onclick="deleteRequest('${r.id}')">🗑 Hapus</button>`;
@@ -543,7 +543,6 @@
       if(!r) return;
       if (r.status === 'rejected') { showToast('Permintaan ditolak tidak dapat diproses.'); return; }
       if (!confirm('Setujui dan simpan data ini ke silsilah?')) return;
-      // Convert empty strings → null so DB check constraints aren't violated
       const nullify = obj => Object.fromEntries(
         Object.entries(obj).map(([k, v]) => [k, (v === '' || v === undefined) ? null : v])
       );
@@ -584,17 +583,13 @@
       t.textContent=msg;t.style.opacity='1';clearTimeout(t._t);t._t=setTimeout(()=>t.style.opacity='0',2800);
     }
 
-    // ── INIT ──
     window.addEventListener('DOMContentLoaded', () => {
       const auth = getCookie('trah_auth');
       if (auth === 'guest' || auth === 'admin') {
         enterApp(auth);
       } else {
-        // show gate
         setTimeout(() => document.getElementById('gateInput').focus(), 100);
       }
-
-      // ESC key closes overlays
       document.getElementById('adminLogoutBtn')?.addEventListener('click', logoutAdmin);
       document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
@@ -603,6 +598,22 @@
         }
       });
     });
+
+    window.switchPinTab = switchPinTab;
+    window.confirmGate = confirmGate;
+    window.setFilter = setFilter;
+    window.loadAndRender = loadAndRender;
+    window.toggleAdminUpgrade = toggleAdminUpgrade;
+    window.confirmAdminPin = confirmAdminPin;
+    window.closePinOverlay = closePinOverlay;
+    window.openDetail = openDetail;
+    window.closeDetail = closeDetail;
+    window.deleteRequest = deleteRequest;
+    window.updateStatus = updateStatus;
+    window.rejectRequest = rejectRequest;
+    window.approveRequest = approveRequest;
+    window.logoutAdmin = logoutAdmin;
+  })();
   </script>
   <script src="js/menu.js"></script>
   <script src="js/cursor.js"></script>
