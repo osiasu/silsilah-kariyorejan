@@ -1,5 +1,6 @@
 # OpenCode configuration
 .opencode/
+!AGENTS.md
 
 # OS files
 .DS_Store
@@ -11,3 +12,6 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Local config (credentials for local dev)
+js/config.local.js

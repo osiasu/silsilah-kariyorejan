@@ -1406,10 +1406,11 @@ html::-webkit-scrollbar {
   <!-- Remove or comment this line once you've deployed to a web server -->
   <script src="js/data.js"></script>
 
+  <script src="js/config.local.js"></script>
   <script>
-    // ── SUPABASE CONFIG ── (replace with your project values)
-    const SUPABASE_URL  = 'https://lckowkndmwiadwifilsv.supabase.co';
-    const SUPABASE_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imxja293a25kbXdpYWR3aWZpbHN2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMzA0MTgsImV4cCI6MjA5MjkwNjQxOH0.VrnY0DfgP_AW1UUJAI2sgNhZ8i8ok22nyWHpj4iQ-YQ';
+    // ── SUPABASE CONFIG ──
+    const SUPABASE_URL  = typeof LOCAL_SUPABASE_URL !== 'undefined' ? LOCAL_SUPABASE_URL : '__SUPABASE_URL__';
+    const SUPABASE_KEY  = typeof LOCAL_SUPABASE_KEY !== 'undefined' ? LOCAL_SUPABASE_KEY : '__SUPABASE_KEY__';
     const TABLE_MEMBERS = 'members';   // resident rows
     const TABLE_SPOUSES = 'spouses';   // spouse rows
 
@@ -1417,9 +1418,7 @@ html::-webkit-scrollbar {
     const sheetURL = "data.csv";
 
     // ── ADMIN STATE ──
-    // ⚠️ SECURITY NOTE: This PIN is stored client-side for demo purposes only.
-    // In production, implement proper server-side authentication with secure session management.
-    const ADMIN_PIN = '7215';
+    const ADMIN_PIN = typeof LOCAL_ADMIN_PIN !== 'undefined' ? LOCAL_ADMIN_PIN : '__ADMIN_PIN__';
     let isAdmin = false;
 
     // Generation label map — shared across list rendering and badges
