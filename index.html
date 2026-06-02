@@ -105,8 +105,6 @@ html::-webkit-scrollbar {
       justify-content: center;
       padding: 0;
     }
-    #searchBox:not(:placeholder-shown) ~ #clearBtn { display: flex; }
-
     /* Logo - always visible in all views */
     .logo-link { display: flex; align-items: center; text-decoration: none; }
     .logo-img { width: 60px; height: auto; object-fit: contain; }
@@ -458,9 +456,6 @@ html::-webkit-scrollbar {
     #pinError { font-size: 0.75rem; color: var(--red); margin-bottom: 0.5rem; min-height: 1.2em; }
     .pin-actions { display: flex; gap: 0.5rem; }
 
-    .clickable-name { cursor: pointer; transition: color 0.15s; }
-    .clickable-name:hover { color: var(--gold-light); }
-
 /* ── FILTER BAR ── */
     #filterBar {
       position: fixed;
@@ -480,23 +475,6 @@ html::-webkit-scrollbar {
       overflow-x: auto;
       scrollbar-width: none;
       scroll-snap-type: x mandatory;
-    }
-    #filterBar::-webkit-scrollbar { display: none; }
-
-    .filter-chip {
-      flex-shrink: 0;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      color: var(--text-muted);
-      font-family: 'Inter', sans-serif;
-      font-size: 0.75rem;
-      font-weight: 500;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      transition: all 0.18s;
-      white-space: nowrap;
-      scroll-snap-align: center;
     }
     #filterBar::-webkit-scrollbar { display: none; }
 
@@ -985,8 +963,6 @@ html::-webkit-scrollbar {
       animation: spin 0.8s linear infinite;
       margin: 0 auto 1rem;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
     /* ── PRINT ── */
     @media print {
       #tabBar, #filterBar, #header, #treeActions { display: none !important; }
@@ -1845,11 +1821,9 @@ html::-webkit-scrollbar {
     function handleSearch() {
       const searchBox = document.getElementById('searchBox');
       const clearBtn = document.getElementById('clearBtn');
-      const searchFeedback = document.getElementById('searchFeedback');
       
       currentKeyword = searchBox.value.trim().toLowerCase();
       
-      // Sync clear button visibility
       if (currentKeyword) {
         clearBtn.style.display = 'flex';
       } else {

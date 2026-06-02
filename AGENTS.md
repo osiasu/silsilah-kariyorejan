@@ -115,6 +115,22 @@ Static genealogy site (family tree). Indonesian language. Pages: `index.html` (m
 - **Filter cache**: `getFilteredRequests()` now uses `_filteredCache` (invalidated in `loadAndRender()` and `setFilter()`), eliminating redundant array filtering when `handleAutoLoadScroll` + `autoLoadMore` fire in the same paint cycle (was up to 3x per frame).
 - **Sentinel done message**: changed `filtered.length > PAGE_SIZE` → `_visibleLimit >= PAGE_SIZE` so "Semua permintaan sudah ditampilkan." appears when exactly PAGE_SIZE items are shown (was missing for 10 items exactly).
 
+## Session 2026-06-02e — Dashboard generasi fix + index.html code clean-up
+
+### dashboard.html
+- **Fixed generasi stat**: added `nullslast` to `ORDER BY generasi.desc.nullslast` + `deleted_at=is.null` filter. Bug: null row returned first under `DESC NULLS FIRST` default, dashboard showed `0` instead of `5`.
+- Verified via curl: query now correctly returns `generasi: "5"`.
+
+### index.html code clean-up
+- ~3587 lines. Massive inline `<style>` (~1148 lines) + JS (~2163 lines).
+- **Removed**: dead CSS `#searchBox:not(:placeholder-shown) ~ #clearBtn` (JS always overrides via inline style)
+- **Removed**: duplicate `.clickable-name` block (second instance at old line 461)
+- **Removed**: duplicate `.filter-chip` block (first instance, completely overridden by second)
+- **Removed**: duplicate `#filterBar::-webkit-scrollbar` (redundant)
+- **Removed**: duplicate `@keyframes spin` (second identical instance)
+- **Removed**: unused `const searchFeedback` from `handleSearch()` (declared but never read)
+- Verified by tester subagent — all 5 cleanups safe, no regressions.
+
 ## Rules
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
 - **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
