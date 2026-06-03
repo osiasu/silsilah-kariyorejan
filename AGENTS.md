@@ -186,6 +186,101 @@ YouTube embed Error 153 persisted through regex+iframe-in-markdown pipeline. `ma
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
 - **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
 
+## Session 2026-06-03 — Phase 1: Button redesign (askape.com hallmark)
+
+### Scope
+- 4 files: `tree.html`, `attendance.html`, `request-list.html`, `misc.html`
+- 80 insertions, 61 deletions
+
+### Button system changes (all buttons, all pages)
+- **Radius**: `10px` → `9999px` (pill, matches askape)
+- **Shadow**: glow → shelf (`0 2px 0 0 color-mix(in srgb, var(--gold), #000 25%)`)
+- **Hover**: `translateY(-1px)` → `translateY(-2px)` + shelf shadow deepens to `0 4px`
+- **Active**: new — solid darker bg, `box-shadow: none`, `translateY(0)`
+- **Transition**: standardized to `all 200ms cubic-bezier(0.4,0,0.2,1)`
+
+### Files affected
+- **tree.html**: `.btn`, `.btn-primary`, `.btn-secondary`, `.btn-cancel` (×2), `.btn-save` (×2), `#adminFab`, `.filter-chip`
+- **attendance.html**: `.btn`, `.btn-primary`, `.btn-secondary`, `.btn-save`, `.btn-cancel`, `.btn-success`, `.btn-danger`, `.load-more-btn`
+- **request-list.html**: `.btn`, `.btn-primary`, `.btn-save`, `.btn-cancel`, `.btn-approve`, `.btn-reject`, `.btn-delete`, `.btn-action`
+- **misc.html**: `.primary-btn`, `.ghost-btn`, `.icon-btn`, `.filter-btn`, `#addNewsBtn`, `.modal-actions .primary-btn`, `#pinConfirmBtn`
+
+### Safety
+- Git tag `askape-before-v1` created before changes
+- All changes unstaged — review via `git diff`
+
+### Follow-up — Button consistency fix (Masuk & Batal)
+- **attendance.html**: PIN Masuk `btn-save` → `btn btn-primary`; PIN Batal `btn-cancel` → `btn btn-secondary`
+- **misc.html**: Removed `#pinConfirmBtn` CSS override (solid gold mismatch); updated `.primary-btn` to `font-weight:600`, `padding:12px 24px`, `font-size:0.875rem`; added `.btn-secondary` class; changed modal/PIN button classes from `ghost-btn`/`primary-btn` → `btn-secondary`/`btn-primary`
+- **Reference used**: request-list `.btn-primary` for Masuk; attendance RSVP konfirmasi `.btn-secondary` for Batal
+
+### Pending (user review needed)
+- Phase 2: Transition unification (non-button elements)
+- Phase 3: Font option (Bricolage Grotesque)
+- Phase 4: Layout polish
+
+## Session 2026-06-03b — Login/admin button consistency fix
+
+### Bug fixes
+- **misc.html**: Masuk button `class="btn-primary"` → `class="primary-btn"` (class didn't exist in misc.html CSS — rendered as unstyled white block). Reverted to native `primary-btn` class which already has gradient gold matching reference.
+- **tree.html**: 4× `btn-cancel` → `btn btn-secondary` (PIN overlay, Edit Anggota, Edit Pasangan, Request sheet)
+- **request-list.html**: Batal PIN `btn-cancel` → `btn btn-secondary` + added `.btn-secondary` CSS (surface2 bg, text color, border, shelf shadow, hover -2px, active press)
+
+### Status
+- **attendance.html**: ✅ Already fixed in previous session
+- **misc.html**: ✅ Masuk fixed (revert to primary-btn)
+- **tree.html**: ✅ All 4 Batal → btn btn-secondary
+- **request-list.html**: ✅ Batal → btn btn-secondary + CSS added
+
+## Session 2026-06-03c — PIN layout fix + hover/active flash fix
+
+### tree.html — PIN overlay reorder (match request-list)
+- **CSS**: `#pinBox` changed from `text-align:center` → `display:flex; flex-direction:column; gap:0.75rem` (matches `.pin-box` in other pages). Removed individual `margin-bottom` on h3/p/input/error (gap handles spacing). Removed `.pin-actions` wrapper and CSS.
+- **HTML**: Removed `.pin-actions` div, buttons are now direct children of `#pinBox`. Order: Masuk (btn-primary) first, Batal (btn-secondary) second — matching request-list reference.
+
+### misc.html — Hover/click flash fix (Phase 1)
+- **Root cause**: `.primary-btn` had `transition:all` defined but **no `:hover` or `:active` rules**. Transition animated undefined state changes, causing visual flash on hover/click.
+- **Fix**: Added `:hover` (translateY -2px, shadow deepens) and `:active` (solid bg, no shadow, translateY 0) rules matching project pattern, with light mode overrides.
+- **Affects**: Both Masuk and Simpan buttons (both use `.primary-btn`).
+
+### misc.html — Hover flash still occurred in dark mode (Phase 2 — final fix)
+- **Root cause (final)**: Two issues compounded:
+  1. `.primary-btn` was in a shared group (`.primary-btn,.ghost-btn,.icon-btn,.filter-btn`) with `transition:all` + `background:var(--surface)` + `border:1px` — causing cascade conflicts when line 21 overrode these. `transition:all` attempted to animate between cascade levels.
+  2. `transition:all` tried to animate `background` from `linear-gradient(...)` (base) to `color-mix(...)` (active) — CSS cannot interpolate between `<gradient>` and `<color>` types, causing a flash. Dark mode only because `color-mix() + var()` adds evaluation overhead.
+- **Fix (dual agent)**:
+  - **FE-Engineer**: Removed `.primary-btn` from shared group (line 20), deleted old duplicate `.primary-btn` block (line 20) and old hover rules — eliminated cascade conflicts
+  - **FE-Designer**: Changed `transition:all` → `transition:transform,box-shadow` on `.primary-btn` (line 21) and `#addNewsBtn` (line 22) — prevents background/gradient animation
+- **Result**: Smooth hover/active with no flash in dark mode.
+
+## Session 2026-06-03d — Button consistency: misc.html sizing + missing CSS
+
+### Problem
+After fixing cascade conflicts (removed old `.primary-btn` from line 20), `.primary-btn` lost its sizing/layout properties. Simpan/Masuk buttons rendered with 0 padding (tiny hit target) and 16px font (too big). `.btn-secondary` had different padding/font-size than reference.
+
+### Multi-agent findings
+
+**uiux-senior** — Architecture audit:
+- misc.html uses standalone classes (`primary-btn`, `btn-secondary`) instead of `.btn` base + modifier pattern used by all other pages
+- `.primary-btn` missing 9 properties vs `.btn` base: `position:relative`, `display:inline-flex`, `align-items`, `justify-content`, `gap:8px`, `padding:12px 24px`, `font-size:0.875rem`, `font-weight:600`, `line-height:1`, `cursor:pointer`
+- `.btn-secondary` missing same layout props + wrong `padding:0.65rem 0.95rem` and `font-size:0.85rem`
+
+**fe-designer** — Found hidden bugs:
+- `--surface3` undefined in misc.html — hover/active background for `.btn-secondary` broken (no visible change)
+- `.modal-actions` CSS missing — modal buttons had no layout
+
+**fe-engineer** — Applied sizing fixes:
+- `.primary-btn`: added `display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 24px;font-size:0.875rem;font-weight:600;line-height:1;`
+- `.btn-secondary`: same + `padding:12px 24px;font-size:0.875rem;font-weight:600;line-height:1;`
+
+### Additional fixes applied after agents
+- `--surface3:#2d2720` added to `:root` (dark mode) — matches attendance
+- `--surface3:#e8e4da` added to `[data-theme="light"]` — matches attendance
+- `.modal-actions{display:flex;flex-direction:column;gap:10px}` with full-width buttons
+- Mobile media query: `.modal-actions{flex-direction:row-reverse}` with `width:auto;flex:1`
+
+### Result
+All buttons across all 4 pages now render identically — pill shape, gold gradient primary, surface2 secondary, 12px 24px padding, 0.875rem font, 600 weight, shelf shadow, same hover/active behavior.
+
 ### Git
 - Active branch: `main`
 - Remote: `https://github.com/osiasu/silsilah-kariyorejan.git`

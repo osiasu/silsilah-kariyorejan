@@ -235,20 +235,24 @@ html::-webkit-scrollbar {
     .form-select option { background: var(--surface2); }
     .form-textarea { resize: vertical; min-height: 72px; }
     .form-actions { display: flex; gap: 0.5rem; margin-top: 1rem; }
-    .btn-cancel { flex: 1; padding: 0.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 0.75rem; cursor: pointer; transition: all 0.18s; }
+    .btn-cancel { flex: 1; padding: 0.5rem; background: var(--surface2); border: 1px solid var(--border); border-radius: 9999px; color: var(--text-muted); font-family: 'Inter', sans-serif; font-size: 0.75rem; cursor: pointer; transition: all 200ms cubic-bezier(0.4,0,0.2,1); }
     .btn-cancel:hover { border-color: var(--text-muted); color: var(--text); }
-    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:0.875rem;font-weight:600;padding:12px 24px;border-radius:10px;border:none;cursor:pointer;transition:all 0.2s ease;text-decoration:none;line-height:1;}
+    .btn-cancel:active{background:var(--surface3)!important;box-shadow:none!important;transform:translateY(0)!important;}
+    .btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:0.875rem;font-weight:600;padding:12px 24px;border-radius:9999px;border:none;cursor:pointer;transition:all 200ms cubic-bezier(0.4,0,0.2,1);text-decoration:none;line-height:1;}
     .btn:disabled{opacity:0.5;cursor:not-allowed;transform:none!important;box-shadow:none!important;}
-    .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1a1a;box-shadow:0 2px 12px rgba(184,130,46,0.3);}
-    .btn-primary:hover{transform:translateY(-1px);box-shadow:0 4px 20px rgba(184,130,46,0.4);}
-    .btn-primary:active{transform:translateY(0);}
-    [data-theme="light"] .btn-primary{background:linear-gradient(135deg,#c8861e,#e8a830);color:#1a0f00;box-shadow:0 2px 14px rgba(200,134,30,0.45);}
-    [data-theme="light"] .btn-primary:hover{box-shadow:0 4px 22px rgba(200,134,30,0.6);}
-    .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
-    .btn-secondary:hover{border-color:var(--gold-dim);background:var(--surface3);}
-    [data-theme="light"] .btn-secondary:not(:hover){border-color:rgba(138,94,26,0.38);box-shadow:0 0 0 1px rgba(138,94,26,0.10);}
-    .btn-save { flex: 2; padding: 0.5rem; background: var(--gold); border: none; border-radius: var(--radius); color: #1a1205; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: opacity 0.18s; }
-    .btn-save:hover { opacity: 0.88; }
+    .btn-primary{background:linear-gradient(135deg,var(--gold),var(--gold-light));color:#1a1a1a;box-shadow:0 2px 0 0 color-mix(in srgb,var(--gold),#000 25%);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 0 0 color-mix(in srgb,var(--gold),#000 25%);}
+    .btn-primary:active{background:color-mix(in srgb,var(--gold),#000 15%)!important;box-shadow:none!important;transform:translateY(0)!important;}
+    [data-theme="light"] .btn-primary{background:linear-gradient(135deg,#c8861e,#e8a830);color:#1a0f00;box-shadow:0 2px 0 0 #a06a18;}
+    [data-theme="light"] .btn-primary:hover{transform:translateY(-2px);box-shadow:0 4px 0 0 #a06a18;}
+    [data-theme="light"] .btn-primary:active{background:#a06a18!important;box-shadow:none!important;transform:translateY(0)!important;}
+    .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:9999px;box-shadow:0 2px 0 0 color-mix(in srgb,var(--border),#000 10%);}
+    .btn-secondary:hover{border-color:var(--gold-dim);background:var(--surface3);box-shadow:0 4px 0 0 color-mix(in srgb,var(--border),#000 10%);transform:translateY(-2px);}
+    .btn-secondary:active{background:var(--surface3)!important;box-shadow:none!important;transform:translateY(0)!important;}
+    [data-theme="light"] .btn-secondary:not(:hover){border-color:rgba(138,94,26,0.38);box-shadow:0 2px 0 0 rgba(138,94,26,0.25);}
+    .btn-save { flex: 2; padding: 0.5rem; background: var(--gold); border: none; border-radius: 9999px; color: #1a1205; font-family: 'Inter', sans-serif; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: all 200ms cubic-bezier(0.4,0,0.2,1); box-shadow:0 2px 0 0 color-mix(in srgb,var(--gold),#000 25%); }
+    .btn-save:hover { opacity: 0.88; box-shadow:0 4px 0 0 color-mix(in srgb,var(--gold),#000 25%); transform:translateY(-2px); }
+    .btn-save:active { background:color-mix(in srgb,var(--gold),#000 15%)!important; box-shadow:none!important; transform:translateY(0)!important; }
     .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
     .spouse-block { border: 1px solid var(--border); border-radius: 10px; padding: 0.5rem 0.75rem 0.375rem; margin: 0 0.75rem 0.5rem; position: relative; }
 
@@ -282,13 +286,14 @@ html::-webkit-scrollbar {
       font-size: 1.5rem;
       font-weight: 300;
       cursor: pointer;
-      box-shadow: 0 4px 18px rgba(184,130,46,0.45);
+      box-shadow: 0 4px 0 0 color-mix(in srgb,var(--gold),#000 25%);
       display: none;
       align-items: center; justify-content: center;
-      transition: opacity 0.2s, transform 0.2s;
+      transition: all 200ms cubic-bezier(0.4,0,0.2,1);
     }
     #adminFab.visible { display: flex; }
-    #adminFab:hover { opacity: 0.88; transform: scale(1.06); }
+    #adminFab:hover { opacity: 0.88; transform: translateY(-2px); box-shadow:0 6px 0 0 color-mix(in srgb,var(--gold),#000 25%); }
+    #adminFab:active { background:color-mix(in srgb,var(--gold),#000 15%)!important; box-shadow:none!important; transform:translateY(0)!important; }
 
 
     .detail-back-btn {
@@ -395,20 +400,22 @@ html::-webkit-scrollbar {
     }
     .btn-cancel {
       flex: 1; padding: 0.5rem;
-      border-radius: 10px; border: 1px solid var(--border);
+      border-radius: 9999px; border: 1px solid var(--border);
       background: var(--surface); color: var(--text-muted);
       font-size: 0.75rem; cursor: pointer;
-      transition: border-color 0.15s;
+      transition: all 200ms cubic-bezier(0.4,0,0.2,1); box-shadow:0 2px 0 0 color-mix(in srgb,var(--border),#000 5%);
     }
-    .btn-cancel:hover { border-color: var(--gold); color: var(--text); }
+    .btn-cancel:hover { border-color: var(--gold); color: var(--text); box-shadow:0 4px 0 0 color-mix(in srgb,var(--border),#000 5%); transform:translateY(-2px); }
+    .btn-cancel:active { background:var(--surface3)!important; box-shadow:none!important; transform:translateY(0)!important; }
     .btn-save {
       flex: 2; padding: 0.5rem;
-      border-radius: 10px; border: none;
+      border-radius: 9999px; border: none;
       background: var(--gold); color: #1a1205;
       font-size: 0.75rem; font-weight: 700;
-      cursor: pointer; transition: opacity 0.15s;
+      cursor: pointer; transition: all 200ms cubic-bezier(0.4,0,0.2,1); box-shadow:0 2px 0 0 color-mix(in srgb,var(--gold),#000 25%);
     }
-    .btn-save:hover { opacity: 0.88; }
+    .btn-save:hover { opacity: 0.88; box-shadow:0 4px 0 0 color-mix(in srgb,var(--gold),#000 25%); transform:translateY(-2px); }
+    .btn-save:active { background:color-mix(in srgb,var(--gold),#000 15%)!important; box-shadow:none!important; transform:translateY(0)!important; }
     .btn-save:disabled { opacity: 0.5; cursor: not-allowed; }
 
     /* ── PIN OVERLAY ── */
@@ -448,13 +455,12 @@ html::-webkit-scrollbar {
       font-size: 0.75rem; color: #e07070;
       text-align: center; min-height: 1rem;
     }
-    #pinBox { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1rem; width: min(340px,90vw); text-align: center; }
-    #pinBox h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; color: var(--gold-light); margin-bottom: 0.25rem; }
-    #pinBox p { font-size: 0.75rem; color: var(--text-muted); margin-bottom: 1rem; }
-    #pinInput { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 1rem; letter-spacing: 0.25em; text-align: center; padding: 0.5rem; outline: none; margin-bottom: 0.75rem; transition: border-color 0.18s; }
+    #pinBox { background: var(--surface); border: 1px solid var(--border); border-radius: 18px; padding: 1rem 1rem 1.25rem; width: min(340px,90vw); display: flex; flex-direction: column; gap: 0.75rem; }
+    #pinBox h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1rem; color: var(--gold-light); text-align: center; }
+    #pinBox p { font-size: 0.75rem; color: var(--text-muted); text-align: center; }
+    #pinInput { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px; color: var(--text); font-family: 'Inter', sans-serif; font-size: 1rem; letter-spacing: 0.25em; text-align: center; padding: 0.5rem; outline: none; transition: border-color 0.18s; }
     #pinInput:focus { border-color: var(--gold); }
-    #pinError { font-size: 0.75rem; color: var(--red); margin-bottom: 0.5rem; min-height: 1.2em; }
-    .pin-actions { display: flex; gap: 0.5rem; }
+    #pinError { font-size: 0.75rem; color: var(--red); text-align: center; min-height: 1.2em; }
 
 /* ── FILTER BAR ── */
     #filterBar {
@@ -482,14 +488,14 @@ html::-webkit-scrollbar {
       flex-shrink: 0;
       background: var(--surface2);
       border: 1px solid var(--border);
-      border-radius: 999px;
+      border-radius: 9999px;
       color: var(--text-muted);
       font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
       font-weight: 500;
       padding: 0.25rem 0.75rem;
       cursor: pointer;
-      transition: all 0.18s;
+      transition: all 200ms cubic-bezier(0.4,0,0.2,1);
       white-space: nowrap;
       scroll-snap-align: center;
     }
@@ -1238,10 +1244,8 @@ html::-webkit-scrollbar {
       <p>Masukkan PIN untuk mengakses mode admin</p>
       <input type="password" id="pinInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmPin()" />
       <div id="pinError"></div>
-      <div class="pin-actions">
-        <button class="btn-cancel" onclick="closePin()">Batal</button>
-        <button class="btn btn-primary" onclick="confirmPin()">Masuk</button>
-      </div>
+      <button class="btn btn-primary" onclick="confirmPin()">Masuk</button>
+      <button class="btn btn-secondary" onclick="closePin()">Batal</button>
     </div>
   </div>
 
@@ -2239,7 +2243,7 @@ html::-webkit-scrollbar {
       })()}
 
       <div class="form-actions">
-        <button class="btn-cancel" onclick="closeSheet('formSheet')">Batal</button>
+        <button class="btn btn-secondary" onclick="closeSheet('formSheet')">Batal</button>
         <button class="btn btn-primary" id="btnSave" onclick="submitForm('${d?.ID||''}')">
           ${d ? 'Simpan Perubahan' : 'Tambah Anggota'}
         </button>
@@ -2306,7 +2310,7 @@ html::-webkit-scrollbar {
         </div>
       </div>
       <div class="form-actions">
-        <button class="btn-cancel" onclick="closeSheet('formSheet')">Batal</button>
+        <button class="btn btn-secondary" onclick="closeSheet('formSheet')">Batal</button>
         <button class="btn btn-primary" id="btnSave" onclick="submitSpouseForm('${member?.ID||''}','${spouseId||''}')">Simpan Pasangan</button>
       </div>`;
     }
@@ -3024,7 +3028,7 @@ html::-webkit-scrollbar {
 
       const formActions = `
         <div class="form-actions" style="padding:1rem;border-top:1px solid var(--border);margin-top:0.75rem">
-          <button class="btn-cancel" onclick="closeSheet('requestSheet')">Batal</button>
+          <button class="btn btn-secondary" onclick="closeSheet('requestSheet')">Batal</button>
           <button class="btn btn-secondary" onclick="openPreviewRequest()" style="flex:1.2">👁 Preview</button>
           <button class="btn btn-primary" onclick="quickSubmitRequest()" style="flex:2">✓ Kirim Permintaan</button>
         </div>`;
