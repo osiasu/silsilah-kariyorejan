@@ -43,7 +43,7 @@
     #adminBanner .ghost-btn{padding:.68rem .95rem;color:var(--text-muted);border:1px solid var(--border);border-radius:999px;background:var(--surface);font-family:'Inter',sans-serif;font-size:.72rem;line-height:1;font-weight:400;cursor:pointer;transition:transform .18s ease,border-color .18s ease,color .18s ease,background .18s ease;}
     #adminBanner .ghost-btn:hover{transform:translateY(-1px);border-color:var(--gold);color:var(--gold-light);}
     .admin-only{display:none!important;}
-    body.is-admin .admin-only{display:flex!important;}
+    .admin-only.visible{display:flex!important;}
     #pinOverlay{position:fixed;inset:0;z-index:900;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:none;align-items:center;justify-content:center;}
     #pinOverlay.open{display:flex;}
     .pin-box{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:2rem 1.75rem;width:calc(100% - 2rem);max-width:340px;display:flex;flex-direction:column;gap:1rem;box-shadow:0 8px 40px rgba(0,0,0,0.5);}
@@ -328,7 +328,7 @@
     </div>
     <div class="header__right">
       <a class="header__cta" href="tree.html">Pohon Silsilah</a>
-      <button id="adminBtn" title="Masuk sebagai Admin">&#x1F510;</button>
+      <button id="adminBtn" title="Masuk sebagai Admin" aria-label="Masuk sebagai Admin">🔐</button>
     </div>
   </div>
 
@@ -664,18 +664,26 @@
     }
     function applyAdminMode() {
       isAdmin = true;
-      document.body.classList.add('is-admin');
       document.getElementById('adminBtn').classList.add('admin-active');
       document.getElementById('adminBanner').classList.add('visible');
+      document.querySelectorAll('.admin-only').forEach(function(el){ el.classList.add('visible'); });
+      updateAdminBtnUI(true);
       setCookie('trah_attendance_admin', 'admin', 30);
     }
     function logoutAdmin() {
       isAdmin = false;
-      document.body.classList.remove('is-admin');
       document.getElementById('adminBtn').classList.remove('admin-active');
       document.getElementById('adminBanner').classList.remove('visible');
+      document.querySelectorAll('.admin-only').forEach(function(el){ el.classList.remove('visible'); });
+      updateAdminBtnUI(false);
       setCookie('trah_attendance_admin', '', -1);
       renderAdminEvents();
+    }
+    function updateAdminBtnUI(active) {
+      var btn = document.getElementById('adminBtn');
+      btn.textContent = active ? '🔓' : '🔐';
+      btn.title = active ? 'Keluar dari mode Admin' : 'Masuk sebagai Admin';
+      btn.setAttribute('aria-label', btn.title);
     }
     function initAdmin() {
       document.getElementById('adminBtn').addEventListener('click', function() {

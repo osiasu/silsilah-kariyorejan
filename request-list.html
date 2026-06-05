@@ -342,6 +342,7 @@
       setCookie('trah_auth', 'admin', 30);
       document.getElementById('adminBtn').classList.add('admin-active');
       document.getElementById('adminBanner').classList.add('visible');
+      updateAdminBtnUI(true);
       renderPageIntro();
     }
 
@@ -372,8 +373,16 @@
       setCookie('trah_auth', 'guest', 30);
       document.getElementById('adminBtn').classList.remove('admin-active');
       document.getElementById('adminBanner').classList.remove('visible');
+      updateAdminBtnUI(false);
       renderPageIntro();
       loadAndRender();
+    }
+
+    function updateAdminBtnUI(active) {
+      var btn = document.getElementById('adminBtn');
+      btn.textContent = active ? '🔓' : '🔐';
+      btn.title = active ? 'Keluar dari mode Super Admin' : 'Masuk sebagai Super Admin';
+      btn.setAttribute('aria-label', btn.title);
     }
 
     async function loadAndRender() {
