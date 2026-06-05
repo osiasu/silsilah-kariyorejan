@@ -37,6 +37,7 @@ Static genealogy site (family tree). Indonesian language. Pages: `tree.html` (ma
 
 ## Rules
 - **Clarify before acting**: when given a task, present findings + proposed scope first. Ask if unclear. Don't assume or over-engineer.
+- **Prefer the simplest approach that satisfies the requirement.** This codebase values clarity and minimalism over elegance.
 - **Always create PR/MR** for every change. Direct push to `main` only when exact phrase **"push to main"** or **"push directly"** appears in user instruction. "commit push git" or "push" alone do NOT qualify.
 - **When switching to `main`**: always run `git pull --ff-only` first to keep local up to date.
 

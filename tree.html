@@ -2816,7 +2816,15 @@ html::-webkit-scrollbar {
       document.getElementById('adminBanner').classList.remove('visible');
       document.getElementById('adminFab').classList.remove('visible');
       document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.remove('visible'));
+      updateAdminBtnUI(false);
       closeAllSheets();
+    }
+
+    function updateAdminBtnUI(active) {
+      var btn = document.getElementById('adminBtn');
+      btn.textContent = active ? '🔓' : '🔐';
+      btn.title = active ? 'Keluar dari mode Super Admin' : 'Masuk sebagai Super Admin';
+      btn.setAttribute('aria-label', btn.title);
     }
 
     // ── REQUEST DATA FEATURE ──
@@ -3518,6 +3526,7 @@ html::-webkit-scrollbar {
       document.getElementById('adminBanner').classList.add('visible');
       document.getElementById('adminFab').classList.add('visible');
       document.querySelectorAll('.nav-admin-only').forEach(el => el.classList.add('visible'));
+      updateAdminBtnUI(true);
       loadPendingRequestCount();
     }
 
