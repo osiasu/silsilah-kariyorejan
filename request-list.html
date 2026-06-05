@@ -164,6 +164,30 @@
     .empty-icon{font-size:2.5rem;margin-bottom:0.75rem;}
     .spinner{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--gold);border-radius:50%;animation:spin 0.8s linear infinite;margin:3rem auto;}
     @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ICON BUTTON SYSTEM */
+    .btn-with-icon{display:inline-flex;align-items:center;justify-content:center;gap:6px;transition:all 200ms cubic-bezier(0.4,0,0.2,1);}
+    .btn-with-icon svg{width:16px;height:16px;flex-shrink:0;stroke:currentColor;fill:none;}
+    .btn-label{display:inline;}
+    .btn-with-icon:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px;}
+    .btn-with-icon:hover{transform:translateY(-2px);}
+    .btn-with-icon:active{transform:translateY(0)!important;box-shadow:none!important;}
+    .detail-footer{display:flex;flex-direction:row;gap:0.65rem;}
+    .detail-footer__row{display:flex;gap:0.5rem;flex:1;min-width:0;}
+    .detail-footer__row--primary{flex:2;}
+    .detail-footer__row .btn-with-icon{flex:1;min-width:0;}
+    @media(max-width:680px){
+      .detail-footer{flex-direction:column;gap:0.5rem;}
+      .detail-footer__row{flex:none;width:100%;}
+      .detail-footer__row .btn-with-icon{height:44px;min-width:44px;padding:0 12px;}
+      .btn-with-icon svg{width:18px;height:18px;}
+      .btn-label{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+      .btn-with-icon:active{transform:scale(0.96)!important;opacity:0.9;}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .btn-with-icon{transition:none!important;}
+      .btn-with-icon:hover,.btn-with-icon:active{transform:none!important;}
+    }
   </style>
 </head>
 <body>
@@ -215,8 +239,8 @@
       </div>
       <input type="password" class="pin-input" id="gateInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmGate()">
       <div class="pin-error" id="gateError"></div>
-      <button class="btn btn-primary" onclick="confirmGate()">Masuk</button>
-      <a href="tree.html" style="font-size:0.78rem;color:var(--text-muted);text-align:center;text-decoration:none;">← Kembali ke Silsilah</a>
+      <button class="btn btn-primary btn-with-icon" onclick="confirmGate()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg><span class="btn-label">Masuk</span></button>
+      <a href="tree.html" style="font-size:0.78rem;color:var(--text-muted);text-align:center;text-decoration:none;display:inline-flex;align-items:center;gap:4px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Kembali ke Silsilah</a>
     </div>
   </div>
 
@@ -233,7 +257,7 @@
       <button class="status-tab" onclick="setFilter('in_progress',this)">▶ In Progress</button>
       <button class="status-tab" onclick="setFilter('completed',this)">✓ Selesai</button>
       <button class="status-tab" onclick="setFilter('rejected',this)">✕ Ditolak</button>
-      <button class="refresh-btn" onclick="loadAndRender()" aria-label="Refresh daftar permintaan" title="Refresh">↻</button>
+      <button class="refresh-btn" onclick="loadAndRender()" aria-label="Refresh daftar permintaan" title="Refresh"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg></button>
     </div>
     <div id="reqList"><div class="spinner"></div></div>
   </div>
@@ -245,8 +269,8 @@
       <div class="pin-sub">Masukkan PIN Super Admin untuk mengaktifkan mode approval</div>
       <input type="password" class="pin-input" id="pinInput" placeholder="••••" maxlength="8" onkeydown="if(event.key==='Enter')confirmAdminPin()">
       <div class="pin-error" id="pinError"></div>
-      <button class="btn btn-primary" onclick="confirmAdminPin()">Masuk sebagai Admin</button>
-      <button class="btn btn-secondary" onclick="closePinOverlay()">Batal</button>
+      <button class="btn btn-primary btn-with-icon" onclick="confirmAdminPin()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg><span class="btn-label">Masuk sebagai Admin</span></button>
+      <button class="btn btn-secondary btn-with-icon" onclick="closePinOverlay()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg><span class="btn-label">Batal</span></button>
     </div>
   </div>
 
@@ -505,15 +529,27 @@
           <div class="preview-grid">${dataHtml||pf('','Tidak ada data')}</div>
         </div>`;
 
-      let footerHtml = `<button class="btn-cancel" style="flex:1" onclick="closeDetail()">Tutup</button>`;
-      if (isAdmin) {
-        footerHtml += `<button class="btn-delete" onclick="deleteRequest('${r.id}')">🗑 Hapus</button>`;
-        if (r.status==='pending') footerHtml+=`<button class="btn-action" onclick="updateStatus('${r.id}','in_progress')">▶ Proses</button>`;
-        if (r.status!=='completed' && r.status!=='rejected') {
-          footerHtml += `<button class="btn-reject" onclick="rejectRequest('${r.id}')">✕ Tolak</button>`;
-          footerHtml += `<button class="btn btn-primary" onclick="approveRequest('${r.id}')">✓ Setujui & Simpan</button>`;
+      const SVG={
+        close:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>',
+        trash:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>',
+        play:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3" fill="currentColor"/></svg>',
+        xCircle:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>',
+        check:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="9 12 11 14 15 10"/></svg>',
+      };
+      const iconBtn=(cls,svg,label,onClick)=>`<button class="${cls} btn-with-icon" onclick="${onClick}" aria-label="${label}">${svg}<span class="btn-label">${label}</span></button>`;
+      const primary=[],secondary=[];
+      secondary.push(iconBtn('btn-cancel',SVG.close,'Tutup','closeDetail()'));
+      if(isAdmin){
+        secondary.push(iconBtn('btn-delete',SVG.trash,'Hapus',`deleteRequest('${r.id}')`));
+        if(r.status==='pending') primary.push(iconBtn('btn-action',SVG.play,'Proses',`updateStatus('${r.id}','in_progress')`));
+        if(r.status!=='completed'&&r.status!=='rejected'){
+          primary.push(iconBtn('btn-reject',SVG.xCircle,'Tolak',`rejectRequest('${r.id}')`));
+          primary.push(iconBtn('btn btn-primary',SVG.check,'Setujui',`approveRequest('${r.id}')`));
         }
       }
+      let footerHtml='';
+      if(primary.length) footerHtml+=`<div class="detail-footer__row detail-footer__row--primary">${primary.join('')}</div>`;
+      footerHtml+=`<div class="detail-footer__row">${secondary.join('')}</div>`;
       document.getElementById('detailFooter').innerHTML=footerHtml;
       document.getElementById('reqDetailOverlay').classList.add('open');
     }
