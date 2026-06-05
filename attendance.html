@@ -669,6 +669,7 @@
       document.querySelectorAll('.admin-only').forEach(function(el){ el.classList.add('visible'); });
       updateAdminBtnUI(true);
       setCookie('trah_attendance_admin', 'admin', 30);
+      setCookie('trah_auth', 'admin', 30);
     }
     function logoutAdmin() {
       isAdmin = false;
@@ -677,6 +678,7 @@
       document.querySelectorAll('.admin-only').forEach(function(el){ el.classList.remove('visible'); });
       updateAdminBtnUI(false);
       setCookie('trah_attendance_admin', '', -1);
+      setCookie('trah_auth', 'guest', 30);
       renderAdminEvents();
     }
     function updateAdminBtnUI(active) {
