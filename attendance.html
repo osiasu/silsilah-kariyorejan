@@ -200,8 +200,8 @@
     .hidden{display:none!important;}
 
     /* Modal */
-    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);display:flex;align-items:flex-end;justify-content:center;z-index:1000;opacity:0;visibility:hidden;transition:opacity 0.3s,visibility 0.3s;}
-    .modal-overlay.active{opacity:1;visibility:visible;}
+    .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center;z-index:1000;}
+    .modal-overlay.active{display:flex;}
     .modal-sheet{background:var(--surface);border:1px solid var(--border);border-radius:20px 20px 0 0;padding:24px;width:100%;max-width:480px;max-height:85vh;overflow-y:auto;transform:translateY(100%);transition:transform 0.35s cubic-bezier(0.32,0.72,0,1);}
     .modal-overlay.active .modal-sheet{transform:translateY(0);}
     .modal-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
@@ -738,6 +738,8 @@
       document.getElementById('ef-desc').value = ev ? (ev.description || '') : '';
       document.getElementById('ef-status').value = normalizeStatus(ev ? (ev.status || 'upcoming') : 'upcoming');
       var overlay = document.getElementById('eventModalOverlay');
+      overlay.style.display = 'flex';
+      void overlay.offsetHeight;
       overlay.classList.add('active');
       overlay.setAttribute('aria-hidden', 'false');
     }
@@ -746,6 +748,7 @@
       overlay.classList.remove('active');
       overlay.setAttribute('aria-hidden', 'true');
       editingEventId = null;
+      setTimeout(function() { overlay.style.display = 'none'; }, 350);
     }
 
     async function saveEvent() {
@@ -1520,6 +1523,8 @@
       confirmBtn.disabled = false;
 
       var overlay = document.getElementById('modalOverlay');
+      overlay.style.display = 'flex';
+      void overlay.offsetHeight;
       overlay.classList.add('active');
       overlay.setAttribute('aria-hidden', 'false');
       setTimeout(function() { confirmBtn.focus(); }, 100);
@@ -1530,6 +1535,7 @@
       overlay.classList.remove('active');
       overlay.setAttribute('aria-hidden', 'true');
       modalContext = null;
+      setTimeout(function() { overlay.style.display = 'none'; }, 350);
     }
 
     async function submitAttendance() {
