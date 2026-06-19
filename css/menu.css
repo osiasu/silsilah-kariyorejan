@@ -586,7 +586,7 @@ body.page-leaving {
   pointer-events: none;
 }
 
-body.page-leaving > *:not(#header):not(.cursor-dot):not(.cursor-canvas) {
+body.page-leaving > *:not(#header):not(.cursor-dot):not(.cursor-ring) {
   animation: page-fade-out 0.22s var(--ease-premium) forwards;
 }
 
