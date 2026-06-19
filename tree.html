@@ -1616,10 +1616,30 @@ html::-webkit-scrollbar {
       });
     }
 
+    // '1p - Anak Menantu' → '1'  (spouse generations carry a 'p' suffix)
+    function spouseGenNum(sp) { return (sp.Generasi || '').split(' - ')[0].replace('p', ''); }
+
+    // People count (members + spouses) under the active filters — matches dashboard.html's
+    // "Total Anggota" definition (members + spouses). Each person matched independently by name + gen.
+    function countAnggota() {
+      const kw = currentKeyword;
+      const mem = allData.filter(d => {
+        const matchGen = !currentGen || (d.Generasi || '').split(' - ')[0] === currentGen;
+        const matchKw  = !kw || (d.Nama || '').toLowerCase().includes(kw);
+        return matchGen && matchKw;
+      }).length;
+      const sp = spousesData.filter(s => {
+        const matchGen = !currentGen || spouseGenNum(s) === currentGen;
+        const matchKw  = !kw || (s.Nama || '').toLowerCase().includes(kw);
+        return matchGen && matchKw;
+      }).length;
+      return mem + sp;
+    }
+
     // ── RENDER COORDINATOR ──
     function renderAll() {
       const data = filteredData();
-      document.getElementById('counterText').textContent = `${data.length} anggota`;
+      document.getElementById('counterText').textContent = `${countAnggota()} anggota`;
       if (currentView === 'list') renderList(data);
       else renderTree();
     }
@@ -1711,7 +1731,7 @@ html::-webkit-scrollbar {
       if (currentGen || currentKeyword) {
         filterTree();
       } else {
-        document.getElementById('counterText').textContent = `${allData.length} anggota`;
+        document.getElementById('counterText').textContent = `${countAnggota()} anggota`;
       }
     }
 
@@ -1836,7 +1856,7 @@ html::-webkit-scrollbar {
       
       if (currentView === 'list') {
         renderAll();
-        updateSearchFeedback(filteredData().length);
+        updateSearchFeedback(countAnggota());
       } else {
         const matchCount = filterTree();
         updateSearchFeedback(matchCount);
@@ -1863,8 +1883,9 @@ html::-webkit-scrollbar {
       const nodes = document.querySelectorAll('#treeRoot .tree-node');
       if (!currentKeyword && !currentGen) {
         nodes.forEach(n => n.style.display = '');
-        document.getElementById('counterText').textContent = `${allData.length} anggota`;
-        return allData.length;
+        const total = countAnggota();
+        document.getElementById('counterText').textContent = `${total} anggota`;
+        return total;
       }
       let matchCount = 0;
       nodes.forEach(n => {
@@ -1878,8 +1899,11 @@ html::-webkit-scrollbar {
           n.style.display = 'none';
         }
       });
-      document.getElementById('counterText').textContent = `${matchCount} anggota`;
-      return matchCount;
+      // Member tree-node visibility is driven by matchCount above; the displayed counter
+      // reports people (members + spouses) to stay consistent with the dashboard.
+      const total = countAnggota();
+      document.getElementById('counterText').textContent = `${total} anggota`;
+      return total;
     }
 
     function expandParents(node) {
