@@ -16,6 +16,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/menu.css">
   <link rel="stylesheet" href="css/cursor.css">
+  <!-- d3-hierarchy: tidy-tree coordinates for the bubble view (rendering is our own DOM/SVG) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/d3-hierarchy@3/dist/d3-hierarchy.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -814,19 +816,19 @@ html::-webkit-scrollbar {
     #treeView { transform-origin: top center; transition: transform 0.2s ease; }
 
     /* ── VIEW TRANSITIONS ── */
-    #listView, #treeView {
+    #listView, #treeView, #bubbleView {
       transition: opacity 0.22s ease, transform 0.22s ease;
     }
-    #listView.view-exit, #treeView.view-exit {
+    #listView.view-exit, #treeView.view-exit, #bubbleView.view-exit {
       opacity: 0;
       transform: translateY(6px);
       pointer-events: none;
     }
-    #listView.view-enter, #treeView.view-enter {
+    #listView.view-enter, #treeView.view-enter, #bubbleView.view-enter {
       opacity: 0;
       transform: translateY(-6px);
     }
-    #listView.view-visible, #treeView.view-visible {
+    #listView.view-visible, #treeView.view-visible, #bubbleView.view-visible {
       opacity: 1;
       transform: translateY(0);
     }
@@ -836,6 +838,150 @@ html::-webkit-scrollbar {
       opacity: 0;
       transition: opacity 0.15s ease;
       pointer-events: none;
+    }
+
+    /* ── BUBBLE VIEW ── */
+    #bubbleActions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.5rem 1rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      gap: 0.5rem;
+    }
+    .bubble-hint { font-family: 'Inter', sans-serif; font-size: 0.625rem; color: var(--text-muted); letter-spacing: 0.02em; }
+    #bubbleCanvas {
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 270px);
+      min-height: 380px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 1px 1px, var(--border) 1px, transparent 0) 0 0 / 28px 28px,
+        var(--bg);
+      cursor: grab;
+      touch-action: none;
+    }
+    #bubbleCanvas.grabbing { cursor: grabbing; }
+    #bubbleStage { position: absolute; top: 0; left: 0; transform-origin: 0 0; will-change: transform; }
+    #bubbleStage svg { position: absolute; top: 0; left: 0; overflow: visible; pointer-events: none; }
+    .bubble-link-path { fill: none; stroke: var(--border); stroke-width: 1.5; }
+
+    .bubble-couple {
+      position: absolute;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 0;
+      transform: translateX(-50%);
+    }
+    .bubble-person {
+      width: 88px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+    .bubble-dot {
+      position: relative;
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.05rem; font-weight: 800;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .bubble-person:hover .bubble-dot { transform: scale(1.08); box-shadow: 0 6px 16px rgba(0,0,0,0.28); }
+    .bubble-dot.male   { background: #6a9fd4; }
+    .bubble-dot.female { background: #e07070; }
+    .bubble-dot.root   { background: var(--gold-light); color: #1a1205; }
+    .bubble-dot.wafat::after {
+      content: '';
+      position: absolute; inset: -3px;
+      border-radius: 50%;
+      border: 2px dashed var(--text-muted);
+      opacity: 0.6;
+    }
+    .bubble-badge {
+      position: absolute; top: -5px; right: -8px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.5rem; font-weight: 700;
+      background: var(--surface); color: var(--text-muted);
+      border: 1px solid var(--border);
+      border-radius: 999px; padding: 1px 5px;
+      letter-spacing: 0.02em;
+    }
+    .bubble-name {
+      margin-top: 7px;
+      width: 88px;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: 0.625rem; font-weight: 700; line-height: 1.2;
+      text-align: center; text-transform: uppercase;
+      color: var(--text);
+      height: 30px; overflow: hidden;
+      display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+    }
+    .bubble-role {
+      margin-top: 3px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.5rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      padding: 1px 6px; border-radius: 999px;
+      background: var(--gold-dim); color: var(--gold-light);
+    }
+    .bubble-role.menantu { background: var(--surface2); color: var(--text-muted); }
+    .bubble-link {
+      flex: 0 0 22px;
+      align-self: flex-start;
+      margin-top: 25px;
+      height: 2px;
+      background: var(--border);
+      position: relative;
+    }
+    .bubble-link::after {
+      content: '∞';
+      position: absolute; top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.7rem; color: var(--text-muted);
+      background: var(--bg); padding: 0 2px; line-height: 1;
+    }
+    #bubbleFallback {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      text-align: center; padding: 2rem;
+      font-family: 'Inter', sans-serif; font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    /* Stats bar */
+    #bubbleStats {
+      display: flex; align-items: center; flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      padding: 0.625rem 1rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .bstat {
+      display: flex; flex-direction: column; align-items: center;
+      font-family: 'Inter', sans-serif;
+      line-height: 1.1; white-space: nowrap;
+    }
+    .bstat-val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.95rem; font-weight: 800; color: var(--text); }
+    .bstat-val .bstat-extra { font-size: 0.7rem; color: var(--gold-light); font-weight: 700; }
+    .bstat-label { font-size: 0.5rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-top: 2px; }
+    .bstat-total .bstat-val { color: var(--gold-light); }
+    .bstat-sep { width: 1px; align-self: stretch; background: var(--border); }
+    .bstat-laki .bstat-val { color: #6a9fd4; }
+    .bstat-perem .bstat-val { color: #e07070; }
+
+    @media (max-width: 680px) {
+      #bubbleCanvas { height: calc(100vh - 290px); }
+      .bubble-hint { display: none; }
+      #bubbleStats { gap: 0.375rem 0.625rem; padding: 0.5rem 0.625rem; }
+      .bstat-val { font-size: 0.8rem; }
     }
 
     .hidden { display: none !important; }
@@ -971,7 +1117,7 @@ html::-webkit-scrollbar {
     }
     /* ── PRINT ── */
     @media print {
-      #tabBar, #filterBar, #header, #treeActions { display: none !important; }
+      #tabBar, #filterBar, #header, #treeActions, #bubbleActions, #bubbleStats { display: none !important; }
       body { padding-bottom: 0; }
     }
 
@@ -1231,6 +1377,28 @@ html::-webkit-scrollbar {
       <div id="treeRoot"></div>
     </div>
 
+    <!-- BUBBLE VIEW -->
+    <div id="bubbleView" class="hidden">
+      <div id="bubbleActions">
+        <div class="tree-actions-left">
+          <span class="bubble-hint">Geser untuk menggeser · gulir untuk zoom</span>
+        </div>
+        <div class="tree-actions-right">
+          <div class="zoom-controls">
+            <button class="zoom-btn" id="bubbleFitBtn" title="Pas ke layar">⤢</button>
+            <button class="zoom-btn" id="bubbleZoomOutBtn" title="Perkecil">−</button>
+            <span class="zoom-indicator" id="bubbleZoomIndicator">100%</span>
+            <button class="zoom-btn" id="bubbleZoomInBtn" title="Perbesar">+</button>
+          </div>
+        </div>
+      </div>
+      <div id="bubbleCanvas">
+        <div id="bubbleStage"></div>
+        <div id="bubbleFallback" class="hidden"></div>
+      </div>
+      <div id="bubbleStats"></div>
+    </div>
+
     <div id="emptyState" class="hidden">
       <div class="empty-icon">🔎</div>
       <p>Tidak ada anggota yang cocok.</p>
@@ -1371,6 +1539,10 @@ html::-webkit-scrollbar {
     <button class="tab-btn" id="tabTree" onclick="switchView('tree')" aria-label="Lihat pohon keluarga">
       <span class="tab-icon" aria-hidden="true">🌿</span>
       Pohon
+    </button>
+    <button class="tab-btn" id="tabBubble" onclick="switchView('bubble')" aria-label="Lihat pohon gelembung">
+      <span class="tab-icon" aria-hidden="true">🫧</span>
+      Gelembung
     </button>
     <button class="tab-btn" id="tabRequest" onclick="openRequestTypeSheet()" aria-label="Ajukan permintaan data">
       <span class="tab-icon" aria-hidden="true">📝</span>
@@ -1821,6 +1993,286 @@ html::-webkit-scrollbar {
       updateZoom();
     }
 
+    // ── BUBBLE VIEW (silsilah-style node graph) ──
+    const BUBBLE = {
+      COL_W: 88,      // width of one person column (bubble + labels) — matches .bubble-person / .bubble-name
+      COUPLE_W: 198,  // member(88) + link(22) + spouse(88); .bubble-couple gap is 0
+      LINK_W: 22,     // marriage link width (matches .bubble-link flex-basis)
+      GROUP_H: 108,   // height of a couple block (bubble + name + role) — connectors anchor below this
+      LEVEL_H: 180,   // vertical distance between generations
+      SIB_GAP: 30,    // min horizontal gap between siblings
+      COUSIN_GAP: 26, // extra gap between different-parent neighbours
+      PAD: 70         // padding around the whole graph
+    };
+
+    // Build a nested {member, children} tree from allData using Parent ID
+    // (same parent/child logic as buildTreeNode, robust to orphans / multiple roots).
+    function buildBubbleData() {
+      const idSet = new Set(allData.map(m => String(m.ID)));
+      const byParent = {};
+      allData.forEach(m => {
+        let pid = m['Parent ID'] == null ? '' : String(m['Parent ID']);
+        if (pid && !idSet.has(pid)) pid = ''; // orphan → treat as root
+        (byParent[pid] = byParent[pid] || []).push(m);
+      });
+      const nest = (member) => ({
+        member,
+        children: (byParent[String(member.ID)] || []).map(nest)
+      });
+      const roots = byParent[''] || [];
+      if (roots.length === 1) return { node: nest(roots[0]), synthetic: false };
+      return { node: { member: null, children: roots.map(nest) }, synthetic: true };
+    }
+
+    function bubbleInitial(name) {
+      const m = (name || '').match(/[A-Za-zÀ-ÿ]/);
+      return (m ? m[0] : '?').toUpperCase();
+    }
+    function bubbleDisplayName(name) {
+      // Strip leading genealogical numbering like "2.1 " or "1. "
+      return (name || '').replace(/^[\d.\s]+/, '').trim() || (name || '');
+    }
+    function isWafat(d) { return (d && (d.Status || '').toLowerCase() === 'wafat'); }
+
+    function renderBubble() {
+      document.getElementById('emptyState').classList.add('hidden');
+      const stage = document.getElementById('bubbleStage');
+      const fallback = document.getElementById('bubbleFallback');
+      renderBubbleStats();
+
+      if (typeof d3 === 'undefined' || !d3.hierarchy) {
+        stage.innerHTML = '';
+        fallback.classList.remove('hidden');
+        fallback.textContent = 'Tampilan gelembung butuh koneksi internet untuk memuat pustaka tata letak. Coba buka via server / online.';
+        return;
+      }
+      if (!allData.length) {
+        stage.innerHTML = '';
+        fallback.classList.remove('hidden');
+        fallback.textContent = 'Belum ada data untuk ditampilkan.';
+        return;
+      }
+      fallback.classList.add('hidden');
+
+      const { node: rootData, synthetic } = buildBubbleData();
+      const root = d3.hierarchy(rootData, d => d.children);
+
+      const hasSpouse = (n) => !!(n.data.member && getMemberSpouses(n.data.member.ID).length);
+      const widthOf = (n) => hasSpouse(n) ? BUBBLE.COUPLE_W : BUBBLE.COL_W;
+
+      d3.tree()
+        .nodeSize([BUBBLE.COL_W, BUBBLE.LEVEL_H])
+        .separation((a, b) => {
+          const gap = (a.parent === b.parent ? BUBBLE.SIB_GAP : BUBBLE.SIB_GAP + BUBBLE.COUSIN_GAP);
+          return ((widthOf(a) + widthOf(b)) / 2 + gap) / BUBBLE.COL_W;
+        })(root);
+
+      // Skip the synthetic root row so real roots sit at the top
+      const yShift = synthetic ? BUBBLE.LEVEL_H : 0;
+      const nodes = root.descendants().filter(n => n.data.member);
+
+      // Bounds
+      let minX = Infinity, maxX = -Infinity, maxY = 0;
+      nodes.forEach(n => {
+        const half = widthOf(n) / 2;
+        minX = Math.min(minX, n.x - half);
+        maxX = Math.max(maxX, n.x + half);
+        maxY = Math.max(maxY, (n.y - yShift) + BUBBLE.GROUP_H);
+      });
+      const offX = -minX + BUBBLE.PAD;
+      const offY = BUBBLE.PAD;
+      const stageW = (maxX - minX) + BUBBLE.PAD * 2;
+      const stageH = maxY + BUBBLE.PAD * 2;
+      stage.style.width = stageW + 'px';
+      stage.style.height = stageH + 'px';
+
+      const sx = n => n.x + offX;
+      const sy = n => (n.y - yShift) + offY;
+
+      // Connectors (SVG) — orthogonal elbows from each parent couple down to its children
+      let paths = '';
+      nodes.forEach(n => {
+        const kids = (n.children || []).filter(c => c.data.member);
+        if (!kids.length) return;
+        const px = sx(n), pBottom = sy(n) + BUBBLE.GROUP_H;
+        const childTop = sy(kids[0]);
+        const busY = pBottom + (childTop - pBottom) / 2;
+        paths += `<path class="bubble-link-path" d="M${px} ${pBottom} V${busY}"/>`;
+        if (kids.length > 1) {
+          paths += `<path class="bubble-link-path" d="M${sx(kids[0])} ${busY} H${sx(kids[kids.length - 1])}"/>`;
+        }
+        kids.forEach(c => {
+          paths += `<path class="bubble-link-path" d="M${sx(c)} ${busY} V${sy(c)}"/>`;
+        });
+      });
+
+      // Bubble couples (DOM)
+      const genBadge = (n) => 'G' + (synthetic ? n.depth : n.depth + 1);
+      let html = `<svg width="${stageW}" height="${stageH}">${paths}</svg>`;
+      nodes.forEach(n => {
+        const m = n.member = n.data.member;
+        const isRoot = !m['Parent ID'] || (synthetic && n.depth === 1);
+        const genNum = (m.Generasi || '').split(' - ')[0];
+        const role = isRoot ? 'Pendiri' : (genLabels[genNum] || m.Generasi || 'Anggota');
+        const badge = genBadge(n);
+        const spouses = getMemberSpouses(m.ID);
+
+        const memberPerson = bubblePersonHtml({
+          id: m.ID, type: 'member',
+          initial: bubbleInitial(m.Nama),
+          name: bubbleDisplayName(m.Nama),
+          cls: isRoot ? 'root' : detectGender(m),
+          wafat: isWafat(m), badge, role, roleCls: ''
+        });
+
+        let inner = memberPerson;
+        spouses.forEach(sp => {
+          inner += `<div class="bubble-link" aria-hidden="true"></div>`;
+          inner += bubblePersonHtml({
+            id: sp.ID, type: 'spouse_row',
+            initial: bubbleInitial(sp.Nama),
+            name: bubbleDisplayName(sp.Nama),
+            cls: isRoot ? 'root' : detectGender(sp),
+            wafat: isWafat(sp), badge,
+            role: isRoot ? 'Pendiri' : 'Menantu',
+            roleCls: isRoot ? '' : 'menantu'
+          });
+        });
+
+        html += `<div class="bubble-couple" style="left:${sx(n)}px;top:${sy(n)}px">${inner}</div>`;
+      });
+
+      stage.innerHTML = html;
+      fitBubbleView();
+    }
+
+    function bubblePersonHtml(o) {
+      return (
+        `<div class="bubble-person" onclick="openDetail('${o.id}','${o.type}')" title="${(o.name || '').replace(/"/g, '&quot;')}">` +
+          `<div class="bubble-dot ${o.cls}${o.wafat ? ' wafat' : ''}">${o.initial}` +
+            `<span class="bubble-badge">${o.badge}</span>` +
+          `</div>` +
+          `<div class="bubble-name">${highlight(o.name || '')}</div>` +
+          `<div class="bubble-role ${o.roleCls || ''}">${o.role}</div>` +
+        `</div>`
+      );
+    }
+
+    function renderBubbleStats() {
+      const el = document.getElementById('bubbleStats');
+      if (!el) return;
+      const genKeys = ['1', '2', '3', '4', '5'];
+      const memCount = {}, spCount = {};
+      genKeys.forEach(k => { memCount[k] = 0; spCount[k] = 0; });
+
+      let laki = 0, perem = 0, wafat = 0;
+      const tally = (d) => {
+        const g = detectGender(d);
+        if (g === 'male') laki++; else perem++;
+        if (isWafat(d)) wafat++;
+      };
+
+      allData.forEach(m => {
+        const g = (m.Generasi || '').split(' - ')[0];
+        if (memCount[g] != null) memCount[g]++;
+        tally(m);
+      });
+      spousesData.forEach(sp => {
+        const g = (sp.Generasi || '').split(' - ')[0].replace('p', ''); // '1p' → '1'
+        if (spCount[g] != null) spCount[g]++;
+        tally(sp);
+      });
+
+      const genStat = (k) => {
+        const extra = spCount[k] ? ` <span class="bstat-extra">+${spCount[k]}</span>` : '';
+        return `<div class="bstat"><div class="bstat-val">${memCount[k]}${extra}</div><div class="bstat-label">${genLabels[k]}</div></div>`;
+      };
+
+      el.innerHTML =
+        `<div class="bstat bstat-total"><div class="bstat-val">${allData.length}</div><div class="bstat-label">Anggota</div></div>` +
+        `<div class="bstat-sep"></div>` +
+        genKeys.map(genStat).join('') +
+        `<div class="bstat-sep"></div>` +
+        `<div class="bstat bstat-laki"><div class="bstat-val">${laki}</div><div class="bstat-label">Laki</div></div>` +
+        `<div class="bstat bstat-perem"><div class="bstat-val">${perem}</div><div class="bstat-label">Perem</div></div>` +
+        `<div class="bstat"><div class="bstat-val">${wafat}</div><div class="bstat-label">Wafat</div></div>`;
+    }
+
+    // ── BUBBLE PAN / ZOOM ──
+    let bScale = 1, bX = 0, bY = 0;
+    const BUBBLE_MIN = 0.2, BUBBLE_MAX = 2.5;
+
+    function applyBubbleTransform() {
+      const stage = document.getElementById('bubbleStage');
+      if (stage) stage.style.transform = `translate(${bX}px, ${bY}px) scale(${bScale})`;
+      const ind = document.getElementById('bubbleZoomIndicator');
+      if (ind) ind.textContent = `${Math.round(bScale * 100)}%`;
+    }
+
+    function fitBubbleView() {
+      const canvas = document.getElementById('bubbleCanvas');
+      const stage = document.getElementById('bubbleStage');
+      if (!canvas || !stage) return;
+      const cw = canvas.clientWidth, ch = canvas.clientHeight;
+      const sw = stage.offsetWidth || 1, sh = stage.offsetHeight || 1;
+      bScale = Math.max(BUBBLE_MIN, Math.min(BUBBLE_MAX, Math.min(cw / sw, ch / sh) * 0.92));
+      bX = (cw - sw * bScale) / 2;
+      bY = Math.max(20, (ch - sh * bScale) / 2);
+      applyBubbleTransform();
+    }
+    function resetBubbleView() { fitBubbleView(); }
+
+    function zoomBubbleAt(factor, cx, cy) {
+      const next = Math.max(BUBBLE_MIN, Math.min(BUBBLE_MAX, bScale * factor));
+      const ratio = next / bScale;
+      // keep the point under (cx, cy) fixed
+      bX = cx - (cx - bX) * ratio;
+      bY = cy - (cy - bY) * ratio;
+      bScale = next;
+      applyBubbleTransform();
+    }
+
+    (function initBubbleControls() {
+      const canvas = document.getElementById('bubbleCanvas');
+      if (!canvas) return;
+      const center = () => ({ x: canvas.clientWidth / 2, y: canvas.clientHeight / 2 });
+
+      document.getElementById('bubbleZoomInBtn')?.addEventListener('click', () => { const c = center(); zoomBubbleAt(1.2, c.x, c.y); });
+      document.getElementById('bubbleZoomOutBtn')?.addEventListener('click', () => { const c = center(); zoomBubbleAt(1 / 1.2, c.x, c.y); });
+      document.getElementById('bubbleFitBtn')?.addEventListener('click', fitBubbleView);
+
+      canvas.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        const r = canvas.getBoundingClientRect();
+        zoomBubbleAt(e.deltaY < 0 ? 1.1 : 1 / 1.1, e.clientX - r.left, e.clientY - r.top);
+      }, { passive: false });
+
+      let dragging = false, moved = false, sx = 0, sy = 0, ox = 0, oy = 0;
+      canvas.addEventListener('pointerdown', (e) => {
+        dragging = true; moved = false;
+        sx = e.clientX; sy = e.clientY; ox = bX; oy = bY;
+        canvas.classList.add('grabbing');
+        canvas.setPointerCapture(e.pointerId);
+      });
+      canvas.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - sx, dy = e.clientY - sy;
+        if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+        bX = ox + dx; bY = oy + dy;
+        applyBubbleTransform();
+      });
+      const endDrag = (e) => {
+        if (!dragging) return;
+        dragging = false;
+        canvas.classList.remove('grabbing');
+        try { canvas.releasePointerCapture(e.pointerId); } catch (_) {}
+      };
+      canvas.addEventListener('pointerup', endDrag);
+      canvas.addEventListener('pointercancel', endDrag);
+      // Swallow click after a drag so it doesn't open a detail sheet
+      canvas.addEventListener('click', (e) => { if (moved) { e.stopPropagation(); e.preventDefault(); } }, true);
+    })();
+
     // ── SEARCH ──
     function handleSearch() {
       const searchBox = document.getElementById('searchBox');
@@ -1936,6 +2388,7 @@ html::-webkit-scrollbar {
       currentView = view;
       document.getElementById('tabList').classList.toggle('active', view === 'list');
       document.getElementById('tabTree').classList.toggle('active', view === 'tree');
+      document.getElementById('tabBubble').classList.toggle('active', view === 'bubble');
 
       // Prepare the incoming view (render while invisible)
       toEl.classList.remove('hidden', 'view-visible', 'view-enter');
@@ -1943,6 +2396,7 @@ html::-webkit-scrollbar {
       toEl.classList.add('view-enter');
 
       if (view === 'list') renderList(filteredData());
+      else if (view === 'bubble') renderBubble();
       else { renderTree(); resetTreeZoom(); }
 
       // Exit animation on current panel
