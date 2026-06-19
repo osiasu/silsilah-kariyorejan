@@ -18,3 +18,6 @@ Thumbs.db
 
 # Local config (credentials for local dev)
 js/config.local.js
+
+# Claude Code local guidance
+CLAUDE.md

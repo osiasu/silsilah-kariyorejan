@@ -4,42 +4,24 @@
   var isTouch = window.matchMedia('(hover: none)').matches;
   if (isTouch) return;
 
-  // ── Dot cursor element ──
+  // ── Dot cursor element (fast follower) ──
   var dot = document.createElement('div');
   dot.className = 'cursor-dot';
   document.body.appendChild(dot);
 
-  // ── Canvas for trailing particles ──
-  var canvas = document.createElement('canvas');
-  canvas.className = 'cursor-canvas';
-  document.body.appendChild(canvas);
-  var ctx = canvas.getContext('2d');
-  var dpr = Math.min(window.devicePixelRatio || 1, 2);
-
-  function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 2);
-    canvas.width = Math.round(window.innerWidth * dpr);
-    canvas.height = Math.round(window.innerHeight * dpr);
-    canvas.style.width = window.innerWidth + 'px';
-    canvas.style.height = window.innerHeight + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  resize();
-  window.addEventListener('resize', resize);
-
-  // ── Get computed color from CSS variable (adapts to light/dark) ──
-  function getTrailColor() {
-    var style = getComputedStyle(document.documentElement);
-    return style.getPropertyValue('--gold-light').trim() || '#d4a55a';
-  }
+  // ── Ring element (slow trailing follower) ──
+  var ring = document.createElement('div');
+  ring.className = 'cursor-ring';
+  document.body.appendChild(ring);
 
   // ── State ──
   var mouseX = 0, mouseY = 0;
   var dotX = 0, dotY = 0;
-  var particles = [];
-  var spawnTimer = 0;
-  var SPAWN_INTERVAL = 3;
-  var MAX_PARTICLES = 8;
+  var ringX = 0, ringY = 0;
+
+  // Smoothness factors (lerp): higher = snappier
+  var DOT_SMOOTHNESS = 0.2;
+  var RING_SMOOTHNESS = 0.1;
 
   // ── Mouse events ──
   document.addEventListener('mousemove', function(e) {
@@ -47,11 +29,13 @@
     mouseY = e.clientY;
     if (!dot.classList.contains('is-visible')) {
       dot.classList.add('is-visible');
+      ring.classList.add('is-visible');
     }
   });
 
   document.addEventListener('mouseleave', function() {
     dot.classList.remove('is-visible');
+    ring.classList.remove('is-visible');
   });
 
   // Hover detection
@@ -59,65 +43,28 @@
   document.addEventListener('mouseover', function(e) {
     if (e.target.closest(hoverTargets)) {
       dot.classList.add('is-hover');
+      ring.classList.add('is-hover');
     }
   });
   document.addEventListener('mouseout', function(e) {
     if (e.target.closest(hoverTargets)) {
       dot.classList.remove('is-hover');
+      ring.classList.remove('is-hover');
     }
   });
 
-  // ── Particle class ──
-  function Particle(x, y) {
-    this.x = x;
-    this.y = y;
-    this.size = Math.random() * 2 + 1.25;
-    this.life = 1.0;
-    this.decay = Math.random() * 0.02 + 0.02;
-    this.vx = (Math.random() - 0.5) * 1;
-    this.vy = (Math.random() - 0.5) * 1;
-  }
-
   // ── Animation loop ──
   function tick() {
-    // Smooth follow
-    dotX += (mouseX - dotX) * 0.35;
-    dotY += (mouseY - dotY) * 0.35;
+    // Fast-following dot
+    dotX += (mouseX - dotX) * DOT_SMOOTHNESS;
+    dotY += (mouseY - dotY) * DOT_SMOOTHNESS;
     dot.style.transform = 'translate(' + dotX + 'px, ' + dotY + 'px) translate(-50%, -50%)';
 
-    // Spawn particles
-    spawnTimer++;
-    if (spawnTimer >= SPAWN_INTERVAL && particles.length < MAX_PARTICLES) {
-      particles.push(new Particle(dotX, dotY));
-      spawnTimer = 0;
-    }
+    // Slow-following ring
+    ringX += (mouseX - ringX) * RING_SMOOTHNESS;
+    ringY += (mouseY - ringY) * RING_SMOOTHNESS;
+    ring.style.transform = 'translate(' + ringX + 'px, ' + ringY + 'px) translate(-50%, -50%)';
 
-    // Clear canvas
-    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-
-    // Get trail color (adapts to theme)
-    var color = getTrailColor();
-
-    // Update & draw particles as dots
-    for (var i = particles.length - 1; i >= 0; i--) {
-      var p = particles[i];
-      p.x += p.vx;
-      p.y += p.vy;
-      p.life -= p.decay;
-
-      if (p.life <= 0) {
-        particles.splice(i, 1);
-        continue;
-      }
-
-      ctx.globalAlpha = p.life * 0.7;
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, p.size * p.life, 0, Math.PI * 2);
-      ctx.fill();
-    }
-
-    ctx.globalAlpha = 1;
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);
