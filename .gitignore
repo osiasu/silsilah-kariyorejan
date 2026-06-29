@@ -21,3 +21,6 @@ js/config.local.js
 
 # Claude Code local guidance
 CLAUDE.md
+
+# Design notes (not for repo)
+REDESIGN_PROMPT.md
