@@ -287,14 +287,15 @@
   </div>
 
   <script src="js/config.local.js"></script>
+  <script src="js/auth.js"></script>
   <script>
   (function() {
     'use strict';
 
     const SUPABASE_URL  = typeof LOCAL_SUPABASE_URL !== 'undefined' ? LOCAL_SUPABASE_URL : '__SUPABASE_URL__';
     const SUPABASE_KEY  = typeof LOCAL_SUPABASE_KEY !== 'undefined' ? LOCAL_SUPABASE_KEY : '__SUPABASE_KEY__';
-    const ADMIN_PIN  = typeof LOCAL_ADMIN_PIN !== 'undefined' ? LOCAL_ADMIN_PIN : '__ADMIN_PIN__';
-    const GUEST_PIN  = typeof LOCAL_GUEST_PIN !== 'undefined' ? LOCAL_GUEST_PIN : '__GUEST_PIN__';
+    const ADMIN_PIN_HASH = typeof LOCAL_ADMIN_PIN_HASH !== 'undefined' ? LOCAL_ADMIN_PIN_HASH : '__ADMIN_PIN_HASH__';
+    const GUEST_PIN_HASH = typeof LOCAL_GUEST_PIN_HASH !== 'undefined' ? LOCAL_GUEST_PIN_HASH : '__GUEST_PIN_HASH__';
     const TABLE_REQUESTS = 'data_requests';
     const TABLE_MEMBERS  = 'members';
 
@@ -325,11 +326,11 @@
       document.getElementById('gateInput').focus();
     }
 
-    function confirmGate() {
-      const val = document.getElementById('gateInput').value;
-      const expectedPin = _activePinTab === 'admin' ? ADMIN_PIN : GUEST_PIN;
-      if (val === expectedPin || (val === ADMIN_PIN && _activePinTab === 'guest')) {
-        const role = (val === ADMIN_PIN) ? 'admin' : 'guest';
+    async function confirmGate() {
+      const digest = await hashPin(document.getElementById('gateInput').value);
+      const expectedHash = _activePinTab === 'admin' ? ADMIN_PIN_HASH : GUEST_PIN_HASH;
+      if (digest === expectedHash || (digest === ADMIN_PIN_HASH && _activePinTab === 'guest')) {
+        const role = (digest === ADMIN_PIN_HASH) ? 'admin' : 'guest';
         setCookie('trah_auth', role, 30);
         enterApp(role);
       } else {
@@ -377,9 +378,9 @@
       document.getElementById('pinError').textContent = '';
       setTimeout(() => document.getElementById('pinInput').focus(), 100);
     }
-    function confirmAdminPin() {
-      const val = document.getElementById('pinInput').value;
-      if (val === ADMIN_PIN) {
+    async function confirmAdminPin() {
+      const digest = await hashPin(document.getElementById('pinInput').value);
+      if (digest === ADMIN_PIN_HASH) {
         document.getElementById('pinOverlay').classList.remove('open');
         applyAdminMode();
         loadAndRender();

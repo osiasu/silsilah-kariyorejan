@@ -44,12 +44,14 @@ jobs:
           GUEST_PIN:     ${{ secrets.GUEST_PIN }}       # PIN  → Secret (masked in logs)
           DEFAULT_PAGE:  ${{ vars.DEFAULT_PAGE || 'dashboard.html' }}
         run: |
+          ADMIN_PIN_HASH=$(printf '%s' "${ADMIN_PIN}" | sha256sum | awk '{print $1}')
+          GUEST_PIN_HASH=$(printf '%s' "${GUEST_PIN}" | sha256sum | awk '{print $1}')
           for file in *.html; do
-            sed -i "s|__SUPABASE_URL__|${SUPABASE_URL}|g" "$file"
-            sed -i "s|__SUPABASE_KEY__|${SUPABASE_KEY}|g" "$file"
-            sed -i "s|__ADMIN_PIN__|${ADMIN_PIN}|g"       "$file"
-            sed -i "s|__GUEST_PIN__|${GUEST_PIN}|g"       "$file"
-            sed -i "s|__DEFAULT_PAGE__|${DEFAULT_PAGE}|g" "$file"
+            sed -i "s|__SUPABASE_URL__|${SUPABASE_URL}|g"     "$file"
+            sed -i "s|__SUPABASE_KEY__|${SUPABASE_KEY}|g"     "$file"
+            sed -i "s|__ADMIN_PIN_HASH__|${ADMIN_PIN_HASH}|g" "$file"
+            sed -i "s|__GUEST_PIN_HASH__|${GUEST_PIN_HASH}|g" "$file"
+            sed -i "s|__DEFAULT_PAGE__|${DEFAULT_PAGE}|g"     "$file"
           done
 
       # ── Deploy the injected files to GitHub Pages ─────────────────────────
